@@ -2,6 +2,6 @@
   "name": "basic-app",
   "private": true,
   "scripts": {
-    "dev": "npx serve ."
+    "dev": "bunx serve ."
   }
 }
