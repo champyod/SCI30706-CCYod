@@ -20,21 +20,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
 
-    // normalised from blob centre
-    const dx = (e.clientX - cx) / (rect.width / 2);
-    const dy = (e.clientY - cy) / (rect.height / 2);
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    // raw pixel distance from blob centre
+    const rawDx = e.clientX - cx;
+    const rawDy = e.clientY - cy;
+    const rawDist = Math.sqrt(rawDx * rawDx + rawDy * rawDy);
 
-    // ---- 3D tilt from full-screen mouse ----
+    // effective blob radius (half the average dimension)
+    const radius = (rect.width + rect.height) / 4;
+
+    // Inverse-distance falloff:
+    //   cursor at blob centre  → falloff = 1 (max effect)
+    //   cursor at blob edge    → falloff ≈ 0.5
+    //   cursor far away        → falloff → 0
+    const falloff = radius / (rawDist + radius);
+
+    // Direction vector × falloff (always -1..1, never flips)
+    const dist = falloff;
+    const dx = rawDist === 0 ? 0 : (rawDx / rawDist) * falloff;
+    const dy = rawDist === 0 ? 0 : (rawDy / rawDist) * falloff;
+
+    // ---- 3D tilt (smooth, max angle only when close) ----
     const tiltX = dy * maxAngle * -1;
     const tiltY = dx * maxAngle;
     blob.style.transform =
       `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
 
     // ---- Specular reflection (Fresnel) ----
-    const fresnel = Math.min(dist * 0.45, 1);
-    const sharpen = 8 + dist * 22;
-    const bright = 0.02 + fresnel * 0.2;
+    const fresnel = Math.min(dist * 0.6, 1);
+    const sharpen = 8 + dist * 24;
+    const bright = 0.02 + fresnel * 0.22;
     const hx = 50 + dx * 38;
     const hy = 50 + dy * 38;
 
@@ -45,19 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
       `rgba(255,255,255,${bright * 0.35}) 35%, ` +
       `transparent 100%` +
     `)`;
-    reflection.style.opacity = String(Math.max(0.15, 1 - dist * 0.3));
+    reflection.style.opacity = String(0.15 + dist * 0.75);
 
-    // ---- Background dot shift (refraction lens illusion) ----
+    // ---- Background dots shift (lens refraction) ----
     dots.forEach((d) => {
-      const ox = parseFloat(d.dataset.origX);
-      const oy = parseFloat(d.dataset.origY);
       d.style.transform =
-        `translate(${-(dx * 10)}px, ${-(dy * 8)}px) scale(${1 + dist * 0.1})`;
+        `translate(${-(dx * 12)}px, ${-(dy * 10)}px) scale(${1 + dist * 0.12})`;
     });
 
-    // ---- Badge follow ----
+    // ---- Badge fade ----
     if (badge) {
-      badge.style.opacity = String(Math.max(0.15, 1 - dist * 0.5));
+      badge.style.opacity = String(0.15 + dist * 0.75);
     }
   }
 
@@ -95,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ---- Full-screen tracking ----
+  // ---- Full-screen tracking with distance falloff ----
   let moveTimer = null;
 
   document.addEventListener("mousemove", (e) => {
@@ -105,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
     moveTimer = setTimeout(() => { startIdle(); }, 800);
   });
 
-  // start idle initially
   startIdle();
 
   // ---- Modal / click ----
@@ -121,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startIdle();
   }
 
-  // blob click opens modal
   container.addEventListener("click", openModal);
   btnMain.addEventListener("click", openModal);
   btnSecondary.addEventListener("click", openModal);
