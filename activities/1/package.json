@@ -1,0 +1,7 @@
+{
+  "name": "basic-app",
+  "private": true,
+  "scripts": {
+    "dev": "bunx serve ."
+  }
+}
