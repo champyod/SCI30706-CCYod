@@ -77,13 +77,7 @@ a:hover { text-decoration:underline; }
   margin-bottom:2rem;
   max-width:32rem;
 }
-.intro-audience { display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:2rem; }
-.pill {
-  display:inline-block; padding:0.4rem 1rem;
-  border:2px solid var(--c-border);
-  font-size:0.75rem; text-transform:uppercase;
-  letter-spacing:0.05em; color:var(--c-dim);
-}
+
 
 /* ===== Buttons ===== */
 .btn {
@@ -302,17 +296,19 @@ a:hover { text-decoration:underline; }
 /* ===== Footer ===== */
 .footer { margin-top:auto; border-top:var(--bw) solid var(--c-border); padding:2rem 1.5rem; }
 .footer-inner { max-width:1280px; margin:0 auto; display:flex; flex-direction:column; gap:1rem; }
-.footer-main { display:flex; flex-direction:column; gap:0.5rem; }
+.footer-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; }
+.footer-left, .footer-right { display:flex; align-items:center; gap:0.75rem; }
+.footer-school { font-size:0.8125rem; color:var(--c-text); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+.footer-school:hover { color:var(--c-green); text-decoration:none; }
 .footer-credit { font-size:0.75rem; color:var(--c-dim); }
-.footer-credit a { color:var(--c-green); }
+.footer-credit:hover { color:var(--c-green); text-decoration:none; }
 .footer-disclaimer { font-size:0.6875rem; }
 .notice {
-  border:1px solid var(--c-coral);
-  color:var(--c-coral);
+  border:1px solid var(--c-yellow);
+  color:var(--c-yellow);
   padding:0.5rem 0.75rem;
   font-weight:600;
 }
-.footer-copy { font-size:0.6875rem; color:#444; }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
