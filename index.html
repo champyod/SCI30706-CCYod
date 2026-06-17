@@ -1,83 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="BasicApp - Day 1" />
-    <title>BasicApp</title>
-    <link rel="stylesheet" href="styles/style.css" />
-  </head>
-  <body>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MWIT Campus Tour — ผังโรงเรียนมหิดลวิทยานุสรณ์ Openhouse 2025" />
+  <title>MWIT Campus Tour | Openhouse 2025</title>
+  <link rel="stylesheet" href="styles/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700;800&family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet" />
+</head>
+<body>
 
-    <header class="header">
-      <div class="header-inner">
-        <span class="logo">[BA]</span>
-        <nav class="nav">
-          <a href="/">Home</a>
-          <a href="#about">About</a>
-        </nav>
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <span class="logo-mark">[ MWIT ]</span>
+        <span class="logo-text">Campus Tour</span>
       </div>
-    </header>
+      <nav class="header-nav">
+        <a class="nav-link" href="#map">แผนผัง</a>
+        <a class="nav-link" href="#about">เกี่ยวกับ</a>
+      </nav>
+    </div>
+  </header>
 
-    <main>
-      <section class="hero" id="hero">
-        <div class="hero-grid">
-          <div class="hero-text">
-            <p class="hero-label">// SCI30706 / DAY-1</p>
-            <h1>BasicApp</h1>
-            <p class="hero-desc">Vanilla HTML + CSS + JS. No frameworks.</p>
-            <div class="hero-actions">
-              <button class="btn btn-primary" id="btnMain">[ GET STARTED ]</button>
-              <button class="btn btn-outline" id="btnSecondary">[ LEARN MORE ]</button>
-            </div>
-          </div>
+  <!-- ===== INTRO ===== -->
+  <section class="intro" id="about">
+    <div class="intro-inner">
+      <p class="intro-label">// OPENHOUSE 2025 — MWIT CAMPUS TOUR</p>
+      <h1 class="intro-title">
+        รู้จัก<span class="accent-green">โรงเรียนมหิดลวิทยานุสรณ์</span>
+      </h1>
+      <p class="intro-desc">
+        คลิกที่อาคารเพื่อดูข้อมูลภายใน — ห้องเรียน ห้องปฏิบัติการ และกิจกรรมต่าง ๆ
+        ที่เปิดให้เยี่ยมชมในงาน Openhouse 2025
+      </p>
+      <div class="intro-audience">
+        <span class="pill">ผู้ปกครอง</span>
+        <span class="pill">นักเรียนประถมต้น</span>
+        <span class="pill">17 จุดทั่วโรงเรียน</span>
+      </div>
+      <button class="btn btn-primary" id="scrollToMap">[ ดูแผนผังทั้งหมด ]</button>
+    </div>
+  </section>
 
-          <div class="hero-visual">
-            <div class="blob-container" id="blobContainer">
-              <div class="blob-bg-mesh" aria-hidden="true">
-                <div class="mesh-dot" style="top:10%;left:15%;width:90px;height:90px;background:#ff0040;opacity:.7"></div>
-                <div class="mesh-dot" style="top:65%;left:8%;width:110px;height:110px;background:#00e5ff;opacity:.6"></div>
-                <div class="mesh-dot" style="top:5%;left:70%;width:80px;height:80px;background:#ff6600;opacity:.65"></div>
-                <div class="mesh-dot" style="top:75%;left:75%;width:100px;height:100px;background:#ffffff;opacity:.5"></div>
-                <div class="mesh-dot" style="top:40%;left:45%;width:50px;height:50px;background:#ccff00;opacity:.55"></div>
-              </div>
-              <div class="liquid-blob" id="glassBlob">
-                <div class="blob-reflection" id="blobReflection"></div>
-              </div>
-              <div class="blob-badge" id="blobBadge">[ CLICK ME ]</div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Brutalist Modal -->
-    <div class="modal-overlay" id="modalOverlay">
-      <div class="modal">
-        <div class="modal-bar"></div>
-        <div class="modal-body">
-          <h2 class="modal-title">BRUTALISM</h2>
-          <p class="modal-sub">Raw. Honest. No decoration.</p>
-          <div class="modal-content-box">
-            <p>Brutalism in web design strips everything unnecessary. No gradients, no shadows, no rounded corners — just content and structure.</p>
-            <p>This modal is rendered with thick borders, monospace type, and zero bullshit.</p>
-          </div>
-          <div class="modal-meta">
-            <span>STATUS: ACTIVE</span>
-            <span>VERSION: 0.1</span>
-          </div>
-          <button class="btn btn-modal" id="modalClose">[ CLOSE ]</button>
+  <!-- ===== MAP ===== -->
+  <section class="map-section" id="map">
+    <div class="map-section-inner">
+      <h2 class="section-title">
+        <span class="title-accent">//</span>
+        CAMPUS MAP
+        <span class="title-sub">คลิกอาคารเพื่อดูรายละเอียด</span>
+      </h2>
+      <div class="map-container" id="mapContainer">
+        <div class="map" id="mapEl"></div>
+        <div class="map-legend">
+          <div class="legend-item"><span class="legend-dot dot-academic"></span>อาคารเรียน</div>
+          <div class="legend-item"><span class="legend-dot dot-dorm"></span>หอพัก</div>
+          <div class="legend-item"><span class="legend-dot dot-sport"></span>กีฬา / สนาม</div>
+          <div class="legend-item"><span class="legend-dot dot-facility"></span>สิ่งอำนวยความสะดวก</div>
+          <div class="legend-item"><span class="legend-dot dot-landmark"></span>จุดเด่น</div>
         </div>
       </div>
     </div>
+  </section>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        <span>&copy; 2026 BasicApp</span>
-        <span class="footer-tag">#brutalist</span>
+  <!-- ===== PANEL ===== -->
+  <aside class="panel" id="panel">
+    <div class="panel-overlay" id="panelOverlay"></div>
+    <div class="panel-sheet" id="panelSheet">
+      <div class="panel-header">
+        <div>
+          <h3 class="panel-name" id="panelName">—</h3>
+          <p class="panel-sub" id="panelSub">—</p>
+        </div>
+        <button class="panel-close" id="panelClose">[ X ]</button>
       </div>
-    </footer>
+      <div class="panel-divider"></div>
+      <div class="panel-body" id="panelBody"></div>
+    </div>
+  </aside>
 
-    <script src="scripts/main.js"></script>
-  </body>
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-main">
+        <p class="footer-credit">
+          ภาพจาก <a href="https://mwit.ac.th" target="_blank" rel="noopener">mwit.ac.th</a>
+          / <a href="https://openhouse.mwit.ac.th" target="_blank" rel="noopener">Openhouse MWIT 2025</a>
+        </p>
+        <p class="footer-disclaimer notice">
+          [ ! ] ข้อมูลอาจไม่ตรงกับปัจจุบัน กรุณาตรวจสอบอีกครั้ง — ทางโรงเรียนขออภัยในความไม่สะดวก
+        </p>
+      </div>
+      <p class="footer-copy">&copy; 2025 MWIT Openhouse — SCI30706</p>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
 </html>
