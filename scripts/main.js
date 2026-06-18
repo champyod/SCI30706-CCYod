@@ -308,7 +308,7 @@ var LABELS = [
   { id:"stand",            text:"แสตนสี",           tl:[14.5833,9.0353],  tr:[33.9402,9.0353],  bl:[14.5833,16.9546],  br:[33.9402,16.9546] },
 ];
 
-/* ===== Render Buildings (SVG style from rectangle-building.svg) ===== */
+/* ===== Render Buildings ===== */
 
 function renderBuildings() {
   var map = document.getElementById("mapEl");
