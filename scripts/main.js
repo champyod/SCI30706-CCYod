@@ -573,16 +573,16 @@ function renderBuildingList() {
     var color = "";
     var typeLabel = "";
     if (b.type === "academic") {
-      color = "oklch(0.62 0.072 158)";
+      color = "oklch(0.75 0.072 158)";
       typeLabel = "อาคารเรียน";
     } else if (b.type === "dormitory") {
-      color = "oklch(0.5 0.062 176)";
+      color = "oklch(0.7 0.062 176)";
       typeLabel = "หอพัก";
     } else if (b.type === "sports") {
-      color = "oklch(0.85 0.112 99)";
+      color = "oklch(0.88 0.112 99)";
       typeLabel = "กีฬา";
     } else if (b.type === "facilities") {
-      color = "oklch(0.6 0 0)";
+      color = "oklch(0.75 0 0)";
       typeLabel = "สิ่งอำนวยความสะดวก";
     }
 

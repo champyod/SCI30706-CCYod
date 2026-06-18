@@ -692,7 +692,7 @@ a:hover {
     letter-spacing: 0.05em;
     text-align: right;
     min-width: 5rem;
-    color: var(--c-cat);
+    color: var(--c-text);
 }
 
 @media (max-width: 480px) {
