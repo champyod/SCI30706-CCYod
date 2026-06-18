@@ -308,47 +308,142 @@ var LABELS = [
   { id:"stand",            text:"แสตนสี",           tl:[14.5833,9.0353],  tr:[33.9402,9.0353],  bl:[14.5833,16.9546],  br:[33.9402,16.9546] },
 ];
 
-/* ===== Render 3D Building Models ===== */
+/* ===== Render Buildings (SVG style from rectangle-building.svg) ===== */
 
 function renderBuildings() {
   var map = document.getElementById("mapEl");
   if (!map) return;
 
   BUILDINGS.forEach(function (b) {
-    // Compute dims from 4-corner coordinates: TL gives top-left, TR-BL give width/height
     var w = b.tr[0] - b.tl[0];
     var h = b.bl[1] - b.tl[1];
 
-    // Show building number only for numbered buildings (bldg1→"1", others→"")
     var numMatch = b.id.match(/^bldg(\d+)$/);
 
     var el = document.createElement("div");
     el.className = "bldg bldg-" + b.type;
-    if (b.type === "academic" || b.type === "dormitory")
-      el.className += " bldg-windows";
     el.style.left = b.tl[0] + "%";
     el.style.top = b.tl[1] + "%";
     el.style.width = w + "%";
     el.style.height = h + "%";
     el.dataset.id = b.id;
 
-    // Shadow layer
-    var shadow = document.createElement("div");
-    shadow.className = "bldg-shadow";
-    el.appendChild(shadow);
+    var S = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(S, "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
 
-    // Front face
-    var front = document.createElement("div");
-    front.className = "bldg-front";
-    el.appendChild(front);
+    var c;
+    if (b.type === "academic") c = { s: "oklch(0.62 0.072 158)", f: "oklch(0.62 0.072 158 / 0.12)" };
+    else if (b.type === "dormitory") c = { s: "oklch(0.5 0.062 176)", f: "oklch(0.5 0.062 176 / 0.12)" };
+    else if (b.type === "sports") c = { s: "oklch(0.85 0.112 99)", f: "oklch(0.85 0.112 99 / 0.12)" };
+    else c = { s: "oklch(0.6 0 0)", f: "oklch(0.6 0 0 / 0.12)" };
 
-    // Building number watermark (inside front)
+    var rect = document.createElementNS(S, "rect");
+    rect.setAttribute("x", "1.5");
+    rect.setAttribute("y", "1.5");
+    rect.setAttribute("width", "97");
+    rect.setAttribute("height", "97");
+    rect.setAttribute("fill", c.f);
+    rect.setAttribute("stroke", c.s);
+    rect.setAttribute("stroke-width", "2");
+    rect.setAttribute("rx", "1");
+    svg.appendChild(rect);
+
+    // Roof: ridge runs along long side, gable triangles on short sides
+    var isLandscape = w >= h;
+    var ins = 25; // gable peak inset from short edge (%)
+
+    if (isLandscape) {
+      // Ridge horizontal, gables at left / right edges
+      var gl = document.createElementNS(S, "polyline");
+      gl.setAttribute("points", "0,5 " + ins + ",50 0,95");
+      gl.setAttribute("fill", "none");
+      gl.setAttribute("stroke", c.s);
+      gl.setAttribute("stroke-width", "1");
+      gl.setAttribute("opacity", "0.35");
+      svg.appendChild(gl);
+
+      var gr = document.createElementNS(S, "polyline");
+      gr.setAttribute("points", "100,5 " + (100 - ins) + ",50 100,95");
+      gr.setAttribute("fill", "none");
+      gr.setAttribute("stroke", c.s);
+      gr.setAttribute("stroke-width", "1");
+      gr.setAttribute("opacity", "0.35");
+      svg.appendChild(gr);
+
+      var ridge = document.createElementNS(S, "line");
+      ridge.setAttribute("x1", ins); ridge.setAttribute("y1", "50");
+      ridge.setAttribute("x2", 100 - ins); ridge.setAttribute("y2", "50");
+      ridge.setAttribute("stroke", c.s);
+      ridge.setAttribute("stroke-width", "1.2");
+      ridge.setAttribute("opacity", "0.5");
+      svg.appendChild(ridge);
+
+      // Slope lines from ridge to top / bottom edges
+      var slopes = [
+        [30, 47, 30, 18], [40, 47, 40, 14], [60, 47, 60, 14], [70, 47, 70, 18],
+        [30, 53, 30, 82], [40, 53, 40, 86], [60, 53, 60, 86], [70, 53, 70, 82],
+      ];
+      slopes.forEach(function (p) {
+        var ln = document.createElementNS(S, "line");
+        ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
+        ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
+        ln.setAttribute("stroke", c.s);
+        ln.setAttribute("stroke-width", "0.6");
+        ln.setAttribute("opacity", "0.25");
+        svg.appendChild(ln);
+      });
+    } else {
+      // Ridge vertical, gables at top / bottom edges
+      var gt = document.createElementNS(S, "polyline");
+      gt.setAttribute("points", "5,0 50," + ins + " 95,0");
+      gt.setAttribute("fill", "none");
+      gt.setAttribute("stroke", c.s);
+      gt.setAttribute("stroke-width", "1");
+      gt.setAttribute("opacity", "0.35");
+      svg.appendChild(gt);
+
+      var gb = document.createElementNS(S, "polyline");
+      gb.setAttribute("points", "5,100 50," + (100 - ins) + " 95,100");
+      gb.setAttribute("fill", "none");
+      gb.setAttribute("stroke", c.s);
+      gb.setAttribute("stroke-width", "1");
+      gb.setAttribute("opacity", "0.35");
+      svg.appendChild(gb);
+
+      var ridge = document.createElementNS(S, "line");
+      ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", ins);
+      ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - ins);
+      ridge.setAttribute("stroke", c.s);
+      ridge.setAttribute("stroke-width", "1.2");
+      ridge.setAttribute("opacity", "0.5");
+      svg.appendChild(ridge);
+
+      var slopes = [
+        [47, 30, 18, 30], [47, 40, 14, 40], [47, 60, 14, 60], [47, 70, 18, 70],
+        [53, 30, 82, 30], [53, 40, 86, 40], [53, 60, 86, 60], [53, 70, 82, 70],
+      ];
+      slopes.forEach(function (p) {
+        var ln = document.createElementNS(S, "line");
+        ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
+        ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
+        ln.setAttribute("stroke", c.s);
+        ln.setAttribute("stroke-width", "0.6");
+        ln.setAttribute("opacity", "0.25");
+        svg.appendChild(ln);
+      });
+    }
+
+    el.appendChild(svg);
+
     var numSpan = document.createElement("span");
     numSpan.className = "bldg-number";
     numSpan.textContent = numMatch ? numMatch[1] : "";
     var minDim = Math.min(w, h);
     numSpan.style.fontSize = minDim * 0.25 + 0.1 + "vw";
-    front.appendChild(numSpan);
+    el.appendChild(numSpan);
 
     // Click
     el.addEventListener("click", function () {
@@ -358,7 +453,6 @@ function renderBuildings() {
     map.appendChild(el);
   });
 
-  // Render non-building labels (football field, futsal, basketball)
   LABELS.forEach(function (l) {
     var w = l.tr[0] - l.tl[0];
     var h = l.bl[1] - l.tl[1];

@@ -265,10 +265,10 @@ a:hover {
 }
 
 /* ====================================
-   3D BUILDING MODEL — Type-Tinted Frames
-    ==================================== */
+   BUILDING — SVG rect + roof lines (rectangle-building.svg style)
+   ==================================== */
 
-/* Non-building areas — plain dashed rectangle + label */
+/* Non-building areas — dashed rectangle + label (court, fields — UNCHANGED) */
 .bldg-label {
     position: absolute;
     display: flex;
@@ -299,139 +299,10 @@ a:hover {
     z-index: 2;
 }
 
-/* Front face — dark fill, tint border */
-.bldg-front {
-    position: absolute;
-    inset: 0;
-    background: var(--c-build);
-    border: var(--bw) solid var(--c-bldg-frame);
-    overflow: hidden;
-    transition: border-color 0.15s;
-}
-
-/* Side wall (right) — 3D depth */
-.bldg::after {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 100%;
-    width: 7px;
-    bottom: -3px;
-    background: var(--c-bldg-side);
-    border: var(--bw) solid var(--c-bldg-frame);
-    border-left: none;
-    transform: skewY(2deg);
-    transform-origin: top left;
-    pointer-events: none;
-    transition: border-color 0.15s;
-}
-
-/* Roof / top face — 3D perspective */
-.bldg::before {
-    content: "";
-    position: absolute;
-    bottom: 100%;
-    right: -3px;
-    height: 7px;
-    left: -1px;
-    background: var(--c-build);
-    border: var(--bw) solid var(--c-bldg-frame);
-    border-bottom: none;
-    transform: skewX(-2deg);
-    transform-origin: bottom right;
-    pointer-events: none;
-    transition: border-color 0.15s;
-}
-
 /* Hover lift */
 .bldg:hover {
     transform: translate(-2px, -2px);
     z-index: 20;
-}
-
-/* ===== Shadow underneath ===== */
-.bldg-shadow {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    right: -10px;
-    bottom: -3px;
-    background: var(--c-shade);
-    z-index: -1;
-    pointer-events: none;
-}
-.bldg:hover .bldg-shadow {
-    background: var(--c-shade-hv);
-}
-
-/* ===== Window grid — academic & dorm only ===== */
-.bldg-windows .bldg-front::after {
-    content: "";
-    position: absolute;
-    inset: 12% 8% 22% 8%;
-    opacity: 0.2;
-    background-image:
-        repeating-linear-gradient(
-            90deg,
-            transparent 0px,
-            transparent 8px,
-            var(--c-wgrid) 8px,
-            var(--c-wgrid) 9px
-        ),
-        repeating-linear-gradient(
-            0deg,
-            transparent 0px,
-            transparent 12px,
-            var(--c-wgrid2) 12px,
-            var(--c-wgrid2) 13px
-        );
-    pointer-events: none;
-}
-
-/* ===== Type-Coloured Borders ===== */
-
-/* Academic — green frame */
-.bldg-academic .bldg-front {
-    border-color: var(--c-green);
-}
-.bldg-academic::after {
-    border-color: var(--c-green);
-}
-.bldg-academic::before {
-    border-color: var(--c-green);
-}
-
-/* Dormitory — teal frame */
-.bldg-dormitory .bldg-front {
-    border-color: var(--c-teal);
-}
-.bldg-dormitory::after {
-    border-color: var(--c-teal);
-}
-.bldg-dormitory::before {
-    border-color: var(--c-teal);
-}
-
-/* Sports — yellow frame */
-.bldg-sports .bldg-front {
-    border-color: var(--c-yellow);
-}
-.bldg-sports::after {
-    border-color: var(--c-yellow);
-}
-.bldg-sports::before {
-    border-color: var(--c-yellow);
-}
-
-/* Facilities — gray frame */
-.bldg-facilities .bldg-front {
-    border-color: var(--c-gray);
-}
-.bldg-facilities::after {
-    border-color: var(--c-gray);
-}
-.bldg-facilities::before {
-    border-color: var(--c-gray);
 }
 
 /* ===== Info Bar (top of map) ===== */
@@ -501,22 +372,19 @@ a:hover {
 .bldg-hovered {
     z-index: 25;
 }
-.bldg-hovered .bldg-front {
-    border-width: 4px;
-}
 
 /* Type-specific glow on hover */
-.bldg-academic.bldg-hovered .bldg-front {
-    box-shadow: 0 0 14px var(--c-glow-green);
+.bldg-academic.bldg-hovered {
+    filter: drop-shadow(0 0 8px var(--c-glow-green));
 }
-.bldg-dormitory.bldg-hovered .bldg-front {
-    box-shadow: 0 0 14px var(--c-glow-teal);
+.bldg-dormitory.bldg-hovered {
+    filter: drop-shadow(0 0 8px var(--c-glow-teal));
 }
-.bldg-sports.bldg-hovered .bldg-front {
-    box-shadow: 0 0 14px var(--c-glow-yellow);
+.bldg-sports.bldg-hovered {
+    filter: drop-shadow(0 0 8px var(--c-glow-yellow));
 }
-.bldg-facilities.bldg-hovered .bldg-front {
-    box-shadow: 0 0 14px var(--c-glow-gray);
+.bldg-facilities.bldg-hovered {
+    filter: drop-shadow(0 0 8px var(--c-glow-gray));
 }
 
 /* ===== Panel ===== */
