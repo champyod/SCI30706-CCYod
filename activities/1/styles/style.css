@@ -15,7 +15,7 @@
 :root {
     --c-bg: oklch(0.042 0 0);
     --c-text: oklch(0.9 0 0);
-    --c-dim: oklch(0.45 0 0);
+    --c-dim: oklch(0.6 0 0);
     --c-green: oklch(0.62 0.072 158);
     --c-teal: oklch(0.5 0.062 176);
     --c-yellow: oklch(0.85 0.112 99);
@@ -40,7 +40,8 @@
     --c-glow-yellow: oklch(0.85 0.112 99 / 0.35);
     --c-glow-gray: oklch(0.6 0 0 / 0.35);
     --c-glow-coral: oklch(0.68 0.086 21 / 0.35);
-    --c-muted: oklch(0.35 0 0);
+    --c-muted: oklch(0.5 0 0);
+    --c-cat: oklch(0.75 0 0);
     --font-mono:
         "IBM Plex Mono", "SF Mono", "Fira Code", "Cascadia Code",
         "JetBrains Mono", monospace;
@@ -129,7 +130,7 @@ a:hover {
 }
 .intro-label {
     font-size: 0.75rem;
-    color: var(--c-muted);
+    color: var(--c-cat);
     text-transform: uppercase;
     letter-spacing: 0.2em;
     margin-bottom: 1.5rem;
@@ -202,7 +203,7 @@ a:hover {
 }
 .title-sub {
     font-size: 0.75rem;
-    color: var(--c-dim);
+    color: var(--c-cat);
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0.05em;
@@ -243,7 +244,7 @@ a:hover {
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--c-dim);
+    color: var(--c-cat);
 }
 .legend-dot {
     display: inline-block;
@@ -265,7 +266,7 @@ a:hover {
 }
 
 /* ====================================
-   BUILDING — SVG rect + roof lines (rectangle-building.svg style)
+   BUILDING — rect + roof lines
    ==================================== */
 
 /* Non-building areas — dashed rectangle + label (court, fields — UNCHANGED) */
@@ -643,7 +644,7 @@ a:hover {
     font-size: 0.7rem;
     text-transform: none;
     letter-spacing: 0.08em;
-    color: var(--c-dim);
+    color: var(--c-cat);
     margin-top: 0.25rem;
     font-family: var(--font-thai);
 }
@@ -691,6 +692,7 @@ a:hover {
     letter-spacing: 0.05em;
     text-align: right;
     min-width: 5rem;
+    color: var(--c-text);
 }
 
 @media (max-width: 480px) {
