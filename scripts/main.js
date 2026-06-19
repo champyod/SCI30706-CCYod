@@ -5,7 +5,7 @@
    Center coordinates from MAIN-OPH-2025 reference
    ======================================== */
 
-var BUILDINGS = [
+const BUILDINGS = [
   // bldg1 — อาคารมหิดลวิทยานุสรณ์ 1
   {
     id: "bldg1",
@@ -303,7 +303,7 @@ var BUILDINGS = [
 ];
 
 // Non-building areas — text labels only
-var LABELS = [
+const LABELS = [
   { id:"football_field",   text:"สนามฟุตบอล",      tl:[8.3318,16.9056], tr:[51.0432,16.9056], bl:[8.3318,49.9883],   br:[51.0432,49.9883] },
   { id:"futsal_field",     text:"สนามฟุตซอล",      tl:[60.4167,23.15],  tr:[74.8514,23.15],   bl:[60.4167,41.6359],  br:[74.8514,41.6359] },
   { id:"basketball_court", text:"สนามบาสเกตบอล",   tl:[60.9375,54.6151], tr:[76.0417,54.6151], bl:[60.9375,70.3559],  br:[76.0417,70.3559] },
@@ -313,16 +313,16 @@ var LABELS = [
 /* ===== Render Buildings ===== */
 
 function renderBuildings() {
-  var map = document.getElementById("mapEl");
+  const map = document.getElementById("mapEl");
   if (!map) return;
 
   BUILDINGS.forEach(function (b) {
-    var w = b.tr[0] - b.tl[0];
-    var h = b.bl[1] - b.tl[1];
+    const w = b.tr[0] - b.tl[0];
+    const h = b.bl[1] - b.tl[1];
 
-    var numMatch = b.id.match(/^bldg(\d+)$/);
+    const numMatch = b.id.match(/^bldg(\d+)$/);
 
-    var el = document.createElement("div");
+    const el = document.createElement("div");
     el.className = "bldg bldg-" + b.type;
     el.style.left = b.tl[0] + "%";
     el.style.top = b.tl[1] + "%";
@@ -330,19 +330,19 @@ function renderBuildings() {
     el.style.height = h + "%";
     el.dataset.id = b.id;
 
-    var S = "http://www.w3.org/2000/svg";
-    var svg = document.createElementNS(S, "svg");
+    const S = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(S, "svg");
     svg.setAttribute("viewBox", "0 0 100 100");
     svg.setAttribute("preserveAspectRatio", "none");
     svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
 
-    var c;
+    let c;
     if (b.type === "academic") c = { s: "oklch(0.62 0.072 158)", f: "oklch(0.62 0.072 158 / 0.12)" };
     else if (b.type === "dormitory") c = { s: "oklch(0.5 0.062 176)", f: "oklch(0.5 0.062 176 / 0.12)" };
     else if (b.type === "sports") c = { s: "oklch(0.85 0.112 99)", f: "oklch(0.85 0.112 99 / 0.12)" };
     else c = { s: "oklch(0.6 0 0)", f: "oklch(0.6 0 0 / 0.12)" };
 
-    var rect = document.createElementNS(S, "rect");
+    const rect = document.createElementNS(S, "rect");
     rect.setAttribute("x", "1.5");
     rect.setAttribute("y", "1.5");
     rect.setAttribute("width", "97");
@@ -354,12 +354,12 @@ function renderBuildings() {
     svg.appendChild(rect);
 
     // Roof: ridge runs along long side, gable triangles on short sides
-    var isLandscape = w >= h;
-    var ins = 25; // gable peak inset from short edge (%)
+    const isLandscape = w >= h;
+    const ins = 25; // gable peak inset from short edge (%)
 
     if (isLandscape) {
       // Ridge horizontal, gables at left / right edges
-      var gl = document.createElementNS(S, "polyline");
+      const gl = document.createElementNS(S, "polyline");
       gl.setAttribute("points", "0,5 " + ins + ",50 0,95");
       gl.setAttribute("fill", "none");
       gl.setAttribute("stroke", c.s);
@@ -367,7 +367,7 @@ function renderBuildings() {
       gl.setAttribute("opacity", "0.35");
       svg.appendChild(gl);
 
-      var gr = document.createElementNS(S, "polyline");
+      const gr = document.createElementNS(S, "polyline");
       gr.setAttribute("points", "100,5 " + (100 - ins) + ",50 100,95");
       gr.setAttribute("fill", "none");
       gr.setAttribute("stroke", c.s);
@@ -375,7 +375,7 @@ function renderBuildings() {
       gr.setAttribute("opacity", "0.35");
       svg.appendChild(gr);
 
-      var ridge = document.createElementNS(S, "line");
+      const ridge = document.createElementNS(S, "line");
       ridge.setAttribute("x1", ins); ridge.setAttribute("y1", "50");
       ridge.setAttribute("x2", 100 - ins); ridge.setAttribute("y2", "50");
       ridge.setAttribute("stroke", c.s);
@@ -384,12 +384,12 @@ function renderBuildings() {
       svg.appendChild(ridge);
 
       // Slope lines from ridge to top / bottom edges
-      var slopes = [
+      const slopes = [
         [30, 47, 30, 18], [40, 47, 40, 14], [60, 47, 60, 14], [70, 47, 70, 18],
         [30, 53, 30, 82], [40, 53, 40, 86], [60, 53, 60, 86], [70, 53, 70, 82],
       ];
       slopes.forEach(function (p) {
-        var ln = document.createElementNS(S, "line");
+        const ln = document.createElementNS(S, "line");
         ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
         ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
         ln.setAttribute("stroke", c.s);
@@ -399,7 +399,7 @@ function renderBuildings() {
       });
     } else {
       // Ridge vertical, gables at top / bottom edges
-      var gt = document.createElementNS(S, "polyline");
+      const gt = document.createElementNS(S, "polyline");
       gt.setAttribute("points", "5,0 50," + ins + " 95,0");
       gt.setAttribute("fill", "none");
       gt.setAttribute("stroke", c.s);
@@ -407,7 +407,7 @@ function renderBuildings() {
       gt.setAttribute("opacity", "0.35");
       svg.appendChild(gt);
 
-      var gb = document.createElementNS(S, "polyline");
+      const gb = document.createElementNS(S, "polyline");
       gb.setAttribute("points", "5,100 50," + (100 - ins) + " 95,100");
       gb.setAttribute("fill", "none");
       gb.setAttribute("stroke", c.s);
@@ -415,7 +415,7 @@ function renderBuildings() {
       gb.setAttribute("opacity", "0.35");
       svg.appendChild(gb);
 
-      var ridge = document.createElementNS(S, "line");
+      const ridge = document.createElementNS(S, "line");
       ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", ins);
       ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - ins);
       ridge.setAttribute("stroke", c.s);
@@ -423,12 +423,12 @@ function renderBuildings() {
       ridge.setAttribute("opacity", "0.5");
       svg.appendChild(ridge);
 
-      var slopes = [
+      const slopes = [
         [47, 30, 18, 30], [47, 40, 14, 40], [47, 60, 14, 60], [47, 70, 18, 70],
         [53, 30, 82, 30], [53, 40, 86, 40], [53, 60, 86, 60], [53, 70, 82, 70],
       ];
       slopes.forEach(function (p) {
-        var ln = document.createElementNS(S, "line");
+        const ln = document.createElementNS(S, "line");
         ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
         ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
         ln.setAttribute("stroke", c.s);
@@ -440,10 +440,10 @@ function renderBuildings() {
 
     el.appendChild(svg);
 
-    var numSpan = document.createElement("span");
+    const numSpan = document.createElement("span");
     numSpan.className = "bldg-number";
     numSpan.textContent = numMatch ? numMatch[1] : "";
-    var minDim = Math.min(w, h);
+    const minDim = Math.min(w, h);
     numSpan.style.fontSize = minDim * 0.25 + 0.1 + "vw";
     el.appendChild(numSpan);
 
@@ -456,9 +456,9 @@ function renderBuildings() {
   });
 
   LABELS.forEach(function (l) {
-    var w = l.tr[0] - l.tl[0];
-    var h = l.bl[1] - l.tl[1];
-    var el = document.createElement("div");
+    const w = l.tr[0] - l.tl[0];
+    const h = l.bl[1] - l.tl[1];
+    const el = document.createElement("div");
     el.className = "bldg-label";
     el.textContent = l.text;
     el.style.left = l.tl[0] + "%";
@@ -470,34 +470,40 @@ function renderBuildings() {
   });
 
   // Hover dim/highlight + info bar
-  var infoBar = document.getElementById("mapInfoBar");
-  var mapContainer = document.getElementById("mapContainer");
+  const infoBar = document.getElementById("mapInfoBar");
+  const mapContainer = document.getElementById("mapContainer");
 
   document.querySelectorAll(".bldg").forEach(function (el) {
     el.addEventListener("mouseenter", function () {
       mapContainer.classList.add("map-dimming");
       el.classList.add("bldg-hovered");
-      var b = BUILDINGS.find(function (x) {
+      const b = BUILDINGS.find(function (x) {
         return x.id === el.dataset.id;
       });
       if (b) {
-        var color = "";
+        let color = "";
         if (b.type === "academic") color = "oklch(0.62 0.072 158)";
         else if (b.type === "dormitory") color = "oklch(0.5 0.062 176)";
         else if (b.type === "sports") color = "oklch(0.85 0.112 99)";
         else if (b.type === "facilities") color = "oklch(0.6 0 0)";
-        infoBar.innerHTML =
-          '<span class="infobar-catdot" style="background:' +
-          color +
-          '"></span>' +
-          '<span class="infobar-name" style="color:' +
-          color +
-          '">' +
-          b.nameTH +
-          " (" +
-          b.nameEN +
-          ")</span>" +
-          '<span class="infobar-hint">\u2014 click for more information</span>';
+        infoBar.textContent = "";
+
+        const dot = document.createElement("span");
+        dot.className = "infobar-catdot";
+        dot.style.backgroundColor = color;
+
+        const nameEl = document.createElement("span");
+        nameEl.className = "infobar-name";
+        nameEl.style.color = color;
+        nameEl.textContent = b.nameTH + " (" + b.nameEN + ")";
+
+        const hint = document.createElement("span");
+        hint.className = "infobar-hint";
+        hint.textContent = "\u2014 click for more information";
+
+        infoBar.appendChild(dot);
+        infoBar.appendChild(nameEl);
+        infoBar.appendChild(hint);
       }
     });
 
@@ -506,8 +512,11 @@ function renderBuildings() {
       setTimeout(function () {
         if (!document.querySelector(".bldg-hovered")) {
           mapContainer.classList.remove("map-dimming");
-          infoBar.innerHTML =
-            '<span class="infobar-main">Mahidol Wittayanusorn School</span>';
+          infoBar.textContent = "";
+          const mainSpan = document.createElement("span");
+          mainSpan.className = "infobar-main";
+          mainSpan.textContent = "Mahidol Wittayanusorn School";
+          infoBar.appendChild(mainSpan);
         }
       }, 80);
     });
@@ -517,30 +526,35 @@ function renderBuildings() {
 /* ===== Panel ===== */
 
 function openPanel(building) {
-  var panel = document.getElementById("panel");
-  var nameEl = document.getElementById("panelName");
-  var subEl = document.getElementById("panelSub");
-  var bodyEl = document.getElementById("panelBody");
+  const panel = document.getElementById("panel");
+  const nameEl = document.getElementById("panelName");
+  const subEl = document.getElementById("panelSub");
+  const bodyEl = document.getElementById("panelBody");
+
+  if (!panel || !nameEl || !subEl || !bodyEl) {
+    console.warn("openPanel: required panel elements not found");
+    return;
+  }
 
   nameEl.textContent = building.nameTH + " (" + building.nameEN + ")";
   subEl.textContent = building.subtitle || "";
-  bodyEl.innerHTML = "";
+  bodyEl.replaceChildren();
 
   if (building.floors && building.floors.length > 0) {
     building.floors.forEach(function (f) {
-      var card = document.createElement("div");
+      const card = document.createElement("div");
       card.className = "floor-card";
 
-      var title = document.createElement("div");
+      const title = document.createElement("div");
       title.className = "floor-title";
       title.textContent = f.floor;
       card.appendChild(title);
 
-      var rooms = document.createElement("div");
+      const rooms = document.createElement("div");
       rooms.className = "floor-rooms";
 
       f.rooms.forEach(function (r) {
-        var pill = document.createElement("span");
+        const pill = document.createElement("span");
         pill.className = "room-pill";
         pill.textContent = r;
         rooms.appendChild(pill);
@@ -549,7 +563,7 @@ function openPanel(building) {
       bodyEl.appendChild(card);
     });
   } else if (building.description) {
-    var desc = document.createElement("div");
+    const desc = document.createElement("div");
     desc.className = "panel-desc";
     desc.textContent = building.description;
     bodyEl.appendChild(desc);
@@ -560,7 +574,11 @@ function openPanel(building) {
 }
 
 function closePanel() {
-  var panel = document.getElementById("panel");
+  const panel = document.getElementById("panel");
+  if (!panel) {
+    console.warn("closePanel: #panel not found");
+    return;
+  }
   panel.classList.remove("open");
   document.body.style.overflow = "";
 }
@@ -568,12 +586,12 @@ function closePanel() {
 /* ===== Render Building List (below map) ===== */
 
 function renderBuildingList() {
-  var container = document.getElementById("buildingList");
+  const container = document.getElementById("buildingList");
   if (!container) return;
 
   BUILDINGS.forEach(function (b) {
-    var color = "";
-    var typeLabel = "";
+    let color = "";
+    let typeLabel = "";
     if (b.type === "academic") {
       color = "oklch(0.75 0.072 158)";
       typeLabel = "อาคารเรียน";
@@ -588,28 +606,34 @@ function renderBuildingList() {
       typeLabel = "สิ่งอำนวยความสะดวก";
     }
 
-    var numMatch = b.id.match(/^bldg(\d+)$/);
-    var displayNum = numMatch ? numMatch[1] : "";
+    const numMatch = b.id.match(/^bldg(\d+)$/);
+    const displayNum = numMatch ? numMatch[1] : "";
 
-    var item = document.createElement("div");
+    const item = document.createElement("div");
     item.className = "bldg-list-item";
-    item.innerHTML =
-      '<span class="bli-num" style="color:' +
-      color +
-      '">' +
-      displayNum +
-      "</span>" +
-      '<span class="bli-name">' +
-      b.nameTH +
-      "</span>" +
-      '<span class="bli-name-en">' +
-      b.nameEN +
-      "</span>" +
-      '<span class="bli-type" style="color:' +
-      color +
-      '">' +
-      typeLabel +
-      "</span>";
+
+    const numSpan = document.createElement("span");
+    numSpan.className = "bli-num";
+    numSpan.style.color = color;
+    numSpan.textContent = displayNum;
+    item.appendChild(numSpan);
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "bli-name";
+    nameSpan.textContent = b.nameTH;
+    item.appendChild(nameSpan);
+
+    const nameEnSpan = document.createElement("span");
+    nameEnSpan.className = "bli-name-en";
+    nameEnSpan.textContent = b.nameEN;
+    item.appendChild(nameEnSpan);
+
+    const typeSpan = document.createElement("span");
+    typeSpan.className = "bli-type";
+    typeSpan.style.color = color;
+    typeSpan.textContent = typeLabel;
+    item.appendChild(typeSpan);
+
     container.appendChild(item);
   });
 }
@@ -620,10 +644,15 @@ document.addEventListener("DOMContentLoaded", function () {
   renderBuildings();
   renderBuildingList();
 
-  var panel = document.getElementById("panel");
-  var closeBtn = document.getElementById("panelClose");
-  var overlay = document.getElementById("panelOverlay");
-  var scrollBtn = document.getElementById("scrollToMap");
+  const panel = document.getElementById("panel");
+  const closeBtn = document.getElementById("panelClose");
+  const overlay = document.getElementById("panelOverlay");
+  const scrollBtn = document.getElementById("scrollToMap");
+
+  if (!closeBtn || !overlay || !panel) {
+    console.warn("DOMContentLoaded: required panel elements missing");
+    return;
+  }
 
   closeBtn.addEventListener("click", closePanel);
   overlay.addEventListener("click", closePanel);
