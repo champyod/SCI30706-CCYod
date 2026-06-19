@@ -302,6 +302,47 @@ const BUILDINGS = [
   },
 ];
 
+const BUILDING_TYPES = {
+  academic: {
+    roofStroke: "oklch(0.62 0.072 158)",
+    roofFill: "oklch(0.62 0.072 158 / 0.12)",
+    labelColor: "oklch(0.62 0.072 158)",
+    listColor: "oklch(0.75 0.072 158)",
+    listLabel: "\u0E2D\u0E32\u0E04\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19",
+  },
+  dormitory: {
+    roofStroke: "oklch(0.5 0.062 176)",
+    roofFill: "oklch(0.5 0.062 176 / 0.12)",
+    labelColor: "oklch(0.5 0.062 176)",
+    listColor: "oklch(0.7 0.062 176)",
+    listLabel: "\u0E2B\u0E2D\u0E1E\u0E31\u0E01",
+  },
+  sports: {
+    roofStroke: "oklch(0.85 0.112 99)",
+    roofFill: "oklch(0.85 0.112 99 / 0.12)",
+    labelColor: "oklch(0.85 0.112 99)",
+    listColor: "oklch(0.88 0.112 99)",
+    listLabel: "\u0E01\u0E35\u0E2C\u0E32",
+  },
+  facilities: {
+    roofStroke: "oklch(0.6 0 0)",
+    roofFill: "oklch(0.6 0 0 / 0.12)",
+    labelColor: "oklch(0.6 0 0)",
+    listColor: "oklch(0.75 0 0)",
+    listLabel: "\u0E2A\u0E34\u0E48\u0E07\u0E2D\u0E33\u0E19\u0E27\u0E22\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E30\u0E14\u0E27\u0E01",
+  },
+};
+
+const VALID_BUILDING_TYPES = Object.freeze(Object.keys(BUILDING_TYPES));
+BUILDINGS.forEach(function (building) {
+  if (!VALID_BUILDING_TYPES.includes(building.type)) {
+    console.error(
+      "Building " + building.id + " has unknown type '" + building.type +
+      "'. Valid types: " + VALID_BUILDING_TYPES.join(", ")
+    );
+  }
+});
+
 // Non-building areas — text labels only
 const LABELS = [
   { id:"football_field",   text:"สนามฟุตบอล",      tl:[8.3318,16.9056], tr:[51.0432,16.9056], bl:[8.3318,49.9883],   br:[51.0432,49.9883] },
@@ -313,8 +354,8 @@ const LABELS = [
 /* ===== Render Buildings ===== */
 
 function renderBuildings() {
-  const map = document.getElementById("mapEl");
-  if (!map) return;
+  const mapElement = document.getElementById("mapEl");
+  if (!mapElement) return;
 
   BUILDINGS.forEach(function (building) {
     const width = building.tr[0] - building.tl[0];
@@ -336,19 +377,15 @@ function renderBuildings() {
     svg.setAttribute("preserveAspectRatio", "none");
     svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
 
-    let colors;
-    if (building.type === "academic") colors = { stroke: "oklch(0.62 0.072 158)", fill: "oklch(0.62 0.072 158 / 0.12)" };
-    else if (building.type === "dormitory") colors = { stroke: "oklch(0.5 0.062 176)", fill: "oklch(0.5 0.062 176 / 0.12)" };
-    else if (building.type === "sports") colors = { stroke: "oklch(0.85 0.112 99)", fill: "oklch(0.85 0.112 99 / 0.12)" };
-    else colors = { stroke: "oklch(0.6 0 0)", fill: "oklch(0.6 0 0 / 0.12)" };
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
 
     const rect = document.createElementNS(SVG_NAMESPACE, "rect");
     rect.setAttribute("x", "1.5");
     rect.setAttribute("y", "1.5");
     rect.setAttribute("width", "97");
     rect.setAttribute("height", "97");
-    rect.setAttribute("fill", colors.fill);
-    rect.setAttribute("stroke", colors.stroke);
+    rect.setAttribute("fill", typeConfig.roofFill);
+    rect.setAttribute("stroke", typeConfig.roofStroke);
     rect.setAttribute("stroke-width", "2");
     rect.setAttribute("rx", "1");
     svg.appendChild(rect);
@@ -362,7 +399,7 @@ function renderBuildings() {
       const gableLeft = document.createElementNS(SVG_NAMESPACE, "polyline");
       gableLeft.setAttribute("points", "0,5 " + gableInset + ",50 0,95");
       gableLeft.setAttribute("fill", "none");
-      gableLeft.setAttribute("stroke", colors.stroke);
+      gableLeft.setAttribute("stroke", typeConfig.roofStroke);
       gableLeft.setAttribute("stroke-width", "1");
       gableLeft.setAttribute("opacity", "0.35");
       svg.appendChild(gableLeft);
@@ -370,7 +407,7 @@ function renderBuildings() {
       const gableRight = document.createElementNS(SVG_NAMESPACE, "polyline");
       gableRight.setAttribute("points", "100,5 " + (100 - gableInset) + ",50 100,95");
       gableRight.setAttribute("fill", "none");
-      gableRight.setAttribute("stroke", colors.stroke);
+      gableRight.setAttribute("stroke", typeConfig.roofStroke);
       gableRight.setAttribute("stroke-width", "1");
       gableRight.setAttribute("opacity", "0.35");
       svg.appendChild(gableRight);
@@ -378,7 +415,7 @@ function renderBuildings() {
       const ridge = document.createElementNS(SVG_NAMESPACE, "line");
       ridge.setAttribute("x1", gableInset); ridge.setAttribute("y1", "50");
       ridge.setAttribute("x2", 100 - gableInset); ridge.setAttribute("y2", "50");
-      ridge.setAttribute("stroke", colors.stroke);
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
       ridge.setAttribute("stroke-width", "1.2");
       ridge.setAttribute("opacity", "0.5");
       svg.appendChild(ridge);
@@ -392,7 +429,7 @@ function renderBuildings() {
         const line = document.createElementNS(SVG_NAMESPACE, "line");
         line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
         line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
-        line.setAttribute("stroke", colors.stroke);
+        line.setAttribute("stroke", typeConfig.roofStroke);
         line.setAttribute("stroke-width", "0.6");
         line.setAttribute("opacity", "0.25");
         svg.appendChild(line);
@@ -402,7 +439,7 @@ function renderBuildings() {
       const gableTop = document.createElementNS(SVG_NAMESPACE, "polyline");
       gableTop.setAttribute("points", "5,0 50," + gableInset + " 95,0");
       gableTop.setAttribute("fill", "none");
-      gableTop.setAttribute("stroke", colors.stroke);
+      gableTop.setAttribute("stroke", typeConfig.roofStroke);
       gableTop.setAttribute("stroke-width", "1");
       gableTop.setAttribute("opacity", "0.35");
       svg.appendChild(gableTop);
@@ -410,7 +447,7 @@ function renderBuildings() {
       const gableBottom = document.createElementNS(SVG_NAMESPACE, "polyline");
       gableBottom.setAttribute("points", "5,100 50," + (100 - gableInset) + " 95,100");
       gableBottom.setAttribute("fill", "none");
-      gableBottom.setAttribute("stroke", colors.stroke);
+      gableBottom.setAttribute("stroke", typeConfig.roofStroke);
       gableBottom.setAttribute("stroke-width", "1");
       gableBottom.setAttribute("opacity", "0.35");
       svg.appendChild(gableBottom);
@@ -418,7 +455,7 @@ function renderBuildings() {
       const ridge = document.createElementNS(SVG_NAMESPACE, "line");
       ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", gableInset);
       ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - gableInset);
-      ridge.setAttribute("stroke", colors.stroke);
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
       ridge.setAttribute("stroke-width", "1.2");
       ridge.setAttribute("opacity", "0.5");
       svg.appendChild(ridge);
@@ -431,7 +468,7 @@ function renderBuildings() {
         const line = document.createElementNS(SVG_NAMESPACE, "line");
         line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
         line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
-        line.setAttribute("stroke", colors.stroke);
+        line.setAttribute("stroke", typeConfig.roofStroke);
         line.setAttribute("stroke-width", "0.6");
         line.setAttribute("opacity", "0.25");
         svg.appendChild(line);
@@ -452,7 +489,7 @@ function renderBuildings() {
       openPanel(building);
     });
 
-    map.appendChild(element);
+    mapElement.appendChild(element);
   });
 
   LABELS.forEach(function (label) {
@@ -466,7 +503,7 @@ function renderBuildings() {
     element.style.width = width + "%";
     element.style.height = height + "%";
 
-    map.appendChild(element);
+    mapElement.appendChild(element);
   });
 
   // Hover dim/highlight + info bar
@@ -481,11 +518,8 @@ function renderBuildings() {
         return candidate.id === element.dataset.id;
       });
       if (building) {
-        let colorValue = "";
-        if (building.type === "academic") colorValue = "oklch(0.62 0.072 158)";
-        else if (building.type === "dormitory") colorValue = "oklch(0.5 0.062 176)";
-        else if (building.type === "sports") colorValue = "oklch(0.85 0.112 99)";
-        else if (building.type === "facilities") colorValue = "oklch(0.6 0 0)";
+        const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+        const colorValue = typeConfig.labelColor;
         infoBarElement.textContent = "";
 
         const categoryDot = document.createElement("span");
@@ -527,18 +561,18 @@ function renderBuildings() {
 
 function openPanel(building) {
   const panel = document.getElementById("panel");
-  const nameElement = document.getElementById("panelName");
-  const subtitleElement = document.getElementById("panelSub");
-  const bodyElement = document.getElementById("panelBody");
+  const panelNameElement = document.getElementById("panelName");
+  const panelSubtitleElement = document.getElementById("panelSub");
+  const panelBodyElement = document.getElementById("panelBody");
 
-  if (!panel || !nameElement || !subtitleElement || !bodyElement) {
+  if (!panel || !panelNameElement || !panelSubtitleElement || !panelBodyElement) {
     console.warn("openPanel: required panel elements not found");
     return;
   }
 
-  nameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
-  subtitleElement.textContent = building.subtitle || "";
-  bodyElement.replaceChildren();
+  panelNameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
+  panelSubtitleElement.textContent = building.subtitle || "";
+  panelBodyElement.replaceChildren();
 
   if (building.floors && building.floors.length > 0) {
     building.floors.forEach(function (floor) {
@@ -560,13 +594,13 @@ function openPanel(building) {
         rooms.appendChild(pill);
       });
       card.appendChild(rooms);
-      bodyElement.appendChild(card);
+      panelBodyElement.appendChild(card);
     });
   } else if (building.description) {
     const descriptionElement = document.createElement("div");
     descriptionElement.className = "panel-desc";
     descriptionElement.textContent = building.description;
-    bodyElement.appendChild(descriptionElement);
+    panelBodyElement.appendChild(descriptionElement);
   }
 
   panel.classList.add("open");
@@ -586,25 +620,13 @@ function closePanel() {
 /* ===== Render Building List (below map) ===== */
 
 function renderBuildingList() {
-  const container = document.getElementById("buildingList");
-  if (!container) return;
+  const buildingListElement = document.getElementById("buildingList");
+  if (!buildingListElement) return;
 
   BUILDINGS.forEach(function (building) {
-    let colorValue = "";
-    let typeLabelText = "";
-    if (building.type === "academic") {
-      colorValue = "oklch(0.75 0.072 158)";
-      typeLabelText = "อาคารเรียน";
-    } else if (building.type === "dormitory") {
-      colorValue = "oklch(0.7 0.062 176)";
-      typeLabelText = "หอพัก";
-    } else if (building.type === "sports") {
-      colorValue = "oklch(0.88 0.112 99)";
-      typeLabelText = "กีฬา";
-    } else if (building.type === "facilities") {
-      colorValue = "oklch(0.75 0 0)";
-      typeLabelText = "สิ่งอำนวยความสะดวก";
-    }
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+    const colorValue = typeConfig.listColor;
+    const typeLabelText = typeConfig.listLabel;
 
     const buildingNumberMatch = building.id.match(/^bldg(\d+)$/);
     const displayNumber = buildingNumberMatch ? buildingNumberMatch[1] : "";
@@ -634,27 +656,32 @@ function renderBuildingList() {
     typeElement.textContent = typeLabelText;
     listItem.appendChild(typeElement);
 
-    container.appendChild(listItem);
+    buildingListElement.appendChild(listItem);
   });
 }
 
 /* ===== Init ===== */
+
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) section.scrollIntoView({ behavior: "smooth" });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   renderBuildings();
   renderBuildingList();
 
   const panel = document.getElementById("panel");
-  const closeButton = document.getElementById("panelClose");
+  const panelCloseButton = document.getElementById("panelClose");
   const overlay = document.getElementById("panelOverlay");
-  const scrollButton = document.getElementById("scrollToMap");
+  const scrollToMap = document.getElementById("scrollToMap");
 
-  if (!closeButton || !overlay || !panel) {
+  if (!panelCloseButton || !overlay || !panel) {
     console.warn("DOMContentLoaded: required panel elements missing");
     return;
   }
 
-  closeButton.addEventListener("click", closePanel);
+  panelCloseButton.addEventListener("click", closePanel);
   overlay.addEventListener("click", closePanel);
 
   document.addEventListener("keydown", function (event) {
@@ -663,9 +690,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  if (scrollButton) {
-    scrollButton.addEventListener("click", function () {
-      document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+  if (scrollToMap) {
+    scrollToMap.addEventListener("click", function () {
+      scrollToSection("map");
     });
   }
 });
