@@ -209,15 +209,24 @@ a:hover {
     letter-spacing: 0.05em;
     font-family: var(--font-thai);
 }
-.map-container {
+
+/* ===== Map Container (fixed aspect ratio, scrollable on mobile) ===== */
+.map-scroll-wrapper {
     position: relative;
     width: 100%;
-    max-width: 1280px;
-    aspect-ratio: 16/9;
     border: var(--bw) solid var(--c-border);
+    background: var(--c-bg);
+}
+
+.map-container {
+    position: relative;
+    width: 1120px;
+    height: 720px;
     background: var(--c-map-bg);
     overflow: hidden;
+    margin: 0 auto;
 }
+
 .map {
     position: absolute;
     inset: 0;
@@ -589,8 +598,15 @@ a:hover {
     .intro-title {
         font-size: clamp(1.5rem, 6vw, 2rem);
     }
+    .map-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
     .map-container {
-        aspect-ratio: 4/3;
+        aspect-ratio: auto;
+        width: 1120px;
+        height: 720px;
+        margin: 0;
     }
     .map-legend {
         bottom: 0.5rem;
@@ -615,6 +631,20 @@ a:hover {
     .panel-body {
         padding: 1rem 1.25rem 2rem;
     }
+}
+
+.map-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.map-scroll-wrapper::-webkit-scrollbar-track {
+    background: var(--c-bg);
+}
+.map-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--c-border);
+    border-radius: 3px;
+}
+.map-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--c-muted);
 }
 
 /* ===== Building List (below map) ===== */
@@ -708,8 +738,13 @@ a:hover {
     .nav-link {
         font-size: 0.7rem;
     }
+    .map-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
     .map-container {
-        aspect-ratio: 1/1;
-        min-height: 360px;
+        width: 1120px;
+        height: 720px;
+        margin: 0;
     }
 }
