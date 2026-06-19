@@ -302,6 +302,47 @@ const BUILDINGS = [
   },
 ];
 
+const BUILDING_TYPES = {
+  academic: {
+    roofStroke: "oklch(0.62 0.072 158)",
+    roofFill: "oklch(0.62 0.072 158 / 0.12)",
+    labelColor: "oklch(0.62 0.072 158)",
+    listColor: "oklch(0.75 0.072 158)",
+    listLabel: "\u0E2D\u0E32\u0E04\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19",
+  },
+  dormitory: {
+    roofStroke: "oklch(0.5 0.062 176)",
+    roofFill: "oklch(0.5 0.062 176 / 0.12)",
+    labelColor: "oklch(0.5 0.062 176)",
+    listColor: "oklch(0.7 0.062 176)",
+    listLabel: "\u0E2B\u0E2D\u0E1E\u0E31\u0E01",
+  },
+  sports: {
+    roofStroke: "oklch(0.85 0.112 99)",
+    roofFill: "oklch(0.85 0.112 99 / 0.12)",
+    labelColor: "oklch(0.85 0.112 99)",
+    listColor: "oklch(0.88 0.112 99)",
+    listLabel: "\u0E01\u0E35\u0E2C\u0E32",
+  },
+  facilities: {
+    roofStroke: "oklch(0.6 0 0)",
+    roofFill: "oklch(0.6 0 0 / 0.12)",
+    labelColor: "oklch(0.6 0 0)",
+    listColor: "oklch(0.75 0 0)",
+    listLabel: "\u0E2A\u0E34\u0E48\u0E07\u0E2D\u0E33\u0E19\u0E27\u0E22\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E30\u0E14\u0E27\u0E01",
+  },
+};
+
+const VALID_BUILDING_TYPES = Object.freeze(Object.keys(BUILDING_TYPES));
+BUILDINGS.forEach(function (building) {
+  if (!VALID_BUILDING_TYPES.includes(building.type)) {
+    console.error(
+      "Building " + building.id + " has unknown type '" + building.type +
+      "'. Valid types: " + VALID_BUILDING_TYPES.join(", ")
+    );
+  }
+});
+
 // Non-building areas — text labels only
 const LABELS = [
   { id:"football_field",   text:"สนามฟุตบอล",      tl:[8.3318,16.9056], tr:[51.0432,16.9056], bl:[8.3318,49.9883],   br:[51.0432,49.9883] },
@@ -313,72 +354,68 @@ const LABELS = [
 /* ===== Render Buildings ===== */
 
 function renderBuildings() {
-  const map = document.getElementById("mapEl");
-  if (!map) return;
+  const mapElement = document.getElementById("mapEl");
+  if (!mapElement) return;
 
-  BUILDINGS.forEach(function (b) {
-    const w = b.tr[0] - b.tl[0];
-    const h = b.bl[1] - b.tl[1];
+  BUILDINGS.forEach(function (building) {
+    const width = building.tr[0] - building.tl[0];
+    const height = building.bl[1] - building.tl[1];
 
-    const numMatch = b.id.match(/^bldg(\d+)$/);
+    const buildingNumberMatch = building.id.match(/^bldg(\d+)$/);
 
-    const el = document.createElement("div");
-    el.className = "bldg bldg-" + b.type;
-    el.style.left = b.tl[0] + "%";
-    el.style.top = b.tl[1] + "%";
-    el.style.width = w + "%";
-    el.style.height = h + "%";
-    el.dataset.id = b.id;
+    const element = document.createElement("div");
+    element.className = "building building-" + building.type;
+    element.style.left = building.tl[0] + "%";
+    element.style.top = building.tl[1] + "%";
+    element.style.width = width + "%";
+    element.style.height = height + "%";
+    element.dataset.id = building.id;
 
-    const S = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(S, "svg");
+    const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(SVG_NAMESPACE, "svg");
     svg.setAttribute("viewBox", "0 0 100 100");
     svg.setAttribute("preserveAspectRatio", "none");
     svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
 
-    let c;
-    if (b.type === "academic") c = { s: "oklch(0.62 0.072 158)", f: "oklch(0.62 0.072 158 / 0.12)" };
-    else if (b.type === "dormitory") c = { s: "oklch(0.5 0.062 176)", f: "oklch(0.5 0.062 176 / 0.12)" };
-    else if (b.type === "sports") c = { s: "oklch(0.85 0.112 99)", f: "oklch(0.85 0.112 99 / 0.12)" };
-    else c = { s: "oklch(0.6 0 0)", f: "oklch(0.6 0 0 / 0.12)" };
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
 
-    const rect = document.createElementNS(S, "rect");
+    const rect = document.createElementNS(SVG_NAMESPACE, "rect");
     rect.setAttribute("x", "1.5");
     rect.setAttribute("y", "1.5");
     rect.setAttribute("width", "97");
     rect.setAttribute("height", "97");
-    rect.setAttribute("fill", c.f);
-    rect.setAttribute("stroke", c.s);
+    rect.setAttribute("fill", typeConfig.roofFill);
+    rect.setAttribute("stroke", typeConfig.roofStroke);
     rect.setAttribute("stroke-width", "2");
     rect.setAttribute("rx", "1");
     svg.appendChild(rect);
 
     // Roof: ridge runs along long side, gable triangles on short sides
-    const isLandscape = w >= h;
-    const ins = 25; // gable peak inset from short edge (%)
+    const isLandscape = width >= height;
+    const gableInset = 25; // gable peak inset from short edge (%)
 
     if (isLandscape) {
       // Ridge horizontal, gables at left / right edges
-      const gl = document.createElementNS(S, "polyline");
-      gl.setAttribute("points", "0,5 " + ins + ",50 0,95");
-      gl.setAttribute("fill", "none");
-      gl.setAttribute("stroke", c.s);
-      gl.setAttribute("stroke-width", "1");
-      gl.setAttribute("opacity", "0.35");
-      svg.appendChild(gl);
+      const gableLeft = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableLeft.setAttribute("points", "0,5 " + gableInset + ",50 0,95");
+      gableLeft.setAttribute("fill", "none");
+      gableLeft.setAttribute("stroke", typeConfig.roofStroke);
+      gableLeft.setAttribute("stroke-width", "1");
+      gableLeft.setAttribute("opacity", "0.35");
+      svg.appendChild(gableLeft);
 
-      const gr = document.createElementNS(S, "polyline");
-      gr.setAttribute("points", "100,5 " + (100 - ins) + ",50 100,95");
-      gr.setAttribute("fill", "none");
-      gr.setAttribute("stroke", c.s);
-      gr.setAttribute("stroke-width", "1");
-      gr.setAttribute("opacity", "0.35");
-      svg.appendChild(gr);
+      const gableRight = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableRight.setAttribute("points", "100,5 " + (100 - gableInset) + ",50 100,95");
+      gableRight.setAttribute("fill", "none");
+      gableRight.setAttribute("stroke", typeConfig.roofStroke);
+      gableRight.setAttribute("stroke-width", "1");
+      gableRight.setAttribute("opacity", "0.35");
+      svg.appendChild(gableRight);
 
-      const ridge = document.createElementNS(S, "line");
-      ridge.setAttribute("x1", ins); ridge.setAttribute("y1", "50");
-      ridge.setAttribute("x2", 100 - ins); ridge.setAttribute("y2", "50");
-      ridge.setAttribute("stroke", c.s);
+      const ridge = document.createElementNS(SVG_NAMESPACE, "line");
+      ridge.setAttribute("x1", gableInset); ridge.setAttribute("y1", "50");
+      ridge.setAttribute("x2", 100 - gableInset); ridge.setAttribute("y2", "50");
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
       ridge.setAttribute("stroke-width", "1.2");
       ridge.setAttribute("opacity", "0.5");
       svg.appendChild(ridge);
@@ -388,37 +425,37 @@ function renderBuildings() {
         [30, 47, 30, 18], [40, 47, 40, 14], [60, 47, 60, 14], [70, 47, 70, 18],
         [30, 53, 30, 82], [40, 53, 40, 86], [60, 53, 60, 86], [70, 53, 70, 82],
       ];
-      slopes.forEach(function (p) {
-        const ln = document.createElementNS(S, "line");
-        ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
-        ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
-        ln.setAttribute("stroke", c.s);
-        ln.setAttribute("stroke-width", "0.6");
-        ln.setAttribute("opacity", "0.25");
-        svg.appendChild(ln);
+      slopes.forEach(function (point) {
+        const line = document.createElementNS(SVG_NAMESPACE, "line");
+        line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
+        line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
+        line.setAttribute("stroke", typeConfig.roofStroke);
+        line.setAttribute("stroke-width", "0.6");
+        line.setAttribute("opacity", "0.25");
+        svg.appendChild(line);
       });
     } else {
       // Ridge vertical, gables at top / bottom edges
-      const gt = document.createElementNS(S, "polyline");
-      gt.setAttribute("points", "5,0 50," + ins + " 95,0");
-      gt.setAttribute("fill", "none");
-      gt.setAttribute("stroke", c.s);
-      gt.setAttribute("stroke-width", "1");
-      gt.setAttribute("opacity", "0.35");
-      svg.appendChild(gt);
+      const gableTop = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableTop.setAttribute("points", "5,0 50," + gableInset + " 95,0");
+      gableTop.setAttribute("fill", "none");
+      gableTop.setAttribute("stroke", typeConfig.roofStroke);
+      gableTop.setAttribute("stroke-width", "1");
+      gableTop.setAttribute("opacity", "0.35");
+      svg.appendChild(gableTop);
 
-      const gb = document.createElementNS(S, "polyline");
-      gb.setAttribute("points", "5,100 50," + (100 - ins) + " 95,100");
-      gb.setAttribute("fill", "none");
-      gb.setAttribute("stroke", c.s);
-      gb.setAttribute("stroke-width", "1");
-      gb.setAttribute("opacity", "0.35");
-      svg.appendChild(gb);
+      const gableBottom = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableBottom.setAttribute("points", "5,100 50," + (100 - gableInset) + " 95,100");
+      gableBottom.setAttribute("fill", "none");
+      gableBottom.setAttribute("stroke", typeConfig.roofStroke);
+      gableBottom.setAttribute("stroke-width", "1");
+      gableBottom.setAttribute("opacity", "0.35");
+      svg.appendChild(gableBottom);
 
-      const ridge = document.createElementNS(S, "line");
-      ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", ins);
-      ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - ins);
-      ridge.setAttribute("stroke", c.s);
+      const ridge = document.createElementNS(SVG_NAMESPACE, "line");
+      ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", gableInset);
+      ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - gableInset);
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
       ridge.setAttribute("stroke-width", "1.2");
       ridge.setAttribute("opacity", "0.5");
       svg.appendChild(ridge);
@@ -427,96 +464,93 @@ function renderBuildings() {
         [47, 30, 18, 30], [47, 40, 14, 40], [47, 60, 14, 60], [47, 70, 18, 70],
         [53, 30, 82, 30], [53, 40, 86, 40], [53, 60, 86, 60], [53, 70, 82, 70],
       ];
-      slopes.forEach(function (p) {
-        const ln = document.createElementNS(S, "line");
-        ln.setAttribute("x1", p[0]); ln.setAttribute("y1", p[1]);
-        ln.setAttribute("x2", p[2]); ln.setAttribute("y2", p[3]);
-        ln.setAttribute("stroke", c.s);
-        ln.setAttribute("stroke-width", "0.6");
-        ln.setAttribute("opacity", "0.25");
-        svg.appendChild(ln);
+      slopes.forEach(function (point) {
+        const line = document.createElementNS(SVG_NAMESPACE, "line");
+        line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
+        line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
+        line.setAttribute("stroke", typeConfig.roofStroke);
+        line.setAttribute("stroke-width", "0.6");
+        line.setAttribute("opacity", "0.25");
+        svg.appendChild(line);
       });
     }
 
-    el.appendChild(svg);
+    element.appendChild(svg);
 
-    const numSpan = document.createElement("span");
-    numSpan.className = "bldg-number";
-    numSpan.textContent = numMatch ? numMatch[1] : "";
-    const minDim = Math.min(w, h);
-    numSpan.style.fontSize = minDim * 0.25 + 0.1 + "vw";
-    el.appendChild(numSpan);
+    const numberElement = document.createElement("span");
+    numberElement.className = "building-number";
+    numberElement.textContent = buildingNumberMatch ? buildingNumberMatch[1] : "";
+    const minimumDimension = Math.min(width, height);
+    numberElement.style.fontSize = minimumDimension * 0.25 + 0.1 + "vw";
+    element.appendChild(numberElement);
 
     // Click
-    el.addEventListener("click", function () {
-      openPanel(b);
+    element.addEventListener("click", function () {
+      openPanel(building);
     });
 
-    map.appendChild(el);
+    mapElement.appendChild(element);
   });
 
-  LABELS.forEach(function (l) {
-    const w = l.tr[0] - l.tl[0];
-    const h = l.bl[1] - l.tl[1];
-    const el = document.createElement("div");
-    el.className = "bldg-label";
-    el.textContent = l.text;
-    el.style.left = l.tl[0] + "%";
-    el.style.top = l.tl[1] + "%";
-    el.style.width = w + "%";
-    el.style.height = h + "%";
+  LABELS.forEach(function (label) {
+    const width = label.tr[0] - label.tl[0];
+    const height = label.bl[1] - label.tl[1];
+    const element = document.createElement("div");
+    element.className = "building-label";
+    element.textContent = label.text;
+    element.style.left = label.tl[0] + "%";
+    element.style.top = label.tl[1] + "%";
+    element.style.width = width + "%";
+    element.style.height = height + "%";
 
-    map.appendChild(el);
+    mapElement.appendChild(element);
   });
 
   // Hover dim/highlight + info bar
-  const infoBar = document.getElementById("mapInfoBar");
-  const mapContainer = document.getElementById("mapContainer");
+  const infoBarElement = document.getElementById("mapInfoBar");
+  const mapContainerElement = document.getElementById("mapContainer");
 
-  document.querySelectorAll(".bldg").forEach(function (el) {
-    el.addEventListener("mouseenter", function () {
-      mapContainer.classList.add("map-dimming");
-      el.classList.add("bldg-hovered");
-      const b = BUILDINGS.find(function (x) {
-        return x.id === el.dataset.id;
+  document.querySelectorAll(".building").forEach(function (element) {
+    element.addEventListener("mouseenter", function () {
+      mapContainerElement.classList.add("map-dimming");
+      element.classList.add("building-hovered");
+      const building = BUILDINGS.find(function (candidate) {
+        return candidate.id === element.dataset.id;
       });
-      if (b) {
-        let color = "";
-        if (b.type === "academic") color = "oklch(0.62 0.072 158)";
-        else if (b.type === "dormitory") color = "oklch(0.5 0.062 176)";
-        else if (b.type === "sports") color = "oklch(0.85 0.112 99)";
-        else if (b.type === "facilities") color = "oklch(0.6 0 0)";
-        infoBar.textContent = "";
+      if (building) {
+        const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+        const colorValue = typeConfig.labelColor;
+        infoBarElement.textContent = "";
 
-        const dot = document.createElement("span");
-        dot.className = "infobar-catdot";
-        dot.style.backgroundColor = color;
+        const categoryDot = document.createElement("span");
+        categoryDot.className = "info-bar-category-dot";
+        categoryDot.style.backgroundColor = colorValue;
 
-        const nameEl = document.createElement("span");
-        nameEl.className = "infobar-name";
-        nameEl.style.color = color;
-        nameEl.textContent = b.nameTH + " (" + b.nameEN + ")";
+        const nameElement = document.createElement("span");
+        nameElement.className = "info-bar-name";
+        nameElement.style.color = colorValue;
+        nameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
 
-        const hint = document.createElement("span");
-        hint.className = "infobar-hint";
-        hint.textContent = "\u2014 click for more information";
+        const hintElement = document.createElement("span");
+        hintElement.className = "info-bar-hint";
+        hintElement.textContent = "\u2014 click for more information";
 
-        infoBar.appendChild(dot);
-        infoBar.appendChild(nameEl);
-        infoBar.appendChild(hint);
+        infoBarElement.appendChild(categoryDot);
+        infoBarElement.appendChild(nameElement);
+        infoBarElement.appendChild(hintElement);
       }
     });
 
-    el.addEventListener("mouseleave", function () {
-      el.classList.remove("bldg-hovered");
+    element.addEventListener("mouseleave", function () {
+      element.classList.remove("building-hovered");
       setTimeout(function () {
-        if (!document.querySelector(".bldg-hovered")) {
-          mapContainer.classList.remove("map-dimming");
-          infoBar.textContent = "";
-          const mainSpan = document.createElement("span");
-          mainSpan.className = "infobar-main";
-          mainSpan.textContent = "Mahidol Wittayanusorn School";
-          infoBar.appendChild(mainSpan);
+        if (!document.querySelector(".building-hovered")) {
+          mapContainerElement.classList.remove("map-dimming");
+          infoBarElement.textContent = "";
+          const mainTextElement = document.createElement("span");
+          mainTextElement.className = "info-bar-main";
+          mainTextElement.textContent = "Mahidol Wittayanusorn School";
+          infoBarElement.appendChild(mainTextElement);
         }
       }, 80);
     });
@@ -527,46 +561,46 @@ function renderBuildings() {
 
 function openPanel(building) {
   const panel = document.getElementById("panel");
-  const nameEl = document.getElementById("panelName");
-  const subEl = document.getElementById("panelSub");
-  const bodyEl = document.getElementById("panelBody");
+  const panelNameElement = document.getElementById("panelName");
+  const panelSubtitleElement = document.getElementById("panelSub");
+  const panelBodyElement = document.getElementById("panelBody");
 
-  if (!panel || !nameEl || !subEl || !bodyEl) {
+  if (!panel || !panelNameElement || !panelSubtitleElement || !panelBodyElement) {
     console.warn("openPanel: required panel elements not found");
     return;
   }
 
-  nameEl.textContent = building.nameTH + " (" + building.nameEN + ")";
-  subEl.textContent = building.subtitle || "";
-  bodyEl.replaceChildren();
+  panelNameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
+  panelSubtitleElement.textContent = building.subtitle || "";
+  panelBodyElement.replaceChildren();
 
   if (building.floors && building.floors.length > 0) {
-    building.floors.forEach(function (f) {
+    building.floors.forEach(function (floor) {
       const card = document.createElement("div");
       card.className = "floor-card";
 
       const title = document.createElement("div");
       title.className = "floor-title";
-      title.textContent = f.floor;
+      title.textContent = floor.floor;
       card.appendChild(title);
 
       const rooms = document.createElement("div");
       rooms.className = "floor-rooms";
 
-      f.rooms.forEach(function (r) {
+      floor.rooms.forEach(function (room) {
         const pill = document.createElement("span");
         pill.className = "room-pill";
-        pill.textContent = r;
+        pill.textContent = room;
         rooms.appendChild(pill);
       });
       card.appendChild(rooms);
-      bodyEl.appendChild(card);
+      panelBodyElement.appendChild(card);
     });
   } else if (building.description) {
-    const desc = document.createElement("div");
-    desc.className = "panel-desc";
-    desc.textContent = building.description;
-    bodyEl.appendChild(desc);
+    const descriptionElement = document.createElement("div");
+    descriptionElement.className = "panel-desc";
+    descriptionElement.textContent = building.description;
+    panelBodyElement.appendChild(descriptionElement);
   }
 
   panel.classList.add("open");
@@ -586,86 +620,79 @@ function closePanel() {
 /* ===== Render Building List (below map) ===== */
 
 function renderBuildingList() {
-  const container = document.getElementById("buildingList");
-  if (!container) return;
+  const buildingListElement = document.getElementById("buildingList");
+  if (!buildingListElement) return;
 
-  BUILDINGS.forEach(function (b) {
-    let color = "";
-    let typeLabel = "";
-    if (b.type === "academic") {
-      color = "oklch(0.75 0.072 158)";
-      typeLabel = "อาคารเรียน";
-    } else if (b.type === "dormitory") {
-      color = "oklch(0.7 0.062 176)";
-      typeLabel = "หอพัก";
-    } else if (b.type === "sports") {
-      color = "oklch(0.88 0.112 99)";
-      typeLabel = "กีฬา";
-    } else if (b.type === "facilities") {
-      color = "oklch(0.75 0 0)";
-      typeLabel = "สิ่งอำนวยความสะดวก";
-    }
+  BUILDINGS.forEach(function (building) {
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+    const colorValue = typeConfig.listColor;
+    const typeLabelText = typeConfig.listLabel;
 
-    const numMatch = b.id.match(/^bldg(\d+)$/);
-    const displayNum = numMatch ? numMatch[1] : "";
+    const buildingNumberMatch = building.id.match(/^bldg(\d+)$/);
+    const displayNumber = buildingNumberMatch ? buildingNumberMatch[1] : "";
 
-    const item = document.createElement("div");
-    item.className = "bldg-list-item";
+    const listItem = document.createElement("div");
+    listItem.className = "building-list-item";
 
-    const numSpan = document.createElement("span");
-    numSpan.className = "bli-num";
-    numSpan.style.color = color;
-    numSpan.textContent = displayNum;
-    item.appendChild(numSpan);
+    const buildingNumberElement = document.createElement("span");
+    buildingNumberElement.className = "building-list-number";
+    buildingNumberElement.style.color = colorValue;
+    buildingNumberElement.textContent = displayNumber;
+    listItem.appendChild(buildingNumberElement);
 
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "bli-name";
-    nameSpan.textContent = b.nameTH;
-    item.appendChild(nameSpan);
+    const nameElement = document.createElement("span");
+    nameElement.className = "building-list-name";
+    nameElement.textContent = building.nameTH;
+    listItem.appendChild(nameElement);
 
-    const nameEnSpan = document.createElement("span");
-    nameEnSpan.className = "bli-name-en";
-    nameEnSpan.textContent = b.nameEN;
-    item.appendChild(nameEnSpan);
+    const nameEnglishElement = document.createElement("span");
+    nameEnglishElement.className = "building-list-name-en";
+    nameEnglishElement.textContent = building.nameEN;
+    listItem.appendChild(nameEnglishElement);
 
-    const typeSpan = document.createElement("span");
-    typeSpan.className = "bli-type";
-    typeSpan.style.color = color;
-    typeSpan.textContent = typeLabel;
-    item.appendChild(typeSpan);
+    const typeElement = document.createElement("span");
+    typeElement.className = "building-list-type";
+    typeElement.style.color = colorValue;
+    typeElement.textContent = typeLabelText;
+    listItem.appendChild(typeElement);
 
-    container.appendChild(item);
+    buildingListElement.appendChild(listItem);
   });
 }
 
 /* ===== Init ===== */
+
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) section.scrollIntoView({ behavior: "smooth" });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   renderBuildings();
   renderBuildingList();
 
   const panel = document.getElementById("panel");
-  const closeBtn = document.getElementById("panelClose");
+  const panelCloseButton = document.getElementById("panelClose");
   const overlay = document.getElementById("panelOverlay");
-  const scrollBtn = document.getElementById("scrollToMap");
+  const scrollToMap = document.getElementById("scrollToMap");
 
-  if (!closeBtn || !overlay || !panel) {
+  if (!panelCloseButton || !overlay || !panel) {
     console.warn("DOMContentLoaded: required panel elements missing");
     return;
   }
 
-  closeBtn.addEventListener("click", closePanel);
+  panelCloseButton.addEventListener("click", closePanel);
   overlay.addEventListener("click", closePanel);
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && panel.classList.contains("open")) {
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && panel.classList.contains("open")) {
       closePanel();
     }
   });
 
-  if (scrollBtn) {
-    scrollBtn.addEventListener("click", function () {
-      document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+  if (scrollToMap) {
+    scrollToMap.addEventListener("click", function () {
+      scrollToSection("map");
     });
   }
 });
