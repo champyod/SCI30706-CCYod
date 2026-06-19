@@ -13,40 +13,43 @@
 
 /* ===== Variables ===== */
 :root {
-    --c-bg: oklch(0.042 0 0);
-    --c-text: oklch(0.9 0 0);
-    --c-dim: oklch(0.6 0 0);
-    --c-green: oklch(0.62 0.072 158);
-    --c-teal: oklch(0.5 0.062 176);
-    --c-yellow: oklch(0.85 0.112 99);
-    --c-coral: oklch(0.68 0.086 21);
-    --c-navy: oklch(0.148 0.02 237);
-    --c-border: oklch(0.235 0 0);
-    --c-build: oklch(0.195 0 0);
-    --c-gray: oklch(0.6 0 0);
-    --c-map-bg: oklch(0.067 0 0);
-    --c-bldg-side: oklch(0.14 0 0);
-    --c-bldg-frame: oklch(0.3 0 0);
-    --c-shade: oklch(0 0 0 / 0.4);
-    --c-shade-hv: oklch(0 0 0 / 0.55);
-    --c-shade-ln: oklch(0 0 0 / 0.85);
-    --c-overlay: oklch(0 0 0 / 0.92);
-    --c-overlay2: oklch(0 0 0 / 0.7);
-    --c-wgrid: oklch(1 0 0 / 0.1);
-    --c-wgrid2: oklch(1 0 0 / 0.06);
-    --c-center-bg: oklch(1 0 0 / 0.04);
-    --c-glow-green: oklch(0.62 0.072 158 / 0.35);
-    --c-glow-teal: oklch(0.5 0.062 176 / 0.35);
-    --c-glow-yellow: oklch(0.85 0.112 99 / 0.35);
-    --c-glow-gray: oklch(0.6 0 0 / 0.35);
-    --c-glow-coral: oklch(0.68 0.086 21 / 0.35);
-    --c-muted: oklch(0.5 0 0);
-    --c-cat: oklch(0.75 0 0);
-    --font-mono:
+    --color-background: oklch(0.042 0 0);
+    --color-text: oklch(0.9 0 0);
+    --color-dim: oklch(0.6 0 0);
+    --color-green: oklch(0.62 0.072 158);
+    --color-teal: oklch(0.5 0.062 176);
+    --color-yellow: oklch(0.85 0.112 99);
+    --color-coral: oklch(0.68 0.086 21);
+    --color-navy: oklch(0.148 0.02 237);
+    --color-border: oklch(0.235 0 0);
+    --color-building: oklch(0.195 0 0);
+    --color-gray: oklch(0.6 0 0);
+    --color-map-background: oklch(0.067 0 0);
+    --color-building-side: oklch(0.14 0 0);
+    --color-building-frame: oklch(0.3 0 0);
+    --color-shade: oklch(0 0 0 / 0.4);
+    --color-shade-heavy: oklch(0 0 0 / 0.55);
+    --color-shade-light: oklch(0 0 0 / 0.85);
+    --color-overlay: oklch(0 0 0 / 0.92);
+    --color-overlay-secondary: oklch(0 0 0 / 0.7);
+    --color-white-grid: oklch(1 0 0 / 0.1);
+    --color-white-grid-secondary: oklch(1 0 0 / 0.06);
+    --color-center-background: oklch(1 0 0 / 0.04);
+    --color-glow-green: oklch(0.62 0.072 158 / 0.35);
+    --color-glow-teal: oklch(0.5 0.062 176 / 0.35);
+    --color-glow-yellow: oklch(0.85 0.112 99 / 0.35);
+    --color-glow-gray: oklch(0.6 0 0 / 0.35);
+    --color-glow-coral: oklch(0.68 0.086 21 / 0.35);
+    --color-muted: oklch(0.5 0 0);
+    --color-category: oklch(0.75 0 0);
+    --color-background-secondary: oklch(0.16 0 0);
+    --color-background-tertiary: oklch(0.2 0 0);
+    --font-family-mono:
         "IBM Plex Mono", "SF Mono", "Fira Code", "Cascadia Code",
         "JetBrains Mono", monospace;
-    --font-thai: "Sarabun", "Noto Sans Thai", "IBM Plex Sans Thai", sans-serif;
-    --bw: 3px;
+    --font-family-thai: "Sarabun", "Noto Sans Thai", "IBM Plex Sans Thai", sans-serif;
+    --font-family-sans-serif: "Sarabun", "Noto Sans Thai", "IBM Plex Sans Thai", sans-serif;
+    --border-width: 3px;
 }
 
 /* ===== Base ===== */
@@ -55,16 +58,16 @@ html {
     scroll-behavior: smooth;
 }
 body {
-    font-family: var(--font-mono);
-    color: var(--c-text);
-    background: var(--c-bg);
+    font-family: var(--font-family-mono);
+    color: var(--color-text);
+    background: var(--color-background);
     line-height: 1.6;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 a {
-    color: var(--c-green);
+    color: var(--color-green);
     text-decoration: none;
 }
 a:hover {
@@ -76,8 +79,8 @@ a:hover {
     position: sticky;
     top: 0;
     z-index: 50;
-    border-bottom: var(--bw) solid var(--c-border);
-    background: var(--c-bg);
+    border-bottom: var(--border-width) solid var(--color-border);
+    background: var(--color-background);
 }
 .header-inner {
     max-width: 1280px;
@@ -96,12 +99,12 @@ a:hover {
 .logo-mark {
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--c-green);
+    color: var(--color-green);
     letter-spacing: 0.05em;
 }
 .logo-text {
     font-size: 0.875rem;
-    color: var(--c-dim);
+    color: var(--color-dim);
     text-transform: uppercase;
     letter-spacing: 0.15em;
 }
@@ -111,12 +114,12 @@ a:hover {
 }
 .nav-link {
     font-size: 0.8125rem;
-    color: var(--c-dim);
+    color: var(--color-dim);
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 .nav-link:hover {
-    color: var(--c-text);
+    color: var(--color-text);
     text-decoration: none;
 }
 
@@ -130,7 +133,7 @@ a:hover {
 }
 .intro-label {
     font-size: 0.75rem;
-    color: var(--c-cat);
+    color: var(--color-category);
     text-transform: uppercase;
     letter-spacing: 0.2em;
     margin-bottom: 1.5rem;
@@ -144,12 +147,12 @@ a:hover {
     letter-spacing: -0.02em;
 }
 .accent-green {
-    color: var(--c-green);
+    color: var(--color-green);
 }
 .intro-desc {
     font-size: 0.9375rem;
-    color: var(--c-dim);
-    font-family: var(--font-thai);
+    color: var(--color-dim);
+    font-family: var(--font-family-thai);
     line-height: 1.7;
     margin-bottom: 2rem;
     max-width: 32rem;
@@ -161,23 +164,23 @@ a:hover {
     align-items: center;
     justify-content: center;
     padding: 0.75rem 2rem;
-    font-family: var(--font-mono);
+    font-family: var(--font-family-mono);
     font-size: 0.8125rem;
     font-weight: 600;
-    border: var(--bw) solid var(--c-border);
+    border: var(--border-width) solid var(--color-border);
     cursor: pointer;
     background: transparent;
-    color: var(--c-text);
+    color: var(--color-text);
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 .btn-primary {
-    border-color: var(--c-green);
-    color: var(--c-green);
+    border-color: var(--color-green);
+    color: var(--color-green);
 }
 .btn-primary:hover {
-    background: var(--c-green);
-    color: var(--c-bg);
+    background: var(--color-green);
+    color: var(--color-background);
 }
 
 /* ===== Map Section ===== */
@@ -199,30 +202,30 @@ a:hover {
     flex-wrap: wrap;
 }
 .title-accent {
-    color: var(--c-green);
+    color: var(--color-green);
 }
 .title-sub {
     font-size: 0.75rem;
-    color: var(--c-cat);
+    color: var(--color-category);
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0.05em;
-    font-family: var(--font-thai);
+    font-family: var(--font-family-thai);
 }
 
 /* ===== Map Container (fixed aspect ratio, scrollable on mobile) ===== */
 .map-scroll-wrapper {
     position: relative;
     width: 100%;
-    border: var(--bw) solid var(--c-border);
-    background: var(--c-bg);
+    border: var(--border-width) solid var(--color-border);
+    background: var(--color-background);
 }
 
 .map-container {
     position: relative;
     width: 1120px;
     height: 720px;
-    background: var(--c-map-bg);
+    background: var(--color-map-background);
     overflow: hidden;
     margin: 0 auto;
 }
@@ -241,8 +244,8 @@ a:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    background: var(--c-shade-ln);
-    border: 1px solid var(--c-border);
+    background: var(--color-shade-light);
+    border: 1px solid var(--color-border);
     padding: 0.5rem 0.75rem;
     z-index: 10;
 }
@@ -253,25 +256,25 @@ a:hover {
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--c-cat);
+    color: var(--color-category);
 }
 .legend-dot {
     display: inline-block;
     width: 8px;
     height: 8px;
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--color-border);
 }
-.dot-academic {
-    background: var(--c-green);
+.legend-dot-academic {
+    background: var(--color-green);
 }
-.dot-dormitory {
-    background: var(--c-teal);
+.legend-dot-dormitory {
+    background: var(--color-teal);
 }
-.dot-sports {
-    background: var(--c-yellow);
+.legend-dot-sports {
+    background: var(--color-yellow);
 }
-.dot-facilities {
-    background: var(--c-gray);
+.legend-dot-facilities {
+    background: var(--color-gray);
 }
 
 /* ====================================
@@ -279,7 +282,7 @@ a:hover {
    ==================================== */
 
 /* Non-building areas — dashed rectangle + label (court, fields — UNCHANGED) */
-.bldg-label {
+.building-label {
     position: absolute;
     display: flex;
     align-items: center;
@@ -293,14 +296,14 @@ a:hover {
     text-align: center;
     pointer-events: none;
     user-select: none;
-    font-family: var(--font-sans);
+    font-family: var(--font-family-sans-serif);
     line-height: 1.2;
     letter-spacing: 0.04em;
     text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 
 /* Container */
-.bldg {
+.building {
     position: absolute;
     cursor: pointer;
     transition:
@@ -310,13 +313,13 @@ a:hover {
 }
 
 /* Hover lift */
-.bldg:hover {
+.building:hover {
     transform: translate(-2px, -2px);
     z-index: 20;
 }
 
 /* ===== Info Bar (top of map) ===== */
-.map-infobar {
+.map-info-bar {
     position: absolute;
     top: 0;
     left: 0;
@@ -325,19 +328,19 @@ a:hover {
     padding: 0.6rem 1rem;
     text-align: center;
     font-size: 0.8125rem;
-    background: var(--c-overlay);
-    border-bottom: 1px solid var(--c-border);
+    background: var(--color-overlay);
+    border-bottom: 1px solid var(--color-border);
     pointer-events: none;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.infobar-main {
-    color: var(--c-green);
-    font-family: var(--font-thai);
+.info-bar-main {
+    color: var(--color-green);
+    font-family: var(--font-family-thai);
     font-weight: 600;
 }
-.infobar-catdot {
+.info-bar-category-dot {
     display: inline-block;
     width: 7px;
     height: 7px;
@@ -347,18 +350,18 @@ a:hover {
     position: relative;
     top: -1px;
 }
-.infobar-name {
+.info-bar-name {
     font-weight: 700;
-    font-family: var(--font-thai);
+    font-family: var(--font-family-thai);
 }
-.infobar-hint {
-    color: var(--c-dim);
+.info-bar-hint {
+    color: var(--color-dim);
     font-size: 0.7rem;
     margin-left: 0.3rem;
 }
 
 /* ===== Building Number (large watermark) ===== */
-.bldg-number {
+.building-number {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -367,34 +370,34 @@ a:hover {
     font-weight: 800;
     color: oklch(0.97 0.012 85 / 0.82);
     pointer-events: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-family-mono);
     line-height: 1;
     user-select: none;
 }
 
 /* ===== Dim/Hover States ===== */
-.map-dimming .bldg:not(.bldg-hovered),
-.map-dimming .bldg-label {
+.map-dimming .building:not(.building-hovered),
+.map-dimming .building-label {
     opacity: 0.2;
     transition: opacity 0.2s;
 }
 
-.bldg-hovered {
+.building-hovered {
     z-index: 25;
 }
 
 /* Type-specific glow on hover */
-.bldg-academic.bldg-hovered {
-    filter: drop-shadow(0 0 8px var(--c-glow-green));
+.building-academic.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-green));
 }
-.bldg-dormitory.bldg-hovered {
-    filter: drop-shadow(0 0 8px var(--c-glow-teal));
+.building-dormitory.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-teal));
 }
-.bldg-sports.bldg-hovered {
-    filter: drop-shadow(0 0 8px var(--c-glow-yellow));
+.building-sports.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-yellow));
 }
-.bldg-facilities.bldg-hovered {
-    filter: drop-shadow(0 0 8px var(--c-glow-gray));
+.building-facilities.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-gray));
 }
 
 /* ===== Panel ===== */
@@ -412,7 +415,7 @@ a:hover {
 .panel-overlay {
     position: fixed;
     inset: 0;
-    background: var(--c-overlay2);
+    background: var(--color-overlay-secondary);
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
@@ -424,8 +427,8 @@ a:hover {
 .panel-sheet {
     position: relative;
     z-index: 1;
-    background: var(--c-navy);
-    border-top: var(--bw) solid var(--c-green);
+    background: var(--color-navy);
+    border-top: var(--border-width) solid var(--color-green);
     transform: translateY(100%);
     transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     max-height: 70vh;
@@ -448,15 +451,15 @@ a:hover {
 }
 .panel-sub {
     font-size: 0.8125rem;
-    color: var(--c-dim);
+    color: var(--color-dim);
     margin-top: 0.25rem;
-    font-family: var(--font-thai);
+    font-family: var(--font-family-thai);
 }
 .panel-close {
     background: transparent;
-    border: 2px solid var(--c-border);
-    color: var(--c-text);
-    font-family: var(--font-mono);
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-family-mono);
     font-size: 0.875rem;
     font-weight: 700;
     padding: 0.5rem 1rem;
@@ -465,12 +468,12 @@ a:hover {
     letter-spacing: 0.05em;
 }
 .panel-close:hover {
-    border-color: var(--c-coral);
-    color: var(--c-coral);
+    border-color: var(--color-coral);
+    color: var(--color-coral);
 }
 .panel-divider {
     height: 1px;
-    background: var(--c-border);
+    background: var(--color-border);
     margin: 0 2rem;
 }
 .panel-body {
@@ -482,13 +485,13 @@ a:hover {
 
 /* Floor card */
 .floor-card {
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--color-border);
     padding: 1rem 1.25rem;
 }
 .floor-title {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: var(--c-green);
+    color: var(--color-green);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 0.75rem;
@@ -501,24 +504,24 @@ a:hover {
 .room-pill {
     display: inline-block;
     padding: 0.3rem 0.75rem;
-    border: 1px solid var(--c-muted);
+    border: 1px solid var(--color-muted);
     font-size: 0.75rem;
-    color: var(--c-text);
-    font-family: var(--font-thai);
+    color: var(--color-text);
+    font-family: var(--font-family-thai);
 }
 .panel-desc {
     font-size: 0.875rem;
-    color: var(--c-dim);
+    color: var(--color-dim);
     line-height: 1.7;
-    font-family: var(--font-thai);
-    border: 1px solid var(--c-border);
+    font-family: var(--font-family-thai);
+    border: 1px solid var(--color-border);
     padding: 1.25rem;
 }
 
 /* ===== Footer ===== */
 .footer {
     margin-top: auto;
-    border-top: var(--bw) solid var(--c-border);
+    border-top: var(--border-width) solid var(--color-border);
     padding: 2rem 1.5rem;
 }
 .footer-inner {
@@ -540,12 +543,12 @@ a:hover {
 }
 .footer-left p {
     font-size: 0.75rem;
-    color: var(--c-dim);
-    font-family: var(--font-thai);
+    color: var(--color-dim);
+    font-family: var(--font-family-thai);
     line-height: 1.6;
 }
 .school-link {
-    color: var(--c-green);
+    color: var(--color-green);
 }
 .school-link:hover {
     text-decoration: underline;
@@ -556,37 +559,37 @@ a:hover {
     gap: 1rem;
 }
 .footer-link {
-    font-family: var(--font-mono);
+    font-family: var(--font-family-mono);
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--c-text);
+    color: var(--color-text);
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 .footer-link:hover {
-    color: var(--c-green);
+    color: var(--color-green);
 }
 .footer-badge {
     display: inline-block;
     font-size: 0.65rem;
     font-weight: 600;
     padding: 0.3rem 0.6rem;
-    border: 2px solid var(--c-green);
-    color: var(--c-green);
+    border: 2px solid var(--color-green);
+    color: var(--color-green);
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
 .footer-badge:hover {
-    background: var(--c-green);
-    color: var(--c-bg);
+    background: var(--color-green);
+    color: var(--color-background);
 }
 .footer-notice {
-    border: 1px solid var(--c-yellow);
-    color: var(--c-yellow);
+    border: 1px solid var(--color-yellow);
+    color: var(--color-yellow);
     padding: 0.5rem 0.75rem;
     font-size: 0.6875rem;
     font-weight: 600;
-    font-family: var(--font-thai);
+    font-family: var(--font-family-thai);
     letter-spacing: 0.02em;
 }
 
@@ -637,20 +640,20 @@ a:hover {
     height: 6px;
 }
 .map-scroll-wrapper::-webkit-scrollbar-track {
-    background: var(--c-bg);
+    background: var(--color-background);
 }
 .map-scroll-wrapper::-webkit-scrollbar-thumb {
-    background: var(--c-border);
+    background: var(--color-border);
     border-radius: 3px;
 }
 .map-scroll-wrapper::-webkit-scrollbar-thumb:hover {
-    background: var(--c-muted);
+    background: var(--color-muted);
 }
 
 /* ===== Building List (below map) ===== */
 .list-section {
     padding: 3rem 1.5rem 4rem;
-    border-top: 1px solid var(--c-border);
+    border-top: 1px solid var(--color-border);
 }
 .list-section-inner {
     max-width: 800px;
@@ -661,12 +664,12 @@ a:hover {
     font-weight: 400;
     letter-spacing: 0.15em;
     margin-bottom: 1.75rem;
-    color: var(--c-text);
+    color: var(--color-text);
     text-transform: uppercase;
-    font-family: var(--font-mono);
+    font-family: var(--font-family-mono);
 }
 .title-accent {
-    color: var(--c-green);
+    color: var(--color-green);
     margin-right: 0.4rem;
 }
 .title-sub {
@@ -674,55 +677,55 @@ a:hover {
     font-size: 0.7rem;
     text-transform: none;
     letter-spacing: 0.08em;
-    color: var(--c-cat);
+    color: var(--color-category);
     margin-top: 0.25rem;
-    font-family: var(--font-thai);
+    font-family: var(--font-family-thai);
 }
 .building-list {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
 }
-.bldg-list-item {
+.building-list-item {
     display: flex;
     align-items: center;
     gap: 0.6rem;
     padding: 0.45rem 0.75rem;
-    background: var(--c-bg2);
-    border: 1px solid var(--c-border);
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
     font-size: 0.8125rem;
     transition:
         background 0.2s,
         border-color 0.2s;
 }
-.bldg-list-item:hover {
-    background: var(--c-bg3);
-    border-color: var(--c-muted);
+.building-list-item:hover {
+    background: var(--color-background-tertiary);
+    border-color: var(--color-muted);
 }
-.bli-num {
-    font-family: var(--font-mono);
+.building-list-number {
+    font-family: var(--font-family-mono);
     font-size: 0.95rem;
     font-weight: 700;
     min-width: 1.6rem;
     text-align: right;
 }
-.bli-name {
-    color: var(--c-text);
-    font-family: var(--font-thai);
+.building-list-name {
+    color: var(--color-text);
+    font-family: var(--font-family-thai);
     font-weight: 500;
 }
-.bli-name-en {
-    color: var(--c-dim);
+.building-list-name-en {
+    color: var(--color-dim);
     font-size: 0.7rem;
     margin-left: auto;
 }
-.bli-type {
-    font-family: var(--font-mono);
+.building-list-type {
+    font-family: var(--font-family-mono);
     font-size: 0.65rem;
     letter-spacing: 0.05em;
     text-align: right;
     min-width: 5rem;
-    color: var(--c-text);
+    color: var(--color-text);
 }
 
 @media (max-width: 480px) {

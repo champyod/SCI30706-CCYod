@@ -26,7 +26,7 @@
 |---|---|
 | `charset="UTF-8"` | รองรับภาษาไทยและอักขระพิเศษทั้งหมด |
 | `viewport` | Responsive บนมือถือ — ไม่ zoom อัตโนมัติ, width = device width |
-| `description` | SEO — ข้อความที่แสดงใน搜索结果 |
+| `description` | SEO — ข้อความที่แสดงในผลการค้นหา |
 
 ```html
 <link rel="stylesheet" href="styles/style.css" />
@@ -198,7 +198,7 @@ Format: `oklch(LIGHTNESS CHROMA HUE / ALPHA)`
 --c-gray: oklch(0.6 0 0);            /* H=0, C=0 → เทา (facilities) */
 ```
 
-C (chroma) 越高 → สียิ่งสด. H (hue) กำหนดสี:
+C (chroma) ยิ่งสูง → สียิ่งสด. H (hue) กำหนดสี:
 
 | Hue (deg) | Color |
 |---|---|
