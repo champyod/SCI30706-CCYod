@@ -142,13 +142,13 @@ const BUILDINGS = [
       { floor: "ชั้น 5", rooms: ["หอพัก (10 ห้อง)", "ห้องน้ำรวม"] },
     ],
   },
-  // bldg9 — อาคารหอพักหญิง
+  // bldg9 — อาคารหอพัก
   {
     id: "bldg9",
-    nameTH: "อาคารหอพักหญิง",
-    nameEN: "Female Dorm",
+    nameTH: "อาคารหอพัก",
+    nameEN: "Dorm",
     type: "dormitory",
-    subtitle: "หอพักนักเรียนหญิง",
+    subtitle: "หอพักนักเรียน",
     tl: [52.6103, 9.0138],
     tr: [60.4106, 9.0138],
     bl: [52.6103, 49.9747],
