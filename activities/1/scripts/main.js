@@ -668,6 +668,20 @@ function scrollToSection(sectionId) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  const themeToggle = document.getElementById("themeToggle");
+  const root = document.documentElement;
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  root.setAttribute("data-theme", savedTheme);
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      const current = root.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    });
+  }
+
   renderBuildings();
   renderBuildingList();
 
