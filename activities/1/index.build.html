@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="th">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="MWIT Campus Tour — ผังโรงเรียนมหิดลวิทยานุสรณ์ Campus Map"
+        />
+        <title>
+            MWIT Campus Tour | ผังโรงเรียนมหิดลวิทยานุสรณ์ Campus Map
+        </title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+        <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+        <style>
+/* ========================================
+   MWIT Campus Tour — Brutalist + 3D Models
+   ======================================== */
+
+/* ===== Reset ===== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== Variables ===== */
+:root {
+    --color-background: oklch(0.042 0 0);
+    --color-text: oklch(0.9 0 0);
+    --color-dim: oklch(0.6 0 0);
+    --color-green: oklch(0.62 0.072 158);
+    --color-teal: oklch(0.5 0.062 176);
+    --color-yellow: oklch(0.85 0.112 99);
+    --color-coral: oklch(0.68 0.086 21);
+    --color-navy: oklch(0.148 0.02 237);
+    --color-border: oklch(0.235 0 0);
+    --color-building: oklch(0.195 0 0);
+    --color-gray: oklch(0.6 0 0);
+    --color-map-background: oklch(0.067 0 0);
+    --color-building-side: oklch(0.14 0 0);
+    --color-building-frame: oklch(0.3 0 0);
+    --color-shade: oklch(0 0 0 / 0.4);
+    --color-shade-heavy: oklch(0 0 0 / 0.55);
+    --color-shade-light: oklch(0 0 0 / 0.85);
+    --color-overlay: oklch(0 0 0 / 0.92);
+    --color-overlay-secondary: oklch(0 0 0 / 0.7);
+    --color-white-grid: oklch(1 0 0 / 0.1);
+    --color-white-grid-secondary: oklch(1 0 0 / 0.06);
+    --color-center-background: oklch(1 0 0 / 0.04);
+    --color-glow-green: oklch(0.62 0.072 158 / 0.35);
+    --color-glow-teal: oklch(0.5 0.062 176 / 0.35);
+    --color-glow-yellow: oklch(0.85 0.112 99 / 0.35);
+    --color-glow-gray: oklch(0.6 0 0 / 0.35);
+    --color-glow-coral: oklch(0.68 0.086 21 / 0.35);
+    --color-muted: oklch(0.5 0 0);
+    --color-category: oklch(0.75 0 0);
+    --color-background-secondary: oklch(0.16 0 0);
+    --color-background-tertiary: oklch(0.2 0 0);
+    --font-family-mono:
+        "IBM Plex Mono", "SF Mono", "Fira Code", "Cascadia Code",
+        "JetBrains Mono", monospace;
+    --font-family-thai: "Sarabun", "Noto Sans Thai", "IBM Plex Sans Thai", sans-serif;
+    --font-family-sans-serif: "Sarabun", "Noto Sans Thai", "IBM Plex Sans Thai", sans-serif;
+    --border-width: 3px;
+}
+
+/* ===== Base ===== */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+body {
+    font-family: var(--font-family-mono);
+    color: var(--color-text);
+    background: var(--color-background);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+a {
+    color: var(--color-green);
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Header ===== */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: var(--border-width) solid var(--color-border);
+    background: var(--color-background);
+}
+.header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+}
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.logo-mark {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-green);
+    letter-spacing: 0.05em;
+}
+.logo-text {
+    font-size: 0.875rem;
+    color: var(--color-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+.header-nav {
+    display: flex;
+    gap: 1.5rem;
+}
+.nav-link {
+    font-size: 0.8125rem;
+    color: var(--color-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.nav-link:hover {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+/* ===== Intro ===== */
+.intro {
+    padding: 6rem 1.5rem 4rem;
+}
+.intro-inner {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.intro-label {
+    font-size: 0.75rem;
+    color: var(--color-category);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+}
+.intro-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+.accent-green {
+    color: var(--color-green);
+}
+.intro-desc {
+    font-size: 0.9375rem;
+    color: var(--color-dim);
+    font-family: var(--font-family-thai);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 32rem;
+}
+
+/* ===== Buttons ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 2rem;
+    font-family: var(--font-family-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border: var(--border-width) solid var(--color-border);
+    cursor: pointer;
+    background: transparent;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.btn-primary {
+    border-color: var(--color-green);
+    color: var(--color-green);
+}
+.btn-primary:hover {
+    background: var(--color-green);
+    color: var(--color-background);
+}
+
+/* ===== Map Section ===== */
+.map-section {
+    padding: 2rem 1.5rem 4rem;
+}
+.map-section-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.title-accent {
+    color: var(--color-green);
+}
+.title-sub {
+    font-size: 0.75rem;
+    color: var(--color-category);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.05em;
+    font-family: var(--font-family-thai);
+}
+
+/* ===== Map Container (fixed aspect ratio, scrollable on mobile) ===== */
+.map-scroll-wrapper {
+    position: relative;
+    width: 100%;
+    border: var(--border-width) solid var(--color-border);
+    background: var(--color-background);
+}
+
+.map-container {
+    position: relative;
+    width: 1120px;
+    height: 720px;
+    background: var(--color-map-background);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.map {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* ===== Legend ===== */
+.map-legend {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    background: var(--color-shade-light);
+    border: 1px solid var(--color-border);
+    padding: 0.5rem 0.75rem;
+    z-index: 10;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-category);
+}
+.legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--color-border);
+}
+.legend-dot-academic {
+    background: var(--color-green);
+}
+.legend-dot-dormitory {
+    background: var(--color-teal);
+}
+.legend-dot-sports {
+    background: var(--color-yellow);
+}
+.legend-dot-facilities {
+    background: var(--color-gray);
+}
+
+/* ====================================
+   BUILDING — rect + roof lines
+   ==================================== */
+
+/* Non-building areas — dashed rectangle + label (court, fields — UNCHANGED) */
+.building-label {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    border: 2px dashed oklch(0.85 0.112 99 / 0.45);
+    background: oklch(0.85 0.112 99 / 0.06);
+    font-size: clamp(0.5rem, 1.5vw, 1rem);
+    font-weight: 600;
+    color: oklch(0.85 0.06 95 / 0.65);
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    font-family: var(--font-family-sans-serif);
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+/* Container */
+.building {
+    position: absolute;
+    cursor: pointer;
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s;
+    z-index: 2;
+}
+
+/* Hover lift */
+.building:hover {
+    transform: translate(-2px, -2px);
+    z-index: 20;
+}
+
+/* ===== Info Bar (top of map) ===== */
+.map-info-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 15;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    font-size: 0.8125rem;
+    background: var(--color-overlay);
+    border-bottom: 1px solid var(--color-border);
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.info-bar-main {
+    color: var(--color-green);
+    font-family: var(--font-family-thai);
+    font-weight: 600;
+}
+.info-bar-category-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+.info-bar-name {
+    font-weight: 700;
+    font-family: var(--font-family-thai);
+}
+.info-bar-hint {
+    color: var(--color-dim);
+    font-size: 0.7rem;
+    margin-left: 0.3rem;
+}
+
+/* ===== Building Number (large watermark) ===== */
+.building-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(0.5rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: oklch(0.97 0.012 85 / 0.82);
+    pointer-events: none;
+    font-family: var(--font-family-mono);
+    line-height: 1;
+    user-select: none;
+}
+
+/* ===== Dim/Hover States ===== */
+.map-dimming .building:not(.building-hovered),
+.map-dimming .building-label {
+    opacity: 0.2;
+    transition: opacity 0.2s;
+}
+
+.building-hovered {
+    z-index: 25;
+}
+
+/* Type-specific glow on hover */
+.building-academic.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-green));
+}
+.building-dormitory.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-teal));
+}
+.building-sports.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-yellow));
+}
+.building-facilities.building-hovered {
+    filter: drop-shadow(0 0 8px var(--color-glow-gray));
+}
+
+/* ===== Panel ===== */
+.panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    pointer-events: none;
+}
+.panel.open {
+    pointer-events: auto;
+}
+.panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--color-overlay-secondary);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+.panel.open .panel-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+.panel-sheet {
+    position: relative;
+    z-index: 1;
+    background: var(--color-navy);
+    border-top: var(--border-width) solid var(--color-green);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.panel.open .panel-sheet {
+    transform: translateY(0);
+}
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.5rem 2rem 1rem;
+}
+.panel-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+.panel-sub {
+    font-size: 0.8125rem;
+    color: var(--color-dim);
+    margin-top: 0.25rem;
+    font-family: var(--font-family-thai);
+}
+.panel-close {
+    background: transparent;
+    border: 2px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-family-mono);
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.panel-close:hover {
+    border-color: var(--color-coral);
+    color: var(--color-coral);
+}
+.panel-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 0 2rem;
+}
+.panel-body {
+    padding: 1.5rem 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Floor card */
+.floor-card {
+    border: 1px solid var(--color-border);
+    padding: 1rem 1.25rem;
+}
+.floor-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-green);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+}
+.floor-rooms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.room-pill {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--color-muted);
+    font-size: 0.75rem;
+    color: var(--color-text);
+    font-family: var(--font-family-thai);
+}
+.panel-desc {
+    font-size: 0.875rem;
+    color: var(--color-dim);
+    line-height: 1.7;
+    font-family: var(--font-family-thai);
+    border: 1px solid var(--color-border);
+    padding: 1.25rem;
+}
+
+/* ===== Footer ===== */
+.footer {
+    margin-top: auto;
+    border-top: var(--border-width) solid var(--color-border);
+    padding: 2rem 1.5rem;
+}
+.footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+.footer-main {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+.footer-left {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.footer-left p {
+    font-size: 0.75rem;
+    color: var(--color-dim);
+    font-family: var(--font-family-thai);
+    line-height: 1.6;
+}
+.school-link {
+    color: var(--color-green);
+}
+.school-link:hover {
+    text-decoration: underline;
+}
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.footer-link {
+    font-family: var(--font-family-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.footer-link:hover {
+    color: var(--color-green);
+}
+.footer-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border: 2px solid var(--color-green);
+    color: var(--color-green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.footer-badge:hover {
+    background: var(--color-green);
+    color: var(--color-background);
+}
+.footer-notice {
+    border: 1px solid var(--color-yellow);
+    color: var(--color-yellow);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    font-family: var(--font-family-thai);
+    letter-spacing: 0.02em;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .intro {
+        padding: 4rem 1.5rem 3rem;
+    }
+    .intro-title {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+    .map-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .map-container {
+        aspect-ratio: auto;
+        width: 1120px;
+        height: 720px;
+        margin: 0;
+    }
+    .map-legend {
+        bottom: 0.5rem;
+        right: 0.5rem;
+        gap: 0.3rem;
+        padding: 0.4rem 0.5rem;
+    }
+    .legend-item {
+        font-size: 0.5rem;
+    }
+    .panel-sheet {
+        max-height: 85vh;
+    }
+    .panel-header {
+        padding: 1rem 1.25rem;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .panel-close {
+        align-self: flex-end;
+    }
+    .panel-body {
+        padding: 1rem 1.25rem 2rem;
+    }
+}
+
+.map-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+.map-scroll-wrapper::-webkit-scrollbar-track {
+    background: var(--color-background);
+}
+.map-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+}
+.map-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+}
+
+/* ===== Building List (below map) ===== */
+.list-section {
+    padding: 3rem 1.5rem 4rem;
+    border-top: 1px solid var(--color-border);
+}
+.list-section-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    margin-bottom: 1.75rem;
+    color: var(--color-text);
+    text-transform: uppercase;
+    font-family: var(--font-family-mono);
+}
+.title-accent {
+    color: var(--color-green);
+    margin-right: 0.4rem;
+}
+.title-sub {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: none;
+    letter-spacing: 0.08em;
+    color: var(--color-category);
+    margin-top: 0.25rem;
+    font-family: var(--font-family-thai);
+}
+.building-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.building-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.75rem;
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+    transition:
+        background 0.2s,
+        border-color 0.2s;
+}
+.building-list-item:hover {
+    background: var(--color-background-tertiary);
+    border-color: var(--color-muted);
+}
+.building-list-number {
+    font-family: var(--font-family-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    min-width: 1.6rem;
+    text-align: right;
+}
+.building-list-name {
+    color: var(--color-text);
+    font-family: var(--font-family-thai);
+    font-weight: 500;
+}
+.building-list-name-en {
+    color: var(--color-dim);
+    font-size: 0.7rem;
+    margin-left: auto;
+}
+.building-list-type {
+    font-family: var(--font-family-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-align: right;
+    min-width: 5rem;
+    color: var(--color-text);
+}
+
+@media (max-width: 480px) {
+    .header-logo {
+        gap: 0.4rem;
+    }
+    .logo-mark {
+        font-size: 1rem;
+    }
+    .logo-text {
+        font-size: 0.7rem;
+    }
+    .nav-link {
+        font-size: 0.7rem;
+    }
+    .map-scroll-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .map-container {
+        width: 1120px;
+        height: 720px;
+        margin: 0;
+    }
+}
+
+</style>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700;800&family=Sarabun:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <!-- ===== HEADER ===== -->
+        <header class="header" id="header">
+            <div class="header-inner">
+                <div class="header-logo">
+                    <span class="logo-mark">[ MWIT ]</span>
+                    <span class="logo-text">Campus Tour</span>
+                </div>
+                <nav class="header-nav">
+                    <a class="nav-link" href="#map">แผนผัง</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- ===== INTRO ===== -->
+        <section class="intro" id="about">
+            <div class="intro-inner">
+                <p class="intro-label">// CAMPUS MAP — MWIT CAMPUS TOUR</p>
+                <h1 class="intro-title">
+                    สำรวจ<span class="accent-green"
+                        >โรงเรียนมหิดลวิทยานุสรณ์</span
+                    >
+                </h1>
+                <p class="intro-desc">
+                    คลิกที่อาคารในแผนผังเพื่อดูข้อมูลภายใน — ห้องเรียน
+                    ห้องปฏิบัติการ และกิจกรรมต่าง ๆ ที่เปิดให้เยี่ยมชม
+                </p>
+                <button class="btn btn-primary" id="scrollToMap">
+                    [ ดูแผนผังทั้งหมด ]
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== MAP ===== -->
+        <section class="map-section" id="map">
+            <div class="map-section-inner">
+                <h2 class="section-title">
+                    <span class="title-accent">//</span>
+                    CAMPUS MAP
+                    <span class="title-sub">คลิกอาคารเพื่อดูรายละเอียด</span>
+                </h2>
+                <div class="map-scroll-wrapper">
+                    <div class="map-container" id="mapContainer">
+                        <div class="map-info-bar" id="mapInfoBar">
+                            <span class="info-bar-main"
+                                >Mahidol Wittayanusorn School</span
+                            >
+                        </div>
+                        <div class="map" id="mapEl">
+                            <!-- Buildings rendered by JS -->
+                        </div>
+                        <div class="map-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot legend-dot-academic"></span
+                                >อาคารเรียน
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-dot-dormitory"></span>หอพัก
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-dot-sports"></span>กีฬา
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot legend-dot-facilities"></span
+                                >สิ่งอำนวยความสะดวก
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== BUILDING LIST ===== -->
+        <section class="list-section">
+            <div class="list-section-inner">
+                <h2 class="section-title">
+                    <span class="title-accent">//</span>
+                    BUILDINGS
+                    <span class="title-sub">รายชื่ออาคารทั้งหมด</span>
+                </h2>
+                <div class="building-list" id="buildingList"></div>
+            </div>
+        </section>
+
+        <!-- ===== PANEL ===== -->
+        <aside class="panel" id="panel">
+            <div class="panel-overlay" id="panelOverlay"></div>
+            <div class="panel-sheet" id="panelSheet">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="panel-name" id="panelName">—</h3>
+                        <p class="panel-sub" id="panelSub">—</p>
+                    </div>
+                    <button class="panel-close" id="panelClose">[ X ]</button>
+                </div>
+                <div class="panel-divider"></div>
+                <div class="panel-body" id="panelBody"></div>
+            </div>
+        </aside>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="footer-main">
+                    <div class="footer-left">
+                        <p>
+                            <a
+                                class="school-link"
+                                href="https://mwit.ac.th"
+                                target="_blank"
+                                rel="noopener"
+                                >โรงเรียนมหิดลวิทยานุสรณ์</a
+                            >
+                            / Mahidol Wittayanusorn School
+                        </p>
+                        <p>
+                            โรงเรียนวิทยาศาสตร์แห่งแรกของประเทศไทย
+                            ก่อตั้งขึ้นเพื่อพัฒนา<br />อัจฉริยภาพด้านวิทยาศาสตร์และคณิตศาสตร์ของนักเรียนระดับมัธยมศึกษา
+                        </p>
+                        <p>
+                            ตั้งอยู่ที่ตำบลศาลายา อำเภอพุทธมณฑล จังหวัดนครปฐม<br />บนพื้นที่กว่า
+                            70 ไร่ ห่างจากกรุงเทพฯ ประมาณ 30 กิโลเมตร
+                        </p>
+                        <p>
+                            ผลิตนักเรียนสู่เวทีวิทยาศาสตร์ระดับโลกอย่างต่อเนื่อง<br />ทั้งโอลิมปิกวิชาการและงานวิจัยชั้นนำ
+                        </p>
+                        <p class="footer-notice">
+                            [ ! ] ข้อมูลอาจไม่ตรงกับปัจจุบัน
+                            กรุณาตรวจสอบอีกครั้ง
+                        </p>
+                    </div>
+                    <div class="footer-right">
+                        <a
+                            class="footer-link"
+                            href="https://github.com/CCYod"
+                            target="_blank"
+                            rel="noopener"
+                            >CCYod</a
+                        >
+                        <a
+                            class="footer-badge"
+                            href="https://github.com/ChampYod/SCI30706-CCYod"
+                            target="_blank"
+                            rel="noopener"
+                            >open-source</a
+                        >
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+"use strict";
+
+/* ========================================
+   MWIT Campus Tour — Building Data & Interaction
+   Center coordinates from MAIN-OPH-2025 reference
+   ======================================== */
+
+const BUILDINGS = [
+  // bldg1 — อาคารมหิดลวิทยานุสรณ์ 1
+  {
+    id: "bldg1",
+    nameTH: "อาคารมหิดลวิทยานุสรณ์ 1",
+    nameEN: "Bldg 1",
+    type: "academic",
+    subtitle: "อาคารเรียนหลัก",
+    tl: [76.066, 53.7325],
+    tr: [82.3562, 53.7325],
+    bl: [76.066, 86.9792],
+    br: [82.3562, 86.9792],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องเรียน (9 ห้อง)"] },
+      { floor: "ชั้น 2", rooms: ["ห้องคอมพิวเตอร์", "ศูนย์คอมพิวเตอร์"] },
+      { floor: "ชั้น 3", rooms: ["ห้องเรียนคณิตศาตร์ร์", "ห้องครูคณิตศาตร์ร์"] },
+      { floor: "ชั้น 4", rooms: ["หอประชุม Dr.Kovit"] },
+      { floor: "ชั้น 5", rooms: ["ห้องเรียนศิลปศาสตร์ร์ (3 ห้อง)", "สำนักงาน"] },
+      { floor: "ชั้น 6", rooms: ["ห้องเรียนศิลปศาสตร์ร์ (5 ห้อง)", "สำนักงาน"] },
+      { floor: "ชั้น 7", rooms: ["ห้องเรียนภาษาต่างประเทศ", "ห้องครูภาษาต่างประเทศ"] },
+    ],
+  },
+  // bldg2 — อาคารมหิดลวิทยานุสรณ์ 2
+  {
+    id: "bldg2",
+    nameTH: "อาคารมหิดลวิทยานุสรณ์ 2",
+    nameEN: "Bldg 2",
+    type: "academic",
+    subtitle: "อาคารเรียน — ชั้น 1-2 ห้องสมุด",
+    tl: [60.9375, 70.3559],
+    tr: [76.0417, 70.3559],
+    bl: [60.9375, 87.0226],
+    br: [76.0417, 87.0226],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องสมุด"] },
+      { floor: "ชั้น 2", rooms: ["ห้องสมุด"] },
+      { floor: "ชั้น 3", rooms: ["ห้องเรียนคณิตศาตร์ร์ (4 ห้อง)"] },
+      { floor: "ชั้น 4", rooms: ["หอประชุม Dr.Nut"] },
+      { floor: "ชั้น 5", rooms: ["ห้องเรียนภูมิศาสตร์ร์", "ห้องครูเคมี"] },
+      { floor: "ชั้น 6", rooms: ["ห้องครูฟิสิกส์"] },
+      { floor: "ชั้น 7", rooms: ["ห้องเรียนภาษาต่างประเทศ (4 ห้อง)"] },
+    ],
+  },
+  // bldg3 — อาคารมหิดลวิทยานุสรณ์ 3 (Co-Learning Space floors 1-2)
+  {
+    id: "bldg3",
+    nameTH: "อาคารมหิดลวิทยานุสรณ์ 3",
+    nameEN: "Bldg 3",
+    type: "academic",
+    subtitle: "อาคารปฏิบัติการ — ชั้น 1-2 Co-Learning Space (ปรับปรุงใหม่)",
+    tl: [53.057, 59.3091],
+    tr: [60.9375, 59.3091],
+    bl: [53.057, 86.9582],
+    br: [60.9375, 86.9582],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["Co-Learning Space (ปรับปรุงใหม่)"] },
+      { floor: "ชั้น 2", rooms: ["Co-Learning Space (ปรับปรุงใหม่)"] },
+      { floor: "ชั้น 3", rooms: ["ห้องเรียนชีววิทยา", "ห้องครูชีววิทยา"] },
+      { floor: "ชั้น 4", rooms: ["ห้องปฏิบัติการชีววิทยา (3)"] },
+      { floor: "ชั้น 5", rooms: ["ห้องโครงงานเคมี", "ห้องเรียนเคมี"] },
+      { floor: "ชั้น 6", rooms: ["ห้องเรียนเคมี", "ห้องปฏิบัติการเคมี", "ห้องเรียนดาราศาสตร์ร์"] },
+      { floor: "ชั้น 7", rooms: ["ห้องเรียนฟิสิกส์", "ห้องปฏิบัติการฟิสิกส์"] },
+    ],
+  },
+  // bldg5 — โรงอาหาร และหอประชุมพระอุบาลีคุณูปมาจารย์
+  {
+    id: "bldg5",
+    nameTH: "โรงอาหาร และหอประชุมพระอุบาลีคุณูปมาจารย์",
+    nameEN: "Cafeteria & Auditorium",
+    type: "facilities",
+    subtitle: "โรงอาหารและหอประชุม",
+    tl: [25.2604, 68.504],
+    tr: [44.0104, 68.504],
+    bl: [25.2604, 87.0226],
+    br: [44.0104, 87.0226],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["โรงอาหาร", "ร้านค้า", "ห้องเก็บของ"] },
+      { floor: "ชั้น 2", rooms: ["หอประชุม", "ห้องประชุม", "ห้องเก็บอุปกรณ์"] },
+      { floor: "ชั้น 3", rooms: ["ห้องพัก (3)", "ห้องเก็บของ"] },
+    ],
+  },
+  // bldg6 — ศูนย์กีฬา
+  {
+    id: "bldg6",
+    nameTH: "ศูนย์กีฬา",
+    nameEN: "Sports Center",
+    type: "sports",
+    subtitle: "ศูนย์กีฬา",
+    tl: [5.1992, 59.2285],
+    tr: [22.6329, 59.2285],
+    bl: [5.1992, 87.0388],
+    br: [22.6329, 87.0388],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องเรียน", "ห้องประชุม", "สำนักงาน", "หอพัก", "สระว่ายน้ำ"] },
+      { floor: "ชั้น 2", rooms: ["สำนักงาน", "ห้องออกกำลังกาย", "หอพัก"] },
+      { floor: "ชั้น 3", rooms: ["ห้องเรียน", "สำนักงาน (2)", "ห้องเก็บอุปกรณ์"] },
+      { floor: "ชั้น 4", rooms: ["สำนักงาน (2)", "ห้องเก็บอุปกรณ์"] },
+    ],
+  },
+  // bldg7 — อาคารหอพักชาย
+  {
+    id: "bldg7",
+    nameTH: "อาคารหอพักชาย",
+    nameEN: "Male Dorm",
+    type: "dormitory",
+    subtitle: "หอพักนักเรียนชาย",
+    tl: [86.2865, 21.5661],
+    tr: [92.2011, 21.5661],
+    bl: [86.2865, 42.6],
+    br: [92.2011, 42.6],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["หอพัก (9 ห้อง)", "ห้องพักครู", "ห้องครูชาย"] },
+      { floor: "ชั้น 2", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 3", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 4", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 5", rooms: ["หอพัก (10 ห้อง)", "ห้องน้ำรวม"] },
+    ],
+  },
+  // bldg8 — อาคารหอพักชาย
+  {
+    id: "bldg8",
+    nameTH: "อาคารหอพักชาย",
+    nameEN: "Male Dorm",
+    type: "dormitory",
+    subtitle: "หอพักนักเรียนชาย (อาคารยาวด้านบน)",
+    tl: [75.0484, 8.7384],
+    tr: [92.1391, 8.7384],
+    bl: [75.0484, 18.5347],
+    br: [92.1391, 18.5347],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องครู", "หอพัก (7 ห้อง)", "ห้องเก็บของ", "ห้องน้ำ"] },
+      { floor: "ชั้น 2", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 3", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 4", rooms: ["หอพัก (7 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 5", rooms: ["หอพัก (10 ห้อง)", "ห้องน้ำรวม"] },
+    ],
+  },
+  // bldg9 — อาคารหอพัก
+  {
+    id: "bldg9",
+    nameTH: "อาคารหอพัก",
+    nameEN: "Dorm",
+    type: "dormitory",
+    subtitle: "หอพักนักเรียน",
+    tl: [52.6103, 9.0138],
+    tr: [60.4106, 9.0138],
+    bl: [52.6103, 49.9747],
+    br: [60.4106, 49.9747],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["หอพัก", "สำนักงาน", "ห้องเก็บของ"] },
+      { floor: "ชั้น 2", rooms: ["Side A: หอพักหญิง — Side B: หอพักชาย", "ห้องดนตรี", "ห้องประวัติศาตร์ร์", "ห้องน้ำ"] },
+      { floor: "ชั้น 2.5", rooms: ["ห้องอ่านหนังสือ", "ห้องศึกษาค้นคว้า"] },
+      { floor: "ชั้น 3-7", rooms: ["หอพัก (ชั้นละ 26 ห้อง)", "ห้องน้ำรวม"] },
+      { floor: "ชั้น 7.5", rooms: ["ห้องเก็บของ"] },
+      { floor: "ชั้น 8", rooms: ["หอพักครู (12 ห้อง)", "ห้องน้ำ"] },
+      { floor: "ชั้น 9", rooms: ["หอพักครู (4 ห้อง)", "ห้องน้ำ"] },
+    ],
+  },
+  // bldg10 — สำนักงานหอพัก ศูนย์พยาบาล และห้องรับรอง
+  {
+    id: "bldg10",
+    nameTH: "สำนักงานหอพัก ศูนย์พยาบาล และห้องรับรอง",
+    nameEN: "Dorm Office & Clinic",
+    type: "dormitory",
+    subtitle: "สำนักงานหอพัก ศูนย์พยาบาล และห้องรับรอง",
+    tl: [76.0484, 26.633],
+    tr: [82.2849, 26.633],
+    bl: [76.0484, 46.357],
+    br: [82.2849, 46.357],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["สำนักงาน (3)", "ห้องพัก", "ห้องประชุม"] },
+      { floor: "ชั้น 2", rooms: ["ศูนย์พยาบาล", "ห้องพัก (4)"] },
+      { floor: "ชั้น 3", rooms: ["หอพัก (4 ห้อง)"] },
+    ],
+  },
+  // bldg11 — อาคารรับรอง
+  {
+    id: "bldg11",
+    nameTH: "อาคารรับรอง",
+    nameEN: "Guest House",
+    type: "facilities",
+    subtitle: "อาคารรับรอง",
+    tl: [84.8958, 43.504],
+    tr: [92.1875, 43.504],
+    bl: [84.8958, 52.7633],
+    br: [92.1875, 52.7633],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องประชุม", "ห้องเก็บของ"] },
+      { floor: "ชั้น 2", rooms: ["ห้องพักรับรอง (5 ห้อง)"] },
+      { floor: "ชั้น 3", rooms: ["ห้องพักรับรอง (5 ห้อง)"] },
+    ],
+  },
+  // bldg12 — บ้านพักผู้อำนวยการ
+  {
+    id: "bldg12",
+    nameTH: "บ้านพักผู้อำนวยการ",
+    nameEN: "Director's Residence",
+    type: "facilities",
+    subtitle: "บ้านพักผู้อำนวยการ",
+    tl: [84.8958, 52.7633],
+    tr: [92.1875, 52.7633],
+    bl: [84.8958, 72.2077],
+    br: [92.1875, 72.2077],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["บ้านพัก", "ห้องประชุม", "ห้องน้ำ"] },
+      { floor: "ชั้น 2", rooms: ["หอพัก (4 ห้อง)", "ห้องน้ำ"] },
+    ],
+  },
+  // bldg13 — อาคารซัก อบ รีด
+  {
+    id: "bldg13",
+    nameTH: "อาคารซัก อบ รีด",
+    nameEN: "Laundry",
+    type: "facilities",
+    subtitle: "อาคารซัก อบ รีด",
+    tl: [60.603, 12.9344],
+    tr: [66.6365, 12.9344],
+    bl: [60.603, 20.3121],
+    br: [66.6365, 20.3121],
+    floors: [],
+    description: "บริการซักรีดรวมสำหรับนักเรียน",
+  },
+  // bldg14 — อาคารรับรอง
+  {
+    id: "bldg14",
+    nameTH: "อาคารรับรอง",
+    nameEN: "Guest House",
+    type: "facilities",
+    subtitle: "อาคารรับรอง",
+    tl: [67.6442, 9.2173],
+    tr: [74.8108, 9.2173],
+    bl: [67.6442, 18.4071],
+    br: [74.8108, 18.4071],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องพักรับรอง"] },
+      { floor: "ชั้น 2-5", rooms: ["ห้องพักรับรอง (ชั้นละ 7 ห้อง)", "ห้องเก็บของ"] },
+    ],
+  },
+  // bldg15 — โรงฝึกงาน และเรือนเพาะชำ
+  {
+    id: "bldg15",
+    nameTH: "โรงฝึกงาน และเรือนเพาะชำ",
+    nameEN: "Workshop & Nursery",
+    type: "academic",
+    subtitle: "โรงฝึกงานและเรือนเพาะชำ",
+    tl: [84.8958, 73.1337],
+    tr: [92.1875, 73.1337],
+    bl: [84.8958, 87.0226],
+    br: [92.1875, 87.0226],
+    floors: [
+      { floor: "ชั้น 1", rooms: ["ห้องปฏิบัติการ", "สำนักงาน"] },
+      { floor: "ชั้น 2", rooms: ["ห้องปฏิบัติการ (3)", "ห้องเก็บของ"] },
+      { floor: "ชั้น 3", rooms: ["ห้องปฏิบัติการ"] },
+    ],
+  },
+  // bldg16 — อาคารอเนกประสงค์ (constructed on bldg4+bldg17)
+  {
+    id: "bldg16",
+    nameTH: "อาคารอเนกประสงค์",
+    nameEN: "Multi-Purpose Bldg",
+    type: "facilities",
+    subtitle: "อาคารอเนกประสงค์ (สร้างทดแทนอาคาร 4 และ 17 เดิม)",
+    tl: [44.0104, 61.0966],
+    tr: [52.8646, 61.0966],
+    bl: [44.0104, 87.0226],
+    br: [52.8646, 87.0226],
+    floors: [],
+    description: "อาคารอเนกประสงค์ สร้างบนพื้นที่รวมของอาคาร 4 และ 17 เดิม",
+  },
+  // bldg17 — สมาคมผู้ปกครอง
+  {
+    id: "bldg17",
+    nameTH: "สมาคมผู้ปกครอง",
+    nameEN: "Parent Association",
+    type: "facilities",
+    subtitle: "ห้องสมาคมผู้ปกครอง",
+    tl: [33.9402, 8.9931],
+    tr: [51.0557, 8.9931],
+    bl: [33.9402, 16.9543],
+    br: [51.0557, 16.9543],
+    floors: [],
+    description: "ห้องสมาคมผู้ปกครอง",
+  },
+  // security_house_1 — ป้อมรักษาความปลอดภัย ซ้าย
+  {
+    id: "security_house_1",
+    nameTH: "ป้อมรักษาความปลอดภัย ซ้าย",
+    nameEN: "Security Booth (Left)",
+    type: "facilities",
+    subtitle: "ป้อมรักษาความปลอดภัย (ฝั่งซ้าย)",
+    tl: [4.1667, 50.9114],
+    tr: [7.8125, 50.9114],
+    bl: [4.1667, 55.5411],
+    br: [7.8125, 55.5411],
+  },
+];
+
+const BUILDING_TYPES = {
+  academic: {
+    roofStroke: "oklch(0.62 0.072 158)",
+    roofFill: "oklch(0.62 0.072 158 / 0.12)",
+    labelColor: "oklch(0.62 0.072 158)",
+    listColor: "oklch(0.75 0.072 158)",
+    listLabel: "\u0E2D\u0E32\u0E04\u0E32\u0E23\u0E40\u0E23\u0E35\u0E22\u0E19",
+  },
+  dormitory: {
+    roofStroke: "oklch(0.5 0.062 176)",
+    roofFill: "oklch(0.5 0.062 176 / 0.12)",
+    labelColor: "oklch(0.5 0.062 176)",
+    listColor: "oklch(0.7 0.062 176)",
+    listLabel: "\u0E2B\u0E2D\u0E1E\u0E31\u0E01",
+  },
+  sports: {
+    roofStroke: "oklch(0.85 0.112 99)",
+    roofFill: "oklch(0.85 0.112 99 / 0.12)",
+    labelColor: "oklch(0.85 0.112 99)",
+    listColor: "oklch(0.88 0.112 99)",
+    listLabel: "\u0E01\u0E35\u0E2C\u0E32",
+  },
+  facilities: {
+    roofStroke: "oklch(0.6 0 0)",
+    roofFill: "oklch(0.6 0 0 / 0.12)",
+    labelColor: "oklch(0.6 0 0)",
+    listColor: "oklch(0.75 0 0)",
+    listLabel: "\u0E2A\u0E34\u0E48\u0E07\u0E2D\u0E33\u0E19\u0E27\u0E22\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E30\u0E14\u0E27\u0E01",
+  },
+};
+
+const VALID_BUILDING_TYPES = Object.freeze(Object.keys(BUILDING_TYPES));
+BUILDINGS.forEach(function (building) {
+  if (!VALID_BUILDING_TYPES.includes(building.type)) {
+    console.error(
+      "Building " + building.id + " has unknown type '" + building.type +
+      "'. Valid types: " + VALID_BUILDING_TYPES.join(", ")
+    );
+  }
+});
+
+// Non-building areas — text labels only
+const LABELS = [
+  { id:"football_field",   text:"สนามฟุตบอล",      tl:[8.3318,16.9056], tr:[51.0432,16.9056], bl:[8.3318,49.9883],   br:[51.0432,49.9883] },
+  { id:"futsal_field",     text:"สนามฟุตซอล",      tl:[60.4167,23.15],  tr:[74.8514,23.15],   bl:[60.4167,41.6359],  br:[74.8514,41.6359] },
+  { id:"basketball_court", text:"สนามบาสเกตบอล",   tl:[60.9375,54.6151], tr:[76.0417,54.6151], bl:[60.9375,70.3559],  br:[76.0417,70.3559] },
+  { id:"stand",            text:"แสตนสี",           tl:[14.5833,9.0353],  tr:[33.9402,9.0353],  bl:[14.5833,16.9546],  br:[33.9402,16.9546] },
+];
+
+/* ===== Render Buildings ===== */
+
+function renderBuildings() {
+  const mapElement = document.getElementById("mapEl");
+  if (!mapElement) return;
+
+  BUILDINGS.forEach(function (building) {
+    const width = building.tr[0] - building.tl[0];
+    const height = building.bl[1] - building.tl[1];
+
+    const buildingNumberMatch = building.id.match(/^bldg(\d+)$/);
+
+    const element = document.createElement("div");
+    element.className = "building building-" + building.type;
+    element.style.left = building.tl[0] + "%";
+    element.style.top = building.tl[1] + "%";
+    element.style.width = width + "%";
+    element.style.height = height + "%";
+    element.dataset.id = building.id;
+
+    const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(SVG_NAMESPACE, "svg");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
+
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+
+    const rect = document.createElementNS(SVG_NAMESPACE, "rect");
+    rect.setAttribute("x", "1.5");
+    rect.setAttribute("y", "1.5");
+    rect.setAttribute("width", "97");
+    rect.setAttribute("height", "97");
+    rect.setAttribute("fill", typeConfig.roofFill);
+    rect.setAttribute("stroke", typeConfig.roofStroke);
+    rect.setAttribute("stroke-width", "2");
+    rect.setAttribute("rx", "1");
+    svg.appendChild(rect);
+
+    // Roof: ridge runs along long side, gable triangles on short sides
+    const isLandscape = width >= height;
+    const gableInset = 25; // gable peak inset from short edge (%)
+
+    if (isLandscape) {
+      // Ridge horizontal, gables at left / right edges
+      const gableLeft = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableLeft.setAttribute("points", "0,5 " + gableInset + ",50 0,95");
+      gableLeft.setAttribute("fill", "none");
+      gableLeft.setAttribute("stroke", typeConfig.roofStroke);
+      gableLeft.setAttribute("stroke-width", "1");
+      gableLeft.setAttribute("opacity", "0.35");
+      svg.appendChild(gableLeft);
+
+      const gableRight = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableRight.setAttribute("points", "100,5 " + (100 - gableInset) + ",50 100,95");
+      gableRight.setAttribute("fill", "none");
+      gableRight.setAttribute("stroke", typeConfig.roofStroke);
+      gableRight.setAttribute("stroke-width", "1");
+      gableRight.setAttribute("opacity", "0.35");
+      svg.appendChild(gableRight);
+
+      const ridge = document.createElementNS(SVG_NAMESPACE, "line");
+      ridge.setAttribute("x1", gableInset); ridge.setAttribute("y1", "50");
+      ridge.setAttribute("x2", 100 - gableInset); ridge.setAttribute("y2", "50");
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
+      ridge.setAttribute("stroke-width", "1.2");
+      ridge.setAttribute("opacity", "0.5");
+      svg.appendChild(ridge);
+
+      // Slope lines from ridge to top / bottom edges
+      const slopes = [
+        [30, 47, 30, 18], [40, 47, 40, 14], [60, 47, 60, 14], [70, 47, 70, 18],
+        [30, 53, 30, 82], [40, 53, 40, 86], [60, 53, 60, 86], [70, 53, 70, 82],
+      ];
+      slopes.forEach(function (point) {
+        const line = document.createElementNS(SVG_NAMESPACE, "line");
+        line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
+        line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
+        line.setAttribute("stroke", typeConfig.roofStroke);
+        line.setAttribute("stroke-width", "0.6");
+        line.setAttribute("opacity", "0.25");
+        svg.appendChild(line);
+      });
+    } else {
+      // Ridge vertical, gables at top / bottom edges
+      const gableTop = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableTop.setAttribute("points", "5,0 50," + gableInset + " 95,0");
+      gableTop.setAttribute("fill", "none");
+      gableTop.setAttribute("stroke", typeConfig.roofStroke);
+      gableTop.setAttribute("stroke-width", "1");
+      gableTop.setAttribute("opacity", "0.35");
+      svg.appendChild(gableTop);
+
+      const gableBottom = document.createElementNS(SVG_NAMESPACE, "polyline");
+      gableBottom.setAttribute("points", "5,100 50," + (100 - gableInset) + " 95,100");
+      gableBottom.setAttribute("fill", "none");
+      gableBottom.setAttribute("stroke", typeConfig.roofStroke);
+      gableBottom.setAttribute("stroke-width", "1");
+      gableBottom.setAttribute("opacity", "0.35");
+      svg.appendChild(gableBottom);
+
+      const ridge = document.createElementNS(SVG_NAMESPACE, "line");
+      ridge.setAttribute("x1", "50"); ridge.setAttribute("y1", gableInset);
+      ridge.setAttribute("x2", "50"); ridge.setAttribute("y2", 100 - gableInset);
+      ridge.setAttribute("stroke", typeConfig.roofStroke);
+      ridge.setAttribute("stroke-width", "1.2");
+      ridge.setAttribute("opacity", "0.5");
+      svg.appendChild(ridge);
+
+      const slopes = [
+        [47, 30, 18, 30], [47, 40, 14, 40], [47, 60, 14, 60], [47, 70, 18, 70],
+        [53, 30, 82, 30], [53, 40, 86, 40], [53, 60, 86, 60], [53, 70, 82, 70],
+      ];
+      slopes.forEach(function (point) {
+        const line = document.createElementNS(SVG_NAMESPACE, "line");
+        line.setAttribute("x1", point[0]); line.setAttribute("y1", point[1]);
+        line.setAttribute("x2", point[2]); line.setAttribute("y2", point[3]);
+        line.setAttribute("stroke", typeConfig.roofStroke);
+        line.setAttribute("stroke-width", "0.6");
+        line.setAttribute("opacity", "0.25");
+        svg.appendChild(line);
+      });
+    }
+
+    element.appendChild(svg);
+
+    const numberElement = document.createElement("span");
+    numberElement.className = "building-number";
+    numberElement.textContent = buildingNumberMatch ? buildingNumberMatch[1] : "";
+    const minimumDimension = Math.min(width, height);
+    numberElement.style.fontSize = minimumDimension * 0.25 + 0.1 + "vw";
+    element.appendChild(numberElement);
+
+    // Click
+    element.addEventListener("click", function () {
+      openPanel(building);
+    });
+
+    mapElement.appendChild(element);
+  });
+
+  LABELS.forEach(function (label) {
+    const width = label.tr[0] - label.tl[0];
+    const height = label.bl[1] - label.tl[1];
+    const element = document.createElement("div");
+    element.className = "building-label";
+    element.textContent = label.text;
+    element.style.left = label.tl[0] + "%";
+    element.style.top = label.tl[1] + "%";
+    element.style.width = width + "%";
+    element.style.height = height + "%";
+
+    mapElement.appendChild(element);
+  });
+
+  // Hover dim/highlight + info bar
+  const infoBarElement = document.getElementById("mapInfoBar");
+  const mapContainerElement = document.getElementById("mapContainer");
+
+  document.querySelectorAll(".building").forEach(function (element) {
+    element.addEventListener("mouseenter", function () {
+      mapContainerElement.classList.add("map-dimming");
+      element.classList.add("building-hovered");
+      const building = BUILDINGS.find(function (candidate) {
+        return candidate.id === element.dataset.id;
+      });
+      if (building) {
+        const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+        const colorValue = typeConfig.labelColor;
+        infoBarElement.textContent = "";
+
+        const categoryDot = document.createElement("span");
+        categoryDot.className = "info-bar-category-dot";
+        categoryDot.style.backgroundColor = colorValue;
+
+        const nameElement = document.createElement("span");
+        nameElement.className = "info-bar-name";
+        nameElement.style.color = colorValue;
+        nameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
+
+        const hintElement = document.createElement("span");
+        hintElement.className = "info-bar-hint";
+        hintElement.textContent = "\u2014 click for more information";
+
+        infoBarElement.appendChild(categoryDot);
+        infoBarElement.appendChild(nameElement);
+        infoBarElement.appendChild(hintElement);
+      }
+    });
+
+    element.addEventListener("mouseleave", function () {
+      element.classList.remove("building-hovered");
+      setTimeout(function () {
+        if (!document.querySelector(".building-hovered")) {
+          mapContainerElement.classList.remove("map-dimming");
+          infoBarElement.textContent = "";
+          const mainTextElement = document.createElement("span");
+          mainTextElement.className = "info-bar-main";
+          mainTextElement.textContent = "Mahidol Wittayanusorn School";
+          infoBarElement.appendChild(mainTextElement);
+        }
+      }, 80);
+    });
+  });
+}
+
+/* ===== Panel ===== */
+
+function openPanel(building) {
+  const panel = document.getElementById("panel");
+  const panelNameElement = document.getElementById("panelName");
+  const panelSubtitleElement = document.getElementById("panelSub");
+  const panelBodyElement = document.getElementById("panelBody");
+
+  if (!panel || !panelNameElement || !panelSubtitleElement || !panelBodyElement) {
+    console.warn("openPanel: required panel elements not found");
+    return;
+  }
+
+  panelNameElement.textContent = building.nameTH + " (" + building.nameEN + ")";
+  panelSubtitleElement.textContent = building.subtitle || "";
+  panelBodyElement.replaceChildren();
+
+  if (building.floors && building.floors.length > 0) {
+    building.floors.forEach(function (floor) {
+      const card = document.createElement("div");
+      card.className = "floor-card";
+
+      const title = document.createElement("div");
+      title.className = "floor-title";
+      title.textContent = floor.floor;
+      card.appendChild(title);
+
+      const rooms = document.createElement("div");
+      rooms.className = "floor-rooms";
+
+      floor.rooms.forEach(function (room) {
+        const pill = document.createElement("span");
+        pill.className = "room-pill";
+        pill.textContent = room;
+        rooms.appendChild(pill);
+      });
+      card.appendChild(rooms);
+      panelBodyElement.appendChild(card);
+    });
+  } else if (building.description) {
+    const descriptionElement = document.createElement("div");
+    descriptionElement.className = "panel-desc";
+    descriptionElement.textContent = building.description;
+    panelBodyElement.appendChild(descriptionElement);
+  }
+
+  panel.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closePanel() {
+  const panel = document.getElementById("panel");
+  if (!panel) {
+    console.warn("closePanel: #panel not found");
+    return;
+  }
+  panel.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+/* ===== Render Building List (below map) ===== */
+
+function renderBuildingList() {
+  const buildingListElement = document.getElementById("buildingList");
+  if (!buildingListElement) return;
+
+  BUILDINGS.forEach(function (building) {
+    const typeConfig = BUILDING_TYPES[building.type] || BUILDING_TYPES.facilities;
+    const colorValue = typeConfig.listColor;
+    const typeLabelText = typeConfig.listLabel;
+
+    const buildingNumberMatch = building.id.match(/^bldg(\d+)$/);
+    const displayNumber = buildingNumberMatch ? buildingNumberMatch[1] : "";
+
+    const listItem = document.createElement("div");
+    listItem.className = "building-list-item";
+
+    const buildingNumberElement = document.createElement("span");
+    buildingNumberElement.className = "building-list-number";
+    buildingNumberElement.style.color = colorValue;
+    buildingNumberElement.textContent = displayNumber;
+    listItem.appendChild(buildingNumberElement);
+
+    const nameElement = document.createElement("span");
+    nameElement.className = "building-list-name";
+    nameElement.textContent = building.nameTH;
+    listItem.appendChild(nameElement);
+
+    const nameEnglishElement = document.createElement("span");
+    nameEnglishElement.className = "building-list-name-en";
+    nameEnglishElement.textContent = building.nameEN;
+    listItem.appendChild(nameEnglishElement);
+
+    const typeElement = document.createElement("span");
+    typeElement.className = "building-list-type";
+    typeElement.style.color = colorValue;
+    typeElement.textContent = typeLabelText;
+    listItem.appendChild(typeElement);
+
+    buildingListElement.appendChild(listItem);
+  });
+}
+
+/* ===== Init ===== */
+
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) section.scrollIntoView({ behavior: "smooth" });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  renderBuildings();
+  renderBuildingList();
+
+  const panel = document.getElementById("panel");
+  const panelCloseButton = document.getElementById("panelClose");
+  const overlay = document.getElementById("panelOverlay");
+  const scrollToMap = document.getElementById("scrollToMap");
+
+  if (!panelCloseButton || !overlay || !panel) {
+    console.warn("DOMContentLoaded: required panel elements missing");
+    return;
+  }
+
+  panelCloseButton.addEventListener("click", closePanel);
+  overlay.addEventListener("click", closePanel);
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && panel.classList.contains("open")) {
+      closePanel();
+    }
+  });
+
+  if (scrollToMap) {
+    scrollToMap.addEventListener("click", function () {
+      scrollToSection("map");
+    });
+  }
+});
+
+</script>
+    </body>
+</html>
