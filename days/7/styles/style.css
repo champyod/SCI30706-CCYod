@@ -91,3 +91,82 @@ button:hover {
 .normal { background-color: #dcfce7; border-left-color: #22c55e; color: #15803d; } /* สีเขียว */
 .underweight { background-color: #fef9c3; border-left-color: #eab308; color: #854d0e; } /* สีเหลือง */
 .overweight { background-color: #fee2e2; border-left-color: #ef4444; color: #991b1b; } /* สีแดง */
+
+/* ปุ่มดูประวัติ */
+.history-btn {
+    width: 100%;
+    background-color: transparent;
+    color: #4f46e5;
+    border: 1.5px solid #4f46e5;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 14px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.history-btn:hover {
+    background-color: #4f46e5;
+    color: white;
+}
+
+/* รายการประวัติ */
+.history-list {
+    margin-top: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.history-item:hover {
+    background: #eef2ff;
+}
+
+.history-item .hi-date {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.history-item .hi-bmi {
+    font-weight: 700;
+    color: #4f46e5;
+}
+
+.history-item .hi-status {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.history-clear-btn {
+    width: 100%;
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+    padding: 7px;
+    font-size: 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 4px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.history-clear-btn:hover {
+    background: #fef2f2;
+}
