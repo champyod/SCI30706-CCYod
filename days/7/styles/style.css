@@ -1,0 +1,93 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #eef2f3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.bmi-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 320px;
+    text-align: center;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box; /* ทำให้ padding ไม่ล้นขอบ */
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #4338ca;
+}
+
+/* ส่วนแสดงผลลัพธ์ */
+.result-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f8fafc;
+    border-left: 5px solid #cbd5e1;
+}
+
+.result-box p {
+    margin: 5px 0;
+    color: #334155;
+}
+
+#bmiValue {
+    font-size: 24px;
+    color: #4f46e5;
+}
+
+#bmiStatus {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* คลาสสำหรับซ่อน/แสดงผลลัพธ์ และเปลี่ยนสีตามความอ้วนผอม */
+.hidden { display: none; }
+.normal { background-color: #dcfce7; border-left-color: #22c55e; color: #15803d; } /* สีเขียว */
+.underweight { background-color: #fef9c3; border-left-color: #eab308; color: #854d0e; } /* สีเหลือง */
+.overweight { background-color: #fee2e2; border-left-color: #ef4444; color: #991b1b; } /* สีแดง */
