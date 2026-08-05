@@ -137,6 +137,30 @@ label {
   color: var(--c-btn-primary-text);
 }
 
+/* theme picker */
+.theme-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-picker input[type="range"] {
+  flex: 1;
+  min-width: 6rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.theme-picker .swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--c-card-border);
+  padding: 0;
+  cursor: pointer;
+}
+
 /* chart canvas container */
 .chart-wrap {
   position: relative;
