@@ -25,11 +25,19 @@ jobs:
             echo "dir=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           fi
 
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: dist
           destination_dir: ${{ steps.dest.outputs.dir }}
           keep_files: true
           exclude_assets: '.github,.opencode,.gitignore'
