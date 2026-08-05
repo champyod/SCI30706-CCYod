@@ -161,6 +161,28 @@ label {
   cursor: pointer;
 }
 
+.theme-picker .swatch-active {
+  outline: 2px solid var(--s-primary);
+  outline-offset: 2px;
+}
+
+/* connection status badge dot */
+.status-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  margin-right: 0.375rem;
+}
+
+.status-dot-cloud {
+  background: var(--s-income);
+}
+
+.status-dot-local {
+  background: var(--s-expense);
+}
+
 /* chart canvas container */
 .chart-wrap {
   position: relative;
