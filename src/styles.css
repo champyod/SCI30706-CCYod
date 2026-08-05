@@ -265,11 +265,14 @@ label {
   background: var(--s-expense);
 }
 
-/* chart canvas container */
+/* chart canvas container: a definite height anchors `canvas { height:100% }`.
+   A min-height would leave the wrapper auto-sized, so the canvas's own
+   backing-store height (written by setupCanvas) feeds back into the layout
+   and grows unboundedly on every ResizeObserver tick. */
 .chart-wrap {
   position: relative;
   width: 100%;
-  min-height: 18rem;
+  height: 18rem;
 }
 
 .chart-wrap canvas {
@@ -299,12 +302,6 @@ label {
   border-radius: 999px;
 }
 
-/* mobile */
-@media (max-width: 40rem) {
-  #app {
-    padding: 0.75rem;
-  }
-
 /* layout sections */
 .charts-grid {
   display: grid;
@@ -323,7 +320,13 @@ label {
   margin-bottom: 1rem;
 }
 
-.card {
+/* mobile */
+@media (max-width: 40rem) {
+  #app {
+    padding: 0.75rem;
+  }
+
+  .card {
     padding: 0.75rem;
   }
 
