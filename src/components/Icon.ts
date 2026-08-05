@@ -130,7 +130,8 @@ const ICONS = {
 
 export type LucideIconName = keyof typeof ICONS;
 
-// Mirrors lucide's IconNode tuple shape; lucide does not export its node types.
+// Mirrors lucide's IconNode tuple shape; re-declared locally to allow recursive
+// nesting (lucide's exported IconNodeChild children are flat 2-tuples).
 type IconNode = readonly [
   tag: string,
   attrs: Record<string, string | number>,
