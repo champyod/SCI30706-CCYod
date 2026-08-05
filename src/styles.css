@@ -101,6 +101,88 @@ label {
   margin-bottom: 0.25rem;
 }
 
+/* mode selector */
+.mode-selector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--c-card-border);
+  border-radius: 0.375rem;
+  background: var(--c-input-bg);
+  color: var(--s-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.mode-active {
+  background: var(--s-primary);
+  border-color: var(--s-primary);
+  color: var(--c-btn-primary-text);
+}
+
+/* transaction form */
+.tx-form {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.tx-type-field {
+  display: flex;
+  gap: 0.75rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.tx-type-field legend {
+  margin-bottom: 0.25rem;
+}
+
+.tx-type-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.tx-type-option input {
+  accent-color: var(--s-primary);
+}
+
+.tx-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.form-error {
+  color: var(--s-expense);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.tx-delete-btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.tx-amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.tx-amount-income {
+  color: var(--s-income);
+}
+
+.tx-amount-expense {
+  color: var(--s-expense);
+}
+
 /* table */
 .table {
   width: 100%;
@@ -223,7 +305,25 @@ label {
     padding: 0.75rem;
   }
 
-  .card {
+/* layout sections */
+.charts-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tx-section {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.goal-section {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card {
     padding: 0.75rem;
   }
 
