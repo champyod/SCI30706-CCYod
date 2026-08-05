@@ -3,9 +3,23 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 
 const OUT_DIR = "dist";
-const MAIN_ENTRY = "src/main.ts";
-const HTML_TEMPLATE = "src/index.html";
+const MAIN_ENTRY = "src/main.tsx";
 const STYLE_SHEET = "src/styles.css";
+
+// HTML is generated in code — the built index.html is the only HTML artifact.
+const HTML_SHELL = `<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinGoal</title>
+  <style>%STYLE%</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>%SCRIPT%</script>
+</body>
+</html>`;
 
 // The entry path is repo-root-relative, so the script only works from the root.
 function assertRepoRoot(): void {
@@ -58,13 +72,12 @@ async function main(): Promise<void> {
   });
 
   const jsPath = findJsOutput(result.outputs);
-  const [script, style, template] = await Promise.all([
+  const [script, style] = await Promise.all([
     readText(jsPath),
     readText(STYLE_SHEET),
-    readText(HTML_TEMPLATE),
   ]);
 
-  const html = inlineInto(template, script, style);
+  const html = inlineInto(HTML_SHELL, script, style);
   await writeFile(`${OUT_DIR}/index.html`, html);
   console.log(`built ${OUT_DIR}/index.html (${Buffer.byteLength(html)} bytes)`);
 }
