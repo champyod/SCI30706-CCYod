@@ -174,6 +174,27 @@ label {
   height: 100%;
 }
 
+/* chart legends (dot color is set inline from a resolved token) */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.chart-legend-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+}
+
 /* mobile */
 @media (max-width: 40rem) {
   #app {
