@@ -112,8 +112,7 @@ function drawPolyline(
   ctx.beginPath();
   for (let index = 0; index < pointCount; index += 1) {
     const x = pointCount > 1 ? index * stepX : plotWidth / 2;
-    const ratio = maxValue > 0 ? (values[index] ?? 0) / maxValue : 0;
-    const y = plotHeight - ratio * plotHeight;
+    const y = pointY(values[index] ?? 0, maxValue, plotHeight);
     if (index === 0) {
       ctx.moveTo(x, y);
     } else {
@@ -121,12 +120,24 @@ function drawPolyline(
     }
   }
   if (pointCount === 1) {
-    // A single point cannot form a line; draw a dot instead.
-    ctx.arc(plotWidth / 2, plotHeight, DOT_RADIUS, 0, TWO_PI);
+    // A single point cannot form a line; draw a dot at the value's position.
+    ctx.arc(
+      plotWidth / 2,
+      pointY(values[0] ?? 0, maxValue, plotHeight),
+      DOT_RADIUS,
+      0,
+      TWO_PI,
+    );
     ctx.fill();
     return;
   }
   ctx.stroke();
+}
+
+// y coordinate of a value within the plot, from baseline (0) up to the top.
+function pointY(value: number, maxValue: number, plotHeight: number): number {
+  const ratio = maxValue > 0 ? value / maxValue : 0;
+  return plotHeight - ratio * plotHeight;
 }
 
 function buildLegend(incomeColor: string, expenseColor: string): HTMLElement {
