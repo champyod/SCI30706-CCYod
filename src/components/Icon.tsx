@@ -142,7 +142,6 @@ type IconNode = readonly [
   children?: readonly IconNode[],
 ];
 
-const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 const SVG_VIEWBOX = "0 0 24 24";
 const DEFAULT_ICON_SIZE = 20;
 const STROKE_WIDTH = 2;
@@ -180,47 +179,4 @@ function renderIconNode(node: IconNode, index: number): ReactElement {
   const [tag, attrs] = node;
   const children = node[2]?.map(renderIconNode) ?? [];
   return createElement(tag, { ...attrs, key: index }, ...children);
-}
-
-// Temporary bridge: Header.ts and QuoteBox.ts (PIVOT-C files) still call
-// renderIcon; kept until PIVOT-C rewrites them, then removed.
-export function renderIcon(name: LucideIconName, size = DEFAULT_ICON_SIZE): SVGElement {
-  const node = ICONS[name];
-  if (node === undefined) {
-    throw new Error(`Unknown icon name: ${name}`);
-  }
-  const svg = document.createElementNS(SVG_NAMESPACE, "svg");
-  setSvgAttributes(svg, size);
-  appendIconChildren(svg, node);
-  return svg;
-}
-
-function setSvgAttributes(svg: SVGElement, size: number): void {
-  svg.setAttribute("width", String(size));
-  svg.setAttribute("height", String(size));
-  svg.setAttribute("viewBox", SVG_VIEWBOX);
-  svg.setAttribute("fill", "none");
-  svg.setAttribute("stroke", "currentColor");
-  svg.setAttribute("stroke-width", String(STROKE_WIDTH));
-  svg.setAttribute("stroke-linecap", "round");
-  svg.setAttribute("stroke-linejoin", "round");
-  svg.setAttribute("aria-hidden", "true");
-}
-
-function appendIconChildren(svg: SVGElement, node: IconNode): void {
-  for (const child of node[2] ?? []) {
-    svg.appendChild(renderIconNodeDom(child));
-  }
-}
-
-function renderIconNodeDom(node: IconNode): SVGElement {
-  const [tag, attrs] = node;
-  const element = document.createElementNS(SVG_NAMESPACE, tag);
-  for (const [attrName, attrValue] of Object.entries(attrs)) {
-    element.setAttribute(attrName, String(attrValue));
-  }
-  for (const child of node[2] ?? []) {
-    element.appendChild(renderIconNodeDom(child));
-  }
-  return element;
 }
