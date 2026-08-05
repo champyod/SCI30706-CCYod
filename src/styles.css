@@ -296,3 +296,9 @@ label {
     grid-template-columns: 1fr;
   }
 }
+
+/* animated icon wrapper: inline-flex keeps the hover-scale origin centered */
+.animated-icon {
+  display: inline-flex;
+  align-items: center;
+}
