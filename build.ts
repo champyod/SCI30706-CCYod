@@ -53,9 +53,14 @@ function inlineInto(
   script: string,
   style: string
 ): string {
+  // Inline <script> content ends at the first literal "</script>" — react-dom
+  // ships one inside a string — so escape it or the element truncates and the
+  // rest of the bundle renders as visible text. "<\/script>" is the same bytes
+  // to JS but doesn't terminate the HTML element.
+  const safeScript = script.replaceAll("</script>", "<\\/script>");
   // Function form of replace avoids interpreting "$" sequences in the bundle.
   return template
-    .replaceAll("%SCRIPT%", () => script)
+    .replaceAll("%SCRIPT%", () => safeScript)
     .replaceAll("%STYLE%", () => style);
 }
 

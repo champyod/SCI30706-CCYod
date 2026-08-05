@@ -1,6 +1,6 @@
 import { build } from "bun";
 import { readFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
+import { statSync } from "node:fs";
 
 const PORT = 3000;
 const SRC_PREFIX = "/src/";
@@ -27,7 +27,12 @@ function resolveSrcPath(pathname: string): string | null {
   if (!pathname.startsWith(SRC_PREFIX)) {
     return null;
   }
-  const decoded = decodeURIComponent(pathname);
+  let decoded: string;
+  try {
+    decoded = decodeURIComponent(pathname);
+  } catch {
+    return null;
+  }
   if (decoded.includes("..")) {
     return null;
   }
@@ -36,7 +41,7 @@ function resolveSrcPath(pathname: string): string | null {
 
 async function serveModule(pathname: string): Promise<Response> {
   const filePath = resolveSrcPath(pathname);
-  if (!filePath || !existsSync(filePath)) {
+  if (!filePath || !statSync(filePath, { throwIfNoEntry: false })?.isFile()) {
     return new Response("not found", { status: 404 });
   }
   // Bun.build resolves bare imports (react, lib/) and transpiles JSX to JS.
@@ -63,6 +68,9 @@ async function serveStyle(): Promise<Response> {
 }
 
 async function handleRequest(request: Request): Promise<Response> {
+  if (request.method !== "GET") {
+    return new Response("method not allowed", { status: 405 });
+  }
   const { pathname } = new URL(request.url);
   if (pathname === "/") {
     return new Response(DEV_HTML_SHELL, {
