@@ -1,0 +1,167 @@
+/* Design tokens: primitive -> semantic -> component. Colors live ONLY in :root. */
+
+:root {
+  /* primitive */
+  --p-green: oklch(0.62 0.072 158);
+  --p-red: oklch(0.6 0.19 25);
+  --p-surface: oklch(0.97 0.01 0);
+  --p-text: oklch(0.2 0.02 0);
+  --p-primary: oklch(0.55 0.15 262);
+
+  /* semantic */
+  --s-income: var(--p-green);
+  --s-expense: var(--p-red);
+  --s-surface: var(--p-surface);
+  --s-text: var(--p-text);
+  --s-primary: var(--p-primary);
+
+  /* component */
+  --c-card-bg: var(--s-surface);
+  --c-card-border: oklch(0.88 0.02 0);
+  --c-input-bg: oklch(0.95 0.01 0);
+  --c-btn-primary-bg: var(--s-primary);
+  --c-btn-primary-text: oklch(0.98 0 0);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, "Noto Sans Thai", "Tahoma", sans-serif;
+  background: var(--s-surface);
+  color: var(--s-text);
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 0.5rem;
+  line-height: 1.25;
+}
+
+/* cards */
+.card {
+  background: var(--c-card-bg);
+  border: 1px solid var(--c-card-border);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.125rem;
+  margin-bottom: 0.75rem;
+}
+
+/* buttons */
+.btn {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--c-card-border);
+  border-radius: 0.375rem;
+  background: var(--c-input-bg);
+  color: var(--s-text);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--c-btn-primary-bg);
+  border-color: var(--c-btn-primary-bg);
+  color: var(--c-btn-primary-text);
+}
+
+/* form fields */
+input,
+select {
+  font: inherit;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--c-card-border);
+  border-radius: 0.375rem;
+  background: var(--c-input-bg);
+  color: var(--s-text);
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--s-primary);
+  outline-offset: 1px;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0.625rem;
+  text-align: left;
+  border-bottom: 1px solid var(--c-card-border);
+}
+
+.table th {
+  font-weight: 600;
+}
+
+/* badge */
+.badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-income {
+  background: var(--s-income);
+  color: var(--c-btn-primary-text);
+}
+
+.badge-expense {
+  background: var(--s-expense);
+  color: var(--c-btn-primary-text);
+}
+
+/* chart canvas container */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 18rem;
+}
+
+.chart-wrap canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* mobile */
+@media (max-width: 40rem) {
+  #app {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.375rem 0.5rem;
+  }
+}
