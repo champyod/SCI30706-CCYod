@@ -17,6 +17,7 @@ export function GoalProgressCard({ goal }: GoalProgressCardProps): ReactElement 
       <div
         className="progress"
         role="progressbar"
+        aria-label={goal.name}
         aria-valuemin={0}
         aria-valuemax={BAR_MAX_PERCENT}
         aria-valuenow={percent}
