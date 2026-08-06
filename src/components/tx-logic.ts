@@ -71,11 +71,13 @@ export function parseTxForm(form: TxFormState): TxFormResult {
 }
 
 export function txBadgeClass(type: TxType): string {
-  return type === "income" ? "badge badge-income" : "badge badge-expense";
+  return type === "income"
+    ? "inline-block rounded-full bg-green-light px-2 py-0.5 text-xs font-semibold text-green-dark"
+    : "inline-block rounded-full bg-expense-light px-2 py-0.5 text-xs font-semibold text-expense";
 }
 
 export function txAmountClass(type: TxType): string {
-  return type === "income" ? "tx-amount tx-amount-income" : "tx-amount tx-amount-expense";
+  return type === "income" ? "font-semibold text-green-dark" : "font-semibold text-expense";
 }
 
 // Income renders a "+" prefix, expense a "−" (U+2212) prefix, before the
