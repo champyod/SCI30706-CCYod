@@ -15,6 +15,12 @@ const PALETTE_KEYS: Array<keyof Palette> = [
   "expense",
 ];
 
+function oklchHue(color: string): number {
+  const inside = /oklch\(([^)]+)\)/.exec(color)?.[1] ?? "";
+  const parts = inside.trim().split(/\s+/);
+  return Number(parts[2]);
+}
+
 describe("contrastRatio", () => {
   test("white on black is roughly 21:1", () => {
     expect(contrastRatio("white", "black")).toBeGreaterThan(20);
@@ -26,38 +32,34 @@ describe("contrastRatio", () => {
 });
 
 describe("generatePalette", () => {
-  test("different hues produce different primaries", () => {
+  test("differs by hue", () => {
     expect(generatePalette(150).primary).not.toBe(generatePalette(260).primary);
   });
 
-  test("returns every key as a non-empty oklch string", () => {
+  test("produces a complete oklch palette", () => {
     const palette = generatePalette(200);
     for (const key of PALETTE_KEYS) {
-      expect(palette[key].length).toBeGreaterThan(0);
       expect(palette[key]).toMatch(/^oklch\(/);
     }
   });
-});
 
-describe("palette contrast", () => {
-  test("onPrimary reads on primary (>= 4.5)", () => {
+  test("contrast gates hold", () => {
     const palette = generatePalette(200);
     expect(contrastRatio(palette.onPrimary, palette.primary)).toBeGreaterThanOrEqual(4.5);
-  });
-
-  test("onSurface reads on surface (>= 4.5)", () => {
-    const palette = generatePalette(200);
     expect(contrastRatio(palette.onSurface, palette.surface)).toBeGreaterThanOrEqual(4.5);
-  });
-
-  test("income reads on surface (>= 4.5)", () => {
-    const palette = generatePalette(200);
     expect(contrastRatio(palette.income, palette.surface)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(palette.expense, palette.surface)).toBeGreaterThanOrEqual(4.5);
   });
 
-  test("expense reads on surface (>= 4.5)", () => {
-    const palette = generatePalette(200);
-    expect(contrastRatio(palette.expense, palette.surface)).toBeGreaterThanOrEqual(4.5);
+  test("income stays green and expense stays red for representative hues", () => {
+    for (const hue of [150, 200, 260, 350, 65]) {
+      const palette = generatePalette(hue);
+      const incomeHue = oklchHue(palette.income);
+      const expenseHue = oklchHue(palette.expense);
+      expect(incomeHue).toBeGreaterThanOrEqual(95);
+      expect(incomeHue).toBeLessThanOrEqual(170);
+      expect(expenseHue >= 330 || expenseHue <= 30).toBe(true);
+    }
   });
 });
 

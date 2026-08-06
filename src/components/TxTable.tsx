@@ -87,7 +87,7 @@ function buildColumns(onDelete: (id: string) => void): ColumnDef<Tx, any>[] {
       cell: ({ row }) => (
         <button
           type="button"
-          className="cursor-pointer rounded-full p-1.5 text-ink-dim transition-colors hover:bg-expense-light hover:text-expense"
+          className="cursor-pointer rounded-full p-1.5 text-ink-dim transition-colors hover:bg-expense-light hover:text-expense-dark"
           aria-label="ลบรายการ"
           onClick={() => onDelete(row.original.id)}
         >
@@ -160,7 +160,7 @@ export function TxTable({ transactions, pendingIds, onDelete }: TxTableProps): R
               pendingIds.has(row.original.id) ? (
                 <SkeletonRow key={row.id} colCount={headerGroup?.headers.length ?? 0} />
               ) : (
-                <tr key={row.id} className="border-b border-edge/60 hover:bg-aqua-light/50">
+                <tr key={row.id} className="border-b border-edge/60 hover:bg-edge/40">
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-3 py-2">
                       {renderCellContent(cell)}
@@ -180,7 +180,7 @@ function SkeletonRow({ colCount }: { colCount: number }): ReactElement {
   return (
     <tr className="animate-pulse border-b border-edge/60">
       <td colSpan={colCount} className="px-3 py-2">
-        <div className="h-4 rounded bg-aqua-light" />
+        <div className="h-4 rounded bg-edge" />
       </td>
     </tr>
   );

@@ -14,7 +14,6 @@ import type { GoalFormValues, GoalInput } from "../src/components/goal-form-logi
 const VALID_VALUES: GoalFormValues = {
   name: "Emergency Fund",
   target: "5000",
-  current: "2500",
   mode: "daily",
   duration: "30",
 };
@@ -22,7 +21,7 @@ const VALID_VALUES: GoalFormValues = {
 const EXPECTED_INPUT: GoalInput = {
   name: "Emergency Fund",
   target: 5000,
-  current: 2500,
+  current: 0,
   mode: "daily",
   duration: 30,
   position: 0,
@@ -62,16 +61,6 @@ describe("validateGoal", () => {
     expect(result).toEqual({ error: "Target must be a positive number." });
   });
 
-  test("rejects non-numeric current", () => {
-    const result = validateGoal({ ...VALID_VALUES, current: "-5" });
-    expect(result).toEqual({ error: "Current must be a positive number." });
-  });
-
-  test("rejects current above target", () => {
-    const result = validateGoal({ ...VALID_VALUES, current: "6000" });
-    expect(result).toEqual({ error: "Current cannot exceed target." });
-  });
-
   test("rejects non-positive duration", () => {
     const result = validateGoal({ ...VALID_VALUES, duration: "0" });
     expect(result).toEqual({ error: "Duration must be a positive whole number of days." });
@@ -100,14 +89,14 @@ describe("submitGoal", () => {
 });
 
 describe("GoalForm", () => {
-  test("renders all five controlled inputs", () => {
+  test("renders all four controlled inputs", () => {
     const markup = renderToString(<GoalForm onSubmit={mock((_i: GoalInput): void => {})} />);
-    expect(markup).toContain('<form class="goal-form"');
+    expect(markup).toContain("<form");
     expect(markup).toContain('name="name"');
     expect(markup).toContain('name="target"');
-    expect(markup).toContain('name="current"');
     expect(markup).toContain('name="mode"');
     expect(markup).toContain('name="duration"');
+    expect(markup).not.toContain('name="current"');
   });
 
   test("renders daily and weekly mode options", () => {

@@ -6,7 +6,6 @@ export type GoalInput = Omit<Goal, "id" | "createdAt">;
 export interface GoalFormValues {
   name: string;
   target: string;
-  current: string;
   mode: GoalMode;
   duration: string;
 }
@@ -16,7 +15,6 @@ export const DEFAULT_MODE: GoalMode = "daily";
 export const EMPTY_FORM_VALUES: GoalFormValues = {
   name: "",
   target: "",
-  current: "",
   mode: DEFAULT_MODE,
   duration: "",
 };
@@ -24,8 +22,6 @@ export const EMPTY_FORM_VALUES: GoalFormValues = {
 const ERRORS = {
   nameRequired: "Name is required.",
   targetInvalid: "Target must be a positive number.",
-  currentInvalid: "Current must be a positive number.",
-  currentOverTarget: "Current cannot exceed target.",
   durationInvalid: "Duration must be a positive whole number of days.",
 } as const;
 
@@ -61,18 +57,11 @@ export function validateGoal(
   if (target === null) {
     return { error: ERRORS.targetInvalid };
   }
-  const current = parseAmount(values.current);
-  if (current === null) {
-    return { error: ERRORS.currentInvalid };
-  }
-  if (current > target) {
-    return { error: ERRORS.currentOverTarget };
-  }
   const duration = parseDuration(values.duration);
   if (duration === null) {
     return { error: ERRORS.durationInvalid };
   }
-  return { name, target, current, mode: values.mode, duration, position: 0 };
+  return { name, target, current: 0, mode: values.mode, duration, position: 0 };
 }
 
 export function submitGoal(

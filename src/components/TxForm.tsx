@@ -12,8 +12,8 @@ const TX_TYPES: readonly TxType[] = ["income", "expense"];
 const AMOUNT_INPUT_HINT = "เช่น 500 หรือ 1250.50";
 
 const TYPE_PILL_CLASSES: Record<TxType, string> = {
-  income: "border-green bg-green-light text-green-dark",
-  expense: "border-expense bg-expense-light text-expense",
+  income: "border-income bg-income-light text-income-dark",
+  expense: "border-expense bg-expense-light text-expense-dark",
 };
 
 const INPUT_CLASS =

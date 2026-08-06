@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent, ReactElement } from "react";
 import type { GoalFormValues, GoalInput } from "./goal-form-logic";
 import { EMPTY_FORM_VALUES, parseMode, submitGoal } from "./goal-form-logic";
 
-const TEXT_FIELDS = ["name", "target", "current", "duration"] as const;
+const TEXT_FIELDS = ["name", "target", "duration"] as const;
 type TextField = (typeof TEXT_FIELDS)[number];
 
 const INPUT_CLASS =
@@ -27,10 +27,6 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
 
   function handleTargetChange(event: ChangeEvent<HTMLInputElement>): void {
     updateTextField("target", event.target.value);
-  }
-
-  function handleCurrentChange(event: ChangeEvent<HTMLInputElement>): void {
-    updateTextField("current", event.target.value);
   }
 
   function handleDurationChange(event: ChangeEvent<HTMLInputElement>): void {
@@ -78,17 +74,6 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
           className={`${INPUT_CLASS} mt-1`}
           value={values.target}
           onChange={handleTargetChange}
-        />
-      </label>
-      <label className="text-sm font-medium text-ink">
-        Current (Baht)
-        <input
-          type="text"
-          name="current"
-          inputMode="decimal"
-          className={`${INPUT_CLASS} mt-1`}
-          value={values.current}
-          onChange={handleCurrentChange}
         />
       </label>
       <label className="text-sm font-medium text-ink">
