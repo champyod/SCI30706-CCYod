@@ -3,8 +3,10 @@ import type { Goal, Settings, Tx } from "../src/lib/types";
 import {
   applyDeduction,
   currentBalance,
+  freeBalance,
   getBalance,
   goalProgress,
+  goalsInvested,
   sumByType,
 } from "../src/lib/finance";
 
@@ -17,6 +19,30 @@ function makeTx(partial: Partial<Tx>): Tx {
     note: "",
     date: "2026-08-05",
     createdAt: "2026-08-05T00:00:00Z",
+    ...partial,
+  };
+}
+
+function makeGoal(partial: Partial<Goal> = {}): Goal {
+  return {
+    id: "g1",
+    name: "savings",
+    target: 100,
+    current: 0,
+    mode: "daily",
+    duration: 30,
+    position: 0,
+    createdAt: "2026-08-05T00:00:00Z",
+    ...partial,
+  };
+}
+
+function makeSettings(partial: Partial<Settings> = {}): Settings {
+  return {
+    savingsBalance: 0,
+    totalDeducted: 0,
+    autoInvestPercent: 0,
+    autoSavePercent: 0,
     ...partial,
   };
 }
@@ -76,13 +102,48 @@ describe("currentBalance", () => {
       makeTx({ id: "a", type: "income", amount: 1000 }),
       makeTx({ id: "b", type: "expense", amount: 300 }),
     ];
-    const settings: Settings = { mode: "daily", savingsBalance: 15, totalDeducted: 15 };
+    const settings = makeSettings({ savingsBalance: 15, totalDeducted: 15 });
     expect(currentBalance(txs, settings)).toBe(700);
   });
 
   test("returns 0 for empty txs and default settings", () => {
-    const settings: Settings = { mode: "weekly", savingsBalance: 0, totalDeducted: 0 };
-    expect(currentBalance([], settings)).toBe(0);
+    expect(currentBalance([], makeSettings())).toBe(0);
+  });
+});
+
+describe("goalsInvested", () => {
+  test("sums current across goals", () => {
+    const goals = [
+      makeGoal({ id: "a", current: 100 }),
+      makeGoal({ id: "b", current: 250.5 }),
+    ];
+    expect(goalsInvested(goals)).toBe(350.5);
+  });
+
+  test("returns 0 for an empty list", () => {
+    expect(goalsInvested([])).toBe(0);
+  });
+});
+
+describe("freeBalance", () => {
+  test("income minus expense minus goals minus savings", () => {
+    const txs: Tx[] = [
+      makeTx({ id: "a", type: "income", amount: 5000 }),
+      makeTx({ id: "b", type: "expense", amount: 1200.5 }),
+    ];
+    const goals = [makeGoal({ id: "a", current: 1500 })];
+    const settings = makeSettings({ savingsBalance: 400 });
+    expect(freeBalance(txs, goals, settings)).toBe(1899.5);
+  });
+
+  test("ignores legacy totalDeducted", () => {
+    const txs: Tx[] = [makeTx({ id: "a", type: "income", amount: 1000 })];
+    const settings = makeSettings({ savingsBalance: 100, totalDeducted: 300 });
+    expect(freeBalance(txs, [], settings)).toBe(900);
+  });
+
+  test("returns 0 for empty txs, goals, and default settings", () => {
+    expect(freeBalance([], [], makeSettings())).toBe(0);
   });
 });
 
