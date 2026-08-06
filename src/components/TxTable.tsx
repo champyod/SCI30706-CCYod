@@ -12,6 +12,7 @@ import type { Tx } from "../lib/types";
 
 export interface TxTableProps {
   transactions: Tx[];
+  pendingIds: Set<string>;
   onDelete: (id: string) => void;
 }
 
@@ -86,7 +87,7 @@ function buildColumns(onDelete: (id: string) => void): ColumnDef<Tx, any>[] {
       cell: ({ row }) => (
         <button
           type="button"
-          className="btn tx-delete-btn"
+          className="cursor-pointer rounded-full p-1.5 text-ink-dim transition-colors hover:bg-expense-light hover:text-expense"
           aria-label="ลบรายการ"
           onClick={() => onDelete(row.original.id)}
         >
@@ -118,7 +119,7 @@ function renderHeaderContent(header: Header<Tx, unknown>): ReactNode {
   return template ?? "";
 }
 
-export function TxTable({ transactions, onDelete }: TxTableProps): ReactElement {
+export function TxTable({ transactions, pendingIds, onDelete }: TxTableProps): ReactElement {
   const table = createTable({
     columns: buildColumns(onDelete),
     data: transactions,
@@ -131,31 +132,56 @@ export function TxTable({ transactions, onDelete }: TxTableProps): ReactElement 
   const headerGroup = table.getHeaderGroups()[0];
   const rows = table.getRowModel().rows;
   return (
-    <table className="table">
-      {headerGroup !== undefined && (
-        <thead>
-          <tr>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{renderHeaderContent(header)}</th>
-            ))}
-          </tr>
-        </thead>
-      )}
-      <tbody>
-        {rows.length === 0 ? (
-          <tr>
-            <td colSpan={headerGroup?.headers.length ?? 0}>{EMPTY_TABLE_MESSAGE}</td>
-          </tr>
-        ) : (
-          rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>{renderCellContent(cell)}</td>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-sm">
+        {headerGroup !== undefined && (
+          <thead>
+            <tr className="border-b border-edge text-left">
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className="px-3 py-2 font-semibold text-ink-dim">
+                  {renderHeaderContent(header)}
+                </th>
               ))}
             </tr>
-          ))
+          </thead>
         )}
-      </tbody>
-    </table>
+        <tbody>
+          {rows.length === 0 ? (
+            <tr>
+              <td
+                colSpan={headerGroup?.headers.length ?? 0}
+                className="px-3 py-6 text-center text-ink-dim"
+              >
+                {EMPTY_TABLE_MESSAGE}
+              </td>
+            </tr>
+          ) : (
+            rows.map((row) =>
+              pendingIds.has(row.original.id) ? (
+                <SkeletonRow key={row.id} colCount={headerGroup?.headers.length ?? 0} />
+              ) : (
+                <tr key={row.id} className="border-b border-edge/60 hover:bg-aqua-light/50">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-3 py-2">
+                      {renderCellContent(cell)}
+                    </td>
+                  ))}
+                </tr>
+              ),
+            )
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SkeletonRow({ colCount }: { colCount: number }): ReactElement {
+  return (
+    <tr className="animate-pulse border-b border-edge/60">
+      <td colSpan={colCount} className="px-3 py-2">
+        <div className="h-4 rounded bg-aqua-light" />
+      </td>
+    </tr>
   );
 }

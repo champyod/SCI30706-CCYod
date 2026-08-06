@@ -8,9 +8,9 @@ const EXPENSE_LABEL = "Expense";
 const BALANCE_LABEL = "Balance";
 
 const TONE_CLASSES = {
-  income: "stat-income",
-  expense: "stat-expense",
-  balance: "",
+  income: "text-green-dark",
+  expense: "text-expense",
+  balance: "text-ink",
 } as const;
 
 interface StatCardData {
@@ -28,7 +28,11 @@ export function SummaryCard({ transactions }: SummaryCardProps): ReactElement {
   const expense = sumByType(transactions, "expense");
   const balance = getBalance(income, expense);
   const cards = buildStatCards(income, expense, balance);
-  return <section className="summary-grid">{cards.map(createStatCard)}</section>;
+  return (
+    <section className="mb-4 grid gap-3 sm:grid-cols-3">
+      {cards.map(createStatCard)}
+    </section>
+  );
 }
 
 function buildStatCards(income: number, expense: number, balance: number): StatCardData[] {
@@ -40,11 +44,17 @@ function buildStatCards(income: number, expense: number, balance: number): StatC
 }
 
 function createStatCard(card: StatCardData, index: number): ReactElement {
-  const className = card.toneClass.length > 0 ? `stat-card ${card.toneClass}` : "stat-card";
   return (
-    <div key={index} className={className}>
-      <span className="stat-label">{card.label}</span>
-      <strong className="stat-value">{card.value}</strong>
+    <div
+      key={index}
+      className="rounded-2xl border border-edge bg-card px-4 py-3 shadow-sm"
+    >
+      <span className="block text-xs font-medium uppercase tracking-wide text-ink-dim">
+        {card.label}
+      </span>
+      <strong className={`mt-1 block text-xl font-bold ${card.toneClass}`}>
+        {card.value}
+      </strong>
     </div>
   );
 }

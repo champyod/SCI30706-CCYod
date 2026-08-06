@@ -6,6 +6,9 @@ import { EMPTY_FORM_VALUES, parseMode, submitGoal } from "./goal-form-logic";
 const TEXT_FIELDS = ["name", "target", "current", "duration"] as const;
 type TextField = (typeof TEXT_FIELDS)[number];
 
+const INPUT_CLASS =
+  "w-full rounded-lg border border-edge bg-surface px-3 py-2 text-ink outline-none transition-colors focus:border-primary";
+
 export interface GoalFormProps {
   onSubmit: (input: GoalInput) => void;
 }
@@ -51,60 +54,72 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
   }
 
   return (
-    // noValidate keeps native browser validation out so parseAmount/parseDuration own the error text.
-    <form className="goal-form" onSubmit={handleSubmit} noValidate>
-      <label className="goal-form-field">
+    <form
+      className="mb-4 grid gap-3 rounded-xl border border-edge bg-card p-4 sm:grid-cols-2"
+      onSubmit={handleSubmit}
+      noValidate
+    >
+      <label className="text-sm font-medium text-ink">
         Name
         <input
           type="text"
           name="name"
+          className={`${INPUT_CLASS} mt-1`}
           value={values.name}
           onChange={handleNameChange}
         />
       </label>
-      <label className="goal-form-field">
+      <label className="text-sm font-medium text-ink">
         Target (Baht)
         <input
           type="text"
           name="target"
           inputMode="decimal"
+          className={`${INPUT_CLASS} mt-1`}
           value={values.target}
           onChange={handleTargetChange}
         />
       </label>
-      <label className="goal-form-field">
+      <label className="text-sm font-medium text-ink">
         Current (Baht)
         <input
           type="text"
           name="current"
           inputMode="decimal"
+          className={`${INPUT_CLASS} mt-1`}
           value={values.current}
           onChange={handleCurrentChange}
         />
       </label>
-      <label className="goal-form-field">
+      <label className="text-sm font-medium text-ink">
         Mode
-        <select name="mode" value={values.mode} onChange={handleModeChange}>
+        <select name="mode" className={`${INPUT_CLASS} mt-1`} value={values.mode} onChange={handleModeChange}>
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
         </select>
       </label>
-      <label className="goal-form-field">
+      <label className="text-sm font-medium text-ink">
         Duration (days)
         <input
           type="text"
           name="duration"
           inputMode="numeric"
+          className={`${INPUT_CLASS} mt-1`}
           value={values.duration}
           onChange={handleDurationChange}
         />
       </label>
       {error !== null && (
-        <p className="goal-form-error" role="alert">
+        <p className="m-0 text-sm text-expense" role="alert">
           {error}
         </p>
       )}
-      <button type="submit">Add Goal</button>
+      <button
+        type="submit"
+        className="cursor-pointer rounded-lg bg-primary px-4 py-2 font-semibold text-on-primary transition-opacity hover:opacity-90 sm:col-span-2"
+      >
+        Add Goal
+      </button>
     </form>
   );
 }

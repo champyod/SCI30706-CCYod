@@ -23,7 +23,7 @@ export function ThemePicker({ hue, onHueChange }: ThemePickerProps): ReactElemen
   }
 
   return (
-    <div className="theme-picker">
+    <div className="flex items-center gap-2">
       <input
         type="range"
         min={MIN_HUE}
@@ -31,13 +31,18 @@ export function ThemePicker({ hue, onHueChange }: ThemePickerProps): ReactElemen
         step={HUE_STEP}
         value={hue}
         aria-label={RANGE_ARIA_LABEL}
+        className="h-1.5 w-24 cursor-pointer accent-primary"
         onChange={handleRangeChange}
       />
       {presetHues.map((presetHue) => (
         <button
           key={presetHue}
           type="button"
-          className={presetHue === hue ? "swatch swatch-active" : "swatch"}
+          className={`h-5 w-5 cursor-pointer rounded-full border-2 transition-transform hover:scale-110 ${
+            presetHue === hue
+              ? "border-ink shadow-md"
+              : "border-white/60 hover:border-white"
+          }`}
           style={{ backgroundColor: generatePalette(presetHue).primary }}
           aria-label={`Set hue to ${presetHue}`}
           aria-pressed={presetHue === hue}

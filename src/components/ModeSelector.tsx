@@ -37,7 +37,11 @@ export function modeIcon(mode: GoalMode): "CalendarDays" | "Target" {
 
 export function ModeSelector({ mode, onModeChange }: ModeSelectorProps): ReactElement {
   return (
-    <div className="mode-selector" role="group" aria-label="โหมดเป้าหมาย">
+    <div
+      className="mb-3 inline-flex gap-1 rounded-full border border-edge bg-surface p-1"
+      role="group"
+      aria-label="โหมดเป้าหมาย"
+    >
       {MODE_OPTIONS.map((option) => {
         const active = option === mode;
         return (
@@ -46,7 +50,11 @@ export function ModeSelector({ mode, onModeChange }: ModeSelectorProps): ReactEl
             type="button"
             data-mode={option}
             aria-pressed={active}
-            className={active ? "mode-btn mode-active" : "mode-btn"}
+            className={`flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+              active
+                ? "bg-primary text-on-primary shadow-sm"
+                : "text-ink-dim hover:text-ink"
+            }`}
             onClick={() => onModeChange(toggleMode(mode, option))}
           >
             <AnimatedIcon name={modeIcon(option)} size={16} />

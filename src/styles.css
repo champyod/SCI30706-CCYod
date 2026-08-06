@@ -1,429 +1,66 @@
-/* Design tokens: primitive -> semantic -> component. Colors live ONLY in :root. */
+/* Tailwind v4 entry. Utilities come from @theme tokens below; activity-7
+   semantic vars stay in :root so the runtime ThemePicker can override them
+   and charts can resolve token colors at draw time. */
+@import "tailwindcss";
 
 :root {
-  /* primitive */
-  --p-green: oklch(0.62 0.072 158);
-  --p-red: oklch(0.6 0.19 25);
-  --p-surface: oklch(0.97 0.01 0);
-  --p-text: oklch(0.2 0.02 0);
-  --p-primary: oklch(0.55 0.15 262);
-
-  /* semantic */
-  --s-income: var(--p-green);
-  --s-expense: var(--p-red);
-  --s-surface: var(--p-surface);
-  --s-text: var(--p-text);
-  --s-primary: var(--p-primary);
-
-  /* component */
-  --c-card-bg: var(--s-surface);
-  --c-card-border: oklch(0.88 0.02 0);
-  --c-input-bg: oklch(0.95 0.01 0);
-  --c-btn-primary-bg: var(--s-primary);
-  --c-btn-primary-text: oklch(0.98 0 0);
+  /* activity-7 aquamarine + green light theme */
+  --s-primary: #3aafa9;
+  --s-surface: #f5faf9;
+  --s-text: #2c3e50;
+  --s-income: #2ecc71;
+  --s-expense: #e74c3c;
+  --s-on-primary: #ffffff;
+  --s-on-surface: #2c3e50;
+  --c-card-border: #d5ecec;
 }
 
-html {
-  color-scheme: light;
+/* Map semantic vars to Tailwind color utilities: bg-surface, text-ink,
+   border-edge, text-income, bg-primary, etc. */
+@theme {
+  --color-primary: var(--s-primary);
+  --color-surface: var(--s-surface);
+  --color-ink: var(--s-text);
+  --color-ink-dim: #7f8c8d;
+  --color-income: var(--s-income);
+  --color-expense: var(--s-expense);
+  --color-on-primary: var(--s-on-primary);
+  --color-on-surface: var(--s-on-surface);
+  --color-edge: var(--c-card-border);
+  --color-card: #ffffff;
+  --color-aqua: #64dfdf;
+  --color-aqua-dark: #3aafa9;
+  --color-aqua-light: #e0f7f7;
+  --color-green: #2ecc71;
+  --color-green-dark: #27ae60;
+  --color-green-light: #e8f8f0;
+  --color-warning: #f39c12;
+  --color-interest: #3498db;
+  --color-expense-light: #fdecea;
+  --color-interest-light: #ebf5fd;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, "Noto Sans Thai", "Tahoma", sans-serif;
-  background: var(--s-surface);
-  color: var(--s-text);
-  line-height: 1.5;
-}
-
-#app {
-  max-width: 56rem;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-h1,
-h2,
-h3 {
-  margin: 0 0 0.5rem;
-  line-height: 1.25;
-}
-
-/* cards */
-.card {
-  background: var(--c-card-bg);
-  border: 1px solid var(--c-card-border);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.card-title {
-  font-size: 1.125rem;
-  margin-bottom: 0.75rem;
-}
-
-/* buttons */
-.btn {
-  font: inherit;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--c-card-border);
-  border-radius: 0.375rem;
-  background: var(--c-input-bg);
-  color: var(--s-text);
-  cursor: pointer;
-}
-
-.btn-primary {
-  background: var(--c-btn-primary-bg);
-  border-color: var(--c-btn-primary-bg);
-  color: var(--c-btn-primary-text);
-}
-
-/* form fields */
-input,
-select {
-  font: inherit;
-  padding: 0.5rem 0.625rem;
-  border: 1px solid var(--c-card-border);
-  border-radius: 0.375rem;
-  background: var(--c-input-bg);
-  color: var(--s-text);
-}
-
-input:focus,
-select:focus {
-  outline: 2px solid var(--s-primary);
-  outline-offset: 1px;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-/* mode selector */
-.mode-selector {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.mode-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
-  border: 1px solid var(--c-card-border);
-  border-radius: 0.375rem;
-  background: var(--c-input-bg);
-  color: var(--s-text);
-  font: inherit;
-  cursor: pointer;
-}
-
-.mode-active {
-  background: var(--s-primary);
-  border-color: var(--s-primary);
-  color: var(--c-btn-primary-text);
-}
-
-/* transaction form */
-.tx-form {
-  display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.tx-type-field {
-  display: flex;
-  gap: 0.75rem;
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-
-.tx-type-field legend {
-  margin-bottom: 0.25rem;
-}
-
-.tx-type-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.tx-type-option input {
-  accent-color: var(--s-primary);
-}
-
-.tx-field {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.form-error {
-  color: var(--s-expense);
-  margin: 0;
-  font-size: 0.875rem;
-}
-
-.tx-delete-btn {
-  padding: 0.25rem 0.5rem;
-}
-
-.tx-amount {
-  font-variant-numeric: tabular-nums;
-}
-
-.tx-amount-income {
-  color: var(--s-income);
-}
-
-.tx-amount-expense {
-  color: var(--s-expense);
-}
-
-/* table */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 0.5rem 0.625rem;
-  text-align: left;
-  border-bottom: 1px solid var(--c-card-border);
-}
-
-.table th {
-  font-weight: 600;
-}
-
-/* badge */
-.badge {
-  display: inline-block;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.badge-income {
-  background: var(--s-income);
-  color: var(--c-btn-primary-text);
-}
-
-.badge-expense {
-  background: var(--s-expense);
-  color: var(--c-btn-primary-text);
-}
-
-/* theme picker */
-.theme-picker {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.theme-picker input[type="range"] {
-  flex: 1;
-  min-width: 6rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-
-.theme-picker .swatch {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  border: 1px solid var(--c-card-border);
-  padding: 0;
-  cursor: pointer;
-}
-
-.theme-picker .swatch-active {
-  outline: 2px solid var(--s-primary);
-  outline-offset: 2px;
-}
-
-/* connection status badge dot */
-.status-dot {
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  margin-right: 0.375rem;
-}
-
-.status-dot-cloud {
-  background: var(--s-income);
-}
-
-.status-dot-local {
-  background: var(--s-expense);
-}
-
-/* chart canvas container: a definite height anchors `canvas { height:100% }`.
-   A min-height would leave the wrapper auto-sized, so the canvas's own
-   backing-store height (written by setupCanvas) feeds back into the layout
-   and grows unboundedly on every ResizeObserver tick. */
-.chart-wrap {
-  position: relative;
-  width: 100%;
-  height: 18rem;
-}
-
-.chart-wrap canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-/* chart legends (dot color is set inline from a resolved token) */
-.chart-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1rem;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-}
-
-.chart-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-}
-
-.chart-legend-dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 999px;
-}
-
-/* layout sections */
-.charts-grid {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.tx-section {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.goal-section {
-  display: grid;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* mobile */
-@media (max-width: 40rem) {
-  #app {
-    padding: 0.75rem;
+@layer base {
+  html {
+    color-scheme: light;
   }
 
-  .card {
-    padding: 0.75rem;
+  body {
+    margin: 0;
+    font-family: system-ui, "Noto Sans Thai", "Tahoma", sans-serif;
+    line-height: 1.5;
+    @apply bg-surface text-ink;
   }
 
-  .table th,
-  .table td {
-    padding: 0.375rem 0.5rem;
+  h1,
+  h2,
+  h3 {
+    @apply m-0 mb-2 leading-tight;
   }
-}
 
-/* app shell */
-.app-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.app-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-/* summary stats */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.stat-card {
-  background: var(--c-card-bg);
-  border: 1px solid var(--c-card-border);
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.75rem;
-}
-
-.stat-value {
-  font-size: 1.125rem;
-}
-
-.stat-income .stat-value {
-  color: var(--s-income);
-}
-
-.stat-expense .stat-value {
-  color: var(--s-expense);
-}
-
-/* goal progress */
-.progress {
-  background: var(--c-input-bg);
-  border-radius: 999px;
-  height: 0.75rem;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
-}
-
-.progress-fill {
-  background: var(--s-primary);
-  border-radius: 999px;
-  height: 100%;
-}
-
-.goal-amounts {
-  font-size: 0.875rem;
-  margin: 0;
-}
-
-/* daily quote */
-.quote-box {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.quote-text {
-  font-style: italic;
-  margin: 0;
-}
-
-@media (max-width: 40rem) {
-  .summary-grid {
-    grid-template-columns: 1fr;
+  input,
+  select,
+  button {
+    font: inherit;
   }
-}
-
-/* animated icon wrapper: inline-flex keeps the hover-scale origin centered */
-.animated-icon {
-  display: inline-flex;
-  align-items: center;
 }

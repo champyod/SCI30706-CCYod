@@ -81,7 +81,7 @@ export function AnimatedIcon({
   }, [pulse]);
 
   return (
-    <span ref={spanRef} className="animated-icon">
+    <span ref={spanRef} className="inline-flex">
       <Icon name={name} size={size} />
     </span>
   );

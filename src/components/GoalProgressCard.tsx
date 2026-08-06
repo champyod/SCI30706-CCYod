@@ -12,20 +12,24 @@ export interface GoalProgressCardProps {
 export function GoalProgressCard({ goal }: GoalProgressCardProps): ReactElement {
   const percent = Math.round(goalProgress(goal) * BAR_MAX_PERCENT);
   return (
-    <article className="card">
-      <h3 className="card-title">{goal.name}</h3>
+    <article className="w-full rounded-xl border border-edge bg-card p-4 shadow-sm">
+      <h3 className="text-base font-bold text-ink">{goal.name}</h3>
       <div
-        className="progress"
+        className="mb-2 h-2.5 w-full overflow-hidden rounded-full bg-aqua-light"
         role="progressbar"
         aria-label={goal.name}
         aria-valuemin={0}
         aria-valuemax={BAR_MAX_PERCENT}
         aria-valuenow={percent}
       >
-        {/* Width is layout data, so it is inline; color stays in CSS. */}
-        <div className="progress-fill" style={{ width: `${percent}%` }} />
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-aqua to-green"
+          style={{ width: `${percent}%` }}
+        />
       </div>
-      <p className="goal-amounts">{`${formatBaht(goal.current)} / ${formatBaht(goal.target)}`}</p>
+      <p className="m-0 text-sm font-medium text-ink-dim">
+        {`${formatBaht(goal.current)} / ${formatBaht(goal.target)}`}
+      </p>
     </article>
   );
 }
