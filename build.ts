@@ -1,10 +1,13 @@
 import { build } from "bun";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 const OUT_DIR = "dist";
 const MAIN_ENTRY = "src/main.tsx";
 const STYLE_SHEET = "src/styles.css";
+const TAILWIND_BIN = "node_modules/.bin/tailwindcss";
+const TAILWIND_TMP = `${OUT_DIR}/.tailwind.css`;
 
 // HTML is generated in code — the built index.html is the only HTML artifact.
 const HTML_SHELL = `<!doctype html>
@@ -64,9 +67,25 @@ function inlineInto(
     .replaceAll("%STYLE%", () => style);
 }
 
+// Tailwind v4 compiles @import "tailwindcss" + @theme tokens into real CSS.
+// The CLI must run after clearOutDir so dist exists for the temp output path.
+function compileTailwind(): void {
+  const result = spawnSync(TAILWIND_BIN, [
+    "--input",
+    STYLE_SHEET,
+    "--output",
+    TAILWIND_TMP,
+    "--minify",
+  ], { stdio: "inherit" });
+  if (result.status !== 0) {
+    throw new Error(`tailwindcss exited with status ${result.status ?? "signal"}`);
+  }
+}
+
 async function main(): Promise<void> {
   assertRepoRoot();
   await clearOutDir();
+  compileTailwind();
 
   const result = await build({
     entrypoints: [MAIN_ENTRY],
@@ -79,7 +98,7 @@ async function main(): Promise<void> {
   const jsPath = findJsOutput(result.outputs);
   const [script, style] = await Promise.all([
     readText(jsPath),
-    readText(STYLE_SHEET),
+    readText(TAILWIND_TMP),
   ]);
 
   const html = inlineInto(HTML_SHELL, script, style);

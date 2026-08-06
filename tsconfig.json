@@ -6,6 +6,7 @@
     "verbatimModuleSyntax": true,
     "module": "preserve",
     "moduleResolution": "bundler",
+    "target": "ES2022",
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM"],
     "noEmit": true,

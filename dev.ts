@@ -1,10 +1,13 @@
 import { build } from "bun";
 import { readFile } from "node:fs/promises";
 import { statSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 
 const PORT = 3000;
 const SRC_PREFIX = "/src/";
 const STYLE_SHEET = "src/styles.css";
+const TAILWIND_BIN = "node_modules/.bin/tailwindcss";
+const TAILWIND_CACHE = "/tmp/fingoal-dev-tailwind.css";
 
 // Dev shell mirrors the build shell, but modules are served on demand
 // (no inline script) so a browser refresh always gets fresh code.
@@ -60,8 +63,19 @@ async function serveModule(pathname: string): Promise<Response> {
   });
 }
 
+// Compiles Tailwind on every style request; fast enough for dev and always
+// fresh. The cache file path is shared by the CLI as its output.
 async function serveStyle(): Promise<Response> {
-  const css = await readFile(STYLE_SHEET, "utf8");
+  const result = spawnSync(TAILWIND_BIN, [
+    "--input",
+    STYLE_SHEET,
+    "--output",
+    TAILWIND_CACHE,
+  ], { stdio: "inherit" });
+  if (result.status !== 0) {
+    return new Response("tailwind compile failed", { status: 500 });
+  }
+  const css = await readFile(TAILWIND_CACHE, "utf8");
   return new Response(css, {
     headers: { "content-type": "text/css" },
   });
