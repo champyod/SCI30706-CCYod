@@ -1,43 +1,44 @@
-/* Tailwind v4 entry. Utilities come from @theme tokens below; activity-7
-   semantic vars stay in :root so the runtime ThemePicker can override them
-   and charts can resolve token colors at draw time. */
+/* Tailwind v4 entry. Utilities come from @theme tokens below; theme vars stay
+   in :root so charts can resolve token colors at draw time. */
 @import "tailwindcss";
 
 :root {
-  /* activity-7 aquamarine + green light theme */
-  --s-primary: #3aafa9;
-  --s-surface: #f5faf9;
-  --s-text: #2c3e50;
-  --s-income: #2ecc71;
-  --s-expense: #e74c3c;
-  --s-on-primary: #ffffff;
-  --s-on-surface: #2c3e50;
-  --c-card-border: #d5ecec;
+  /* Default pastel-mint theme (generateTheme of the "mint" template). */
+  --s-primary: oklch(0.5 0.1 160);
+  --s-primary-light: oklch(0.74 0.1 160);
+  --s-primary-dark: oklch(0.42 0.1 160);
+  --s-surface: oklch(0.97 0.01 0);
+  --s-text: oklch(0.25 0 0);
+  --s-income: oklch(0.52 0.13 154);
+  --s-income-light: oklch(0.72 0.13 154);
+  --s-income-dark: oklch(0.34 0.13 154);
+  --s-expense: oklch(0.55 0.16 30);
+  --s-expense-light: oklch(0.75 0.16 30);
+  --s-expense-dark: oklch(0.38 0.16 30);
+  --s-on-primary: oklch(0.98 0 0);
+  --s-on-surface: oklch(0.25 0 0);
+  --c-card-border: oklch(0.9 0.02 160);
 }
 
 /* Map semantic vars to Tailwind color utilities: bg-surface, text-ink,
-   border-edge, text-income, bg-primary, etc. */
+   border-edge, text-income, bg-primary-light, etc. */
 @theme {
   --color-primary: var(--s-primary);
+  --color-primary-light: var(--s-primary-light);
+  --color-primary-dark: var(--s-primary-dark);
   --color-surface: var(--s-surface);
   --color-ink: var(--s-text);
-  --color-ink-dim: #7f8c8d;
+  --color-ink-dim: #6b6f70;
   --color-income: var(--s-income);
+  --color-income-light: var(--s-income-light);
+  --color-income-dark: var(--s-income-dark);
   --color-expense: var(--s-expense);
+  --color-expense-light: var(--s-expense-light);
+  --color-expense-dark: var(--s-expense-dark);
   --color-on-primary: var(--s-on-primary);
   --color-on-surface: var(--s-on-surface);
   --color-edge: var(--c-card-border);
   --color-card: #ffffff;
-  --color-aqua: #64dfdf;
-  --color-aqua-dark: #3aafa9;
-  --color-aqua-light: #e0f7f7;
-  --color-green: #2ecc71;
-  --color-green-dark: #27ae60;
-  --color-green-light: #e8f8f0;
-  --color-warning: #f39c12;
-  --color-interest: #3498db;
-  --color-expense-light: #fdecea;
-  --color-interest-light: #ebf5fd;
 }
 
 @layer base {

@@ -54,9 +54,10 @@ const goalInput = {
 };
 
 const settingsInput: Settings = {
-  mode: "weekly",
   savingsBalance: 500,
   totalDeducted: 123,
+  autoInvestPercent: 20,
+  autoSavePercent: 10,
 };
 
 describe("LocalStore transactions", () => {
@@ -174,10 +175,15 @@ describe("LocalStore settings", () => {
     const { store } = makeStore();
     const settings = await store.getSettings();
 
-    expect(settings).toEqual({ mode: "daily", savingsBalance: 0, totalDeducted: 0 });
+    expect(settings).toEqual({
+      savingsBalance: 0,
+      totalDeducted: 0,
+      autoInvestPercent: 0,
+      autoSavePercent: 0,
+    });
   });
 
-  test("saveSettings then getSettings roundtrips all three values", async () => {
+  test("saveSettings then getSettings roundtrips all four values", async () => {
     const { store } = makeStore();
 
     await store.saveSettings(settingsInput);
@@ -186,14 +192,15 @@ describe("LocalStore settings", () => {
     expect(settings).toEqual(settingsInput);
   });
 
-  test("saveSettings with mode weekly persists mode string in shim storage", async () => {
+  test("saveSettings persists values in shim storage", async () => {
     const { store, storage } = makeStore();
 
     await store.saveSettings(settingsInput);
 
-    expect(storage.getItem(STORAGE_KEYS.mode)).toBe("weekly");
     expect(storage.getItem(STORAGE_KEYS.savings_balance)).toBe("500");
     expect(storage.getItem(STORAGE_KEYS.total_deducted)).toBe("123");
+    expect(storage.getItem(STORAGE_KEYS.auto_invest_percent)).toBe("20");
+    expect(storage.getItem(STORAGE_KEYS.auto_save_percent)).toBe("10");
   });
 
   test("clearAll empties transactions, goals, and settings", async () => {
@@ -207,30 +214,32 @@ describe("LocalStore settings", () => {
     expect(await store.listTransactions()).toEqual([]);
     expect(await store.listGoals()).toEqual([]);
     expect(await store.getSettings()).toEqual({
-      mode: "daily",
       savingsBalance: 0,
       totalDeducted: 0,
+      autoInvestPercent: 0,
+      autoSavePercent: 0,
     });
     expect(storage.getItem(STORAGE_KEYS.transactions)).toBeNull();
     expect(storage.getItem(STORAGE_KEYS.goals)).toBeNull();
-    expect(storage.getItem(STORAGE_KEYS.mode)).toBeNull();
     expect(storage.getItem(STORAGE_KEYS.savings_balance)).toBeNull();
     expect(storage.getItem(STORAGE_KEYS.total_deducted)).toBeNull();
+    expect(storage.getItem(STORAGE_KEYS.auto_invest_percent)).toBeNull();
+    expect(storage.getItem(STORAGE_KEYS.auto_save_percent)).toBeNull();
   });
 
   test("corrupted JSON falls back to defaults without throwing", async () => {
     const { store, storage } = makeStore();
     storage.setItem(STORAGE_KEYS.transactions, "{not json");
     storage.setItem(STORAGE_KEYS.goals, "{also not json");
-    storage.setItem(STORAGE_KEYS.mode, "fortnightly");
     storage.setItem(STORAGE_KEYS.savings_balance, "not-a-number");
 
     expect(await store.listTransactions()).toEqual([]);
     expect(await store.listGoals()).toEqual([]);
     expect(await store.getSettings()).toEqual({
-      mode: "daily",
       savingsBalance: 0,
       totalDeducted: 0,
+      autoInvestPercent: 0,
+      autoSavePercent: 0,
     });
   });
 });

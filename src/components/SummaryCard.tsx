@@ -1,16 +1,16 @@
 import type { ReactElement } from "react";
-import { getBalance, sumByType } from "../lib/finance";
+import { freeBalance, goalsInvested } from "../lib/finance";
 import { formatBaht } from "../lib/money";
-import type { Tx } from "../lib/types";
+import type { Goal, Settings, Tx } from "../lib/types";
 
-const INCOME_LABEL = "Income";
-const EXPENSE_LABEL = "Expense";
-const BALANCE_LABEL = "Balance";
+const SAVED_LABEL = "Saved";
+const IN_GOALS_LABEL = "In Goals";
+const FREE_LABEL = "Free Balance";
 
 const TONE_CLASSES = {
-  income: "text-green-dark",
-  expense: "text-expense",
-  balance: "text-ink",
+  saved: "text-income-dark",
+  goals: "text-primary-dark",
+  free: "text-ink",
 } as const;
 
 interface StatCardData {
@@ -21,13 +21,19 @@ interface StatCardData {
 
 export interface SummaryCardProps {
   transactions: Tx[];
+  goals: Goal[];
+  settings: Settings;
 }
 
-export function SummaryCard({ transactions }: SummaryCardProps): ReactElement {
-  const income = sumByType(transactions, "income");
-  const expense = sumByType(transactions, "expense");
-  const balance = getBalance(income, expense);
-  const cards = buildStatCards(income, expense, balance);
+export function SummaryCard({
+  transactions,
+  goals,
+  settings,
+}: SummaryCardProps): ReactElement {
+  const saved = settings.savingsBalance;
+  const invested = goalsInvested(goals);
+  const free = freeBalance(transactions, goals, settings);
+  const cards = buildStatCards(saved, invested, free);
   return (
     <section className="mb-4 grid gap-3 sm:grid-cols-3">
       {cards.map(createStatCard)}
@@ -35,11 +41,11 @@ export function SummaryCard({ transactions }: SummaryCardProps): ReactElement {
   );
 }
 
-function buildStatCards(income: number, expense: number, balance: number): StatCardData[] {
+function buildStatCards(saved: number, invested: number, free: number): StatCardData[] {
   return [
-    { label: INCOME_LABEL, value: formatBaht(income), toneClass: TONE_CLASSES.income },
-    { label: EXPENSE_LABEL, value: formatBaht(expense), toneClass: TONE_CLASSES.expense },
-    { label: BALANCE_LABEL, value: formatBaht(balance), toneClass: TONE_CLASSES.balance },
+    { label: SAVED_LABEL, value: formatBaht(saved), toneClass: TONE_CLASSES.saved },
+    { label: IN_GOALS_LABEL, value: formatBaht(invested), toneClass: TONE_CLASSES.goals },
+    { label: FREE_LABEL, value: formatBaht(free), toneClass: TONE_CLASSES.free },
   ];
 }
 
@@ -47,12 +53,12 @@ function createStatCard(card: StatCardData, index: number): ReactElement {
   return (
     <div
       key={index}
-      className="rounded-2xl border border-edge bg-card px-4 py-3 shadow-sm"
+      className="rounded-2xl border border-edge bg-card px-4 py-4 text-center shadow-sm"
     >
-      <span className="block text-xs font-medium uppercase tracking-wide text-ink-dim">
+      <span className="block text-sm font-medium uppercase tracking-wide text-ink-dim">
         {card.label}
       </span>
-      <strong className={`mt-1 block text-xl font-bold ${card.toneClass}`}>
+      <strong className={`mt-1 block text-4xl font-bold ${card.toneClass}`}>
         {card.value}
       </strong>
     </div>

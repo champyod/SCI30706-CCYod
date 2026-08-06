@@ -24,9 +24,16 @@ export interface Goal {
 }
 
 export interface Settings {
-  mode: GoalMode;
   savingsBalance: number;
   totalDeducted: number;
+  autoInvestPercent: number;
+  autoSavePercent: number;
 }
 
-export type StorageKey = "transactions" | "goals" | "mode" | "savings_balance" | "total_deducted";
+export type StorageKey =
+  | "transactions"
+  | "goals"
+  | "savings_balance"
+  | "total_deducted"
+  | "auto_invest_percent"
+  | "auto_save_percent";

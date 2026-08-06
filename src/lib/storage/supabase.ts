@@ -3,19 +3,26 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "../../config";
 import type { Goal, Settings, Tx } from "../types";
 import type { DataStore } from "./datastore";
 
-const DEFAULT_SETTINGS: Settings = { mode: "daily", savingsBalance: 0, totalDeducted: 0 };
+const DEFAULT_SETTINGS: Settings = {
+  savingsBalance: 0,
+  totalDeducted: 0,
+  autoInvestPercent: 0,
+  autoSavePercent: 0,
+};
 
 const SETTING_KEYS = {
-  mode: "mode",
   savingsBalance: "savings_balance",
   totalDeducted: "total_deducted",
+  autoInvestPercent: "auto_invest_percent",
+  autoSavePercent: "auto_save_percent",
 } as const;
 
-// settings.id integer primary key has no default, so the three keyed rows use fixed ids
+// settings.id integer primary key has no default, so the four keyed rows use fixed ids
 const SETTING_IDS = {
-  mode: 1,
   savingsBalance: 2,
   totalDeducted: 3,
+  autoInvestPercent: 4,
+  autoSavePercent: 5,
 } as const;
 
 export interface SupabaseResult<T> {
@@ -105,10 +112,6 @@ function patchToRow(patch: Partial<Goal> | Partial<Tx>): Record<string, unknown>
   }
   delete row.createdAt;
   return row;
-}
-
-function parseMode(value: unknown): Settings["mode"] {
-  return value === "weekly" || value === "daily" ? value : DEFAULT_SETTINGS.mode;
 }
 
 // the real SupabaseClient's generated generics are too deep for TS to check
@@ -214,17 +217,19 @@ export class SupabaseStore implements DataStore {
     );
     const byKey = new Map(((result.data ?? []) as SettingsRow[]).map((row) => [row.key, row.value]));
     return {
-      mode: parseMode(byKey.get(SETTING_KEYS.mode)),
       savingsBalance: parseNumber(byKey.get(SETTING_KEYS.savingsBalance)),
       totalDeducted: parseNumber(byKey.get(SETTING_KEYS.totalDeducted)),
+      autoInvestPercent: parseNumber(byKey.get(SETTING_KEYS.autoInvestPercent)),
+      autoSavePercent: parseNumber(byKey.get(SETTING_KEYS.autoSavePercent)),
     };
   }
 
   async saveSettings(settings: Settings): Promise<void> {
     const rows = [
-      { id: SETTING_IDS.mode, key: SETTING_KEYS.mode, value: settings.mode },
       { id: SETTING_IDS.savingsBalance, key: SETTING_KEYS.savingsBalance, value: settings.savingsBalance },
       { id: SETTING_IDS.totalDeducted, key: SETTING_KEYS.totalDeducted, value: settings.totalDeducted },
+      { id: SETTING_IDS.autoInvestPercent, key: SETTING_KEYS.autoInvestPercent, value: settings.autoInvestPercent },
+      { id: SETTING_IDS.autoSavePercent, key: SETTING_KEYS.autoSavePercent, value: settings.autoSavePercent },
     ];
     await this.run("บันทึกการตั้งค่า", () =>
       this.client.from("settings").upsert(rows, { onConflict: "key" }),

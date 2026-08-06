@@ -30,21 +30,23 @@ describe("STORAGE_KEYS", () => {
   const storageKeyNames: StorageKey[] = [
     "transactions",
     "goals",
-    "mode",
     "savings_balance",
     "total_deducted",
+    "auto_invest_percent",
+    "auto_save_percent",
   ];
 
-  test("maps exactly the 5 StorageKey values", () => {
+  test("maps exactly the 6 StorageKey values", () => {
     expect(Object.keys(STORAGE_KEYS).sort()).toEqual([...storageKeyNames].sort());
   });
 
   test("maps each key to its expected localStorage string", () => {
     expect(STORAGE_KEYS.transactions).toBe("fingoal_transactions");
     expect(STORAGE_KEYS.goals).toBe("fingoal_goals");
-    expect(STORAGE_KEYS.mode).toBe("fingoal_mode");
     expect(STORAGE_KEYS.savings_balance).toBe("fingoal_savings_balance");
     expect(STORAGE_KEYS.total_deducted).toBe("fingoal_total_deducted");
+    expect(STORAGE_KEYS.auto_invest_percent).toBe("fingoal_auto_invest_percent");
+    expect(STORAGE_KEYS.auto_save_percent).toBe("fingoal_auto_save_percent");
   });
 });
 

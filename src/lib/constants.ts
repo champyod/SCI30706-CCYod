@@ -24,7 +24,8 @@ export const SAVINGS_QUOTES = [
 export const STORAGE_KEYS: Record<StorageKey, string> = {
   transactions: "fingoal_transactions",
   goals: "fingoal_goals",
-  mode: "fingoal_mode",
   savings_balance: "fingoal_savings_balance",
   total_deducted: "fingoal_total_deducted",
+  auto_invest_percent: "fingoal_auto_invest_percent",
+  auto_save_percent: "fingoal_auto_save_percent",
 };

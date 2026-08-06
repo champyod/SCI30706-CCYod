@@ -21,7 +21,12 @@ const goalInput = {
   position: 0,
 };
 
-const settingsInput: Settings = { mode: "weekly", savingsBalance: 500, totalDeducted: 123 };
+const settingsInput: Settings = {
+  savingsBalance: 500,
+  totalDeducted: 123,
+  autoInvestPercent: 20,
+  autoSavePercent: 10,
+};
 
 function txRow(id: string, createdAt: string): Row {
   return { id, type: "expense", category: "food", amount: 10, note: "a", date: "2026-08-01", created_at: createdAt };
@@ -145,57 +150,78 @@ describe("SupabaseStore goals", () => {
 describe("SupabaseStore settings", () => {
   test("getSettings returns defaults when the settings table is empty", async () => {
     const { store } = makeFakeStore();
-    expect(await store.getSettings()).toEqual({ mode: "daily", savingsBalance: 0, totalDeducted: 0 });
+    expect(await store.getSettings()).toEqual({
+      savingsBalance: 0,
+      totalDeducted: 0,
+      autoInvestPercent: 0,
+      autoSavePercent: 0,
+    });
   });
 
   test("getSettings maps stored key-value rows and falls back per missing key", async () => {
     const { store, client } = makeFakeStore();
-    client.settings.rows = [{ id: 1, key: "mode", value: "weekly" }];
-
-    const settings = await store.getSettings();
-
-    expect(settings).toEqual({ mode: "weekly", savingsBalance: 0, totalDeducted: 0 });
-  });
-
-  test("getSettings falls back to default for invalid mode and non-numeric values", async () => {
-    const { store, client } = makeFakeStore();
     client.settings.rows = [
-      { id: 1, key: "mode", value: "fortnightly" },
-      { id: 2, key: "savings_balance", value: "abc" },
-      { id: 3, key: "total_deducted", value: 42 },
+      { id: 4, key: "auto_invest_percent", value: 30 },
     ];
 
     const settings = await store.getSettings();
 
-    expect(settings).toEqual({ mode: "daily", savingsBalance: 0, totalDeducted: 42 });
+    expect(settings).toEqual({
+      savingsBalance: 0,
+      totalDeducted: 0,
+      autoInvestPercent: 30,
+      autoSavePercent: 0,
+    });
   });
 
-  test("saveSettings upserts the three keys with deterministic ids on key conflict", async () => {
+  test("getSettings falls back to default for non-numeric values", async () => {
+    const { store, client } = makeFakeStore();
+    client.settings.rows = [
+      { id: 2, key: "savings_balance", value: "abc" },
+      { id: 3, key: "total_deducted", value: 42 },
+      { id: 4, key: "auto_invest_percent", value: "nope" },
+      { id: 5, key: "auto_save_percent", value: 5 },
+    ];
+
+    const settings = await store.getSettings();
+
+    expect(settings).toEqual({
+      savingsBalance: 0,
+      totalDeducted: 42,
+      autoInvestPercent: 0,
+      autoSavePercent: 5,
+    });
+  });
+
+  test("saveSettings upserts the four keys with deterministic ids on key conflict", async () => {
     const { store, client } = makeFakeStore();
 
     await store.saveSettings(settingsInput);
 
     expect(client.settings.lastUpsertConflict).toBe("key");
-    expect(client.settings.rows).toHaveLength(3);
-    const mode = client.settings.rows.find((row) => row.key === "mode");
-    expect(mode?.id).toBe(1);
-    expect(mode?.value).toBe("weekly");
+    expect(client.settings.rows).toHaveLength(4);
     const balance = client.settings.rows.find((row) => row.key === "savings_balance");
     expect(balance?.id).toBe(2);
     expect(balance?.value).toBe(500);
     const deducted = client.settings.rows.find((row) => row.key === "total_deducted");
     expect(deducted?.id).toBe(3);
     expect(deducted?.value).toBe(123);
+    const invest = client.settings.rows.find((row) => row.key === "auto_invest_percent");
+    expect(invest?.id).toBe(4);
+    expect(invest?.value).toBe(20);
+    const save = client.settings.rows.find((row) => row.key === "auto_save_percent");
+    expect(save?.id).toBe(5);
+    expect(save?.value).toBe(10);
     expect(await store.getSettings()).toEqual(settingsInput);
   });
 
   test("saveSettings replaces existing rows for the same keys", async () => {
     const { store, client } = makeFakeStore();
-    client.settings.rows = [{ id: 1, key: "mode", value: "daily" }];
+    client.settings.rows = [{ id: 2, key: "savings_balance", value: 1 }];
 
-    await store.saveSettings({ mode: "weekly", savingsBalance: 10, totalDeducted: 5 });
+    await store.saveSettings({ savingsBalance: 10, totalDeducted: 5, autoInvestPercent: 0, autoSavePercent: 0 });
 
-    expect(client.settings.rows).toHaveLength(3);
+    expect(client.settings.rows).toHaveLength(4);
   });
 });
 
@@ -235,7 +261,7 @@ describe("SupabaseStore clearAll", () => {
     const { store, client } = makeFakeStore();
     client.transactions.rows = [txRow("t1", "2026-08-01T00:00:00.000Z")];
     client.goals.rows = [goalRow("g1", 0, "a")];
-    client.settings.rows = [{ id: 1, key: "mode", value: "daily" }];
+    client.settings.rows = [{ id: 2, key: "savings_balance", value: 300 }];
 
     await store.clearAll();
 

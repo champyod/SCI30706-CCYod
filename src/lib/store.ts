@@ -1,11 +1,13 @@
 import { toast } from "sonner";
+import { applyGoalDeltas, computeAutoSplit } from "./auto-split";
 import type { DataStore } from "./storage/datastore";
 import type { Goal, Settings, Tx } from "./types";
 
 const DEFAULT_SETTINGS: Settings = {
-  mode: "daily",
   savingsBalance: 0,
   totalDeducted: 0,
+  autoInvestPercent: 0,
+  autoSavePercent: 0,
 };
 
 const ADD_TX_ERROR = "ไม่สามารถเพิ่มรายการได้ โปรดลองอีกครั้ง";
@@ -15,6 +17,10 @@ const UPDATE_ERROR = "ไม่สามารถบันทึกการเ�
 
 function tempId(): string {
   return `pending-${crypto.randomUUID()}`;
+}
+
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 /** Single in-memory cache over a DataStore backend; notifies listeners on every mutation. */
@@ -71,19 +77,49 @@ export class AppStore {
   // Optimistic add: the row appears immediately as pending, then the backend
   // write resolves and replaces it with the persisted record. On failure the
   // row is rolled back and a toast explains what happened.
+  //
+  // An income transaction also triggers auto-invest (top goal first, rollover
+  // to the next) and auto-save; both are applied optimistically and persisted
+  // only after the transaction write succeeds. Deleting the income transaction
+  // later does NOT reverse its split.
   async addTx(input: Omit<Tx, "id" | "createdAt">): Promise<Tx> {
     const pending: Tx = { ...input, id: tempId(), createdAt: new Date().toISOString() };
+    const split =
+      input.type === "income" ? computeAutoSplit(input.amount, this.goals, this.settings) : null;
+    const previousGoals = this.goals;
+    const previousSettings = this.settings;
+
     this.transactions.push(pending);
     this.pendingTxIds.add(pending.id);
+    if (split !== null && (split.goalDeltas.length > 0 || split.saveAmount > 0)) {
+      this.goals = applyGoalDeltas(this.goals, split.goalDeltas);
+      this.settings = {
+        ...this.settings,
+        savingsBalance: round2(this.settings.savingsBalance + split.saveAmount),
+      };
+    }
     this.notify();
     try {
       const saved = await this.backend.addTransaction(input);
       this.transactions = this.transactions.map((tx) => (tx.id === pending.id ? saved : tx));
       this.pendingTxIds.delete(pending.id);
+      if (split !== null) {
+        for (const delta of split.goalDeltas) {
+          const goal = this.goals.find((g) => g.id === delta.goalId);
+          if (goal !== undefined) {
+            await this.backend.updateGoal(delta.goalId, { current: goal.current });
+          }
+        }
+        if (split.saveAmount > 0) {
+          await this.backend.saveSettings(this.settings);
+        }
+      }
       this.notify();
       return saved;
     } catch (error) {
       this.transactions = this.transactions.filter((tx) => tx.id !== pending.id);
+      this.goals = previousGoals;
+      this.settings = previousSettings;
       this.pendingTxIds.delete(pending.id);
       this.notify();
       toast.error(ADD_TX_ERROR);
@@ -195,24 +231,48 @@ export class AppStore {
     }
   }
 
-  /** Move the goal at `position` (array index) to the front; persist new positions via updateGoal. */
-  async promoteGoal(position: number): Promise<void> {
+  /**
+   * Add money to a goal, capped so its current never exceeds target.
+   */
+  async investGoal(id: string, amount: number): Promise<void> {
     const previous = this.goals;
-    const goal = this.goals[position];
-    if (!goal) return;
-    const reordered = [goal, ...this.goals.filter((g) => g.id !== goal.id)];
-    this.goals = reordered.map((g, index) => ({ ...g, position: index }));
+    const goal = this.goals.find((g) => g.id === id);
+    if (goal === undefined || amount <= 0) {
+      return;
+    }
+    const nextCurrent = round2(Math.min(goal.target, goal.current + amount));
+    if (nextCurrent === goal.current) {
+      return;
+    }
+    this.goals = this.goals.map((g) =>
+      g.id === id ? { ...g, current: nextCurrent } : g,
+    );
     this.notify();
     try {
-      for (let index = 0; index < reordered.length; index += 1) {
-        const current = reordered[index];
-        if (current === undefined) continue;
-        if (current.position !== index) {
-          await this.backend.updateGoal(current.id, { position: index });
-        }
-      }
+      await this.backend.updateGoal(id, { current: nextCurrent });
     } catch (error) {
       this.goals = previous;
+      this.notify();
+      toast.error(UPDATE_ERROR);
+      throw error;
+    }
+  }
+
+  /**
+   * Move money out of free balance into savings.
+   */
+  async saveMoney(amount: number): Promise<void> {
+    if (amount <= 0) {
+      return;
+    }
+    const previous = this.settings;
+    const merged = { ...this.settings, savingsBalance: round2(this.settings.savingsBalance + amount) };
+    this.settings = merged;
+    this.notify();
+    try {
+      await this.backend.saveSettings(merged);
+    } catch (error) {
+      this.settings = previous;
       this.notify();
       toast.error(UPDATE_ERROR);
       throw error;

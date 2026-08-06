@@ -2,11 +2,12 @@ import { STORAGE_KEYS } from "../constants";
 import type { Goal, Settings, Tx } from "../types";
 import type { DataStore } from "./datastore";
 
-const DEFAULT_SETTINGS: Settings = { mode: "daily", savingsBalance: 0, totalDeducted: 0 };
-
-function parseMode(raw: string | null): Settings["mode"] {
-  return raw === "weekly" || raw === "daily" ? raw : DEFAULT_SETTINGS.mode;
-}
+const DEFAULT_SETTINGS: Settings = {
+  savingsBalance: 0,
+  totalDeducted: 0,
+  autoInvestPercent: 0,
+  autoSavePercent: 0,
+};
 
 function parseNumber(raw: string | null): number {
   const parsed = Number(raw);
@@ -88,23 +89,26 @@ export class LocalStore implements DataStore {
 
   async getSettings(): Promise<Settings> {
     return {
-      mode: parseMode(this.storage.getItem(STORAGE_KEYS.mode)),
       savingsBalance: parseNumber(this.storage.getItem(STORAGE_KEYS.savings_balance)),
       totalDeducted: parseNumber(this.storage.getItem(STORAGE_KEYS.total_deducted)),
+      autoInvestPercent: parseNumber(this.storage.getItem(STORAGE_KEYS.auto_invest_percent)),
+      autoSavePercent: parseNumber(this.storage.getItem(STORAGE_KEYS.auto_save_percent)),
     };
   }
 
   async saveSettings(s: Settings): Promise<void> {
-    this.storage.setItem(STORAGE_KEYS.mode, s.mode);
     this.storage.setItem(STORAGE_KEYS.savings_balance, String(s.savingsBalance));
     this.storage.setItem(STORAGE_KEYS.total_deducted, String(s.totalDeducted));
+    this.storage.setItem(STORAGE_KEYS.auto_invest_percent, String(s.autoInvestPercent));
+    this.storage.setItem(STORAGE_KEYS.auto_save_percent, String(s.autoSavePercent));
   }
 
   async clearAll(): Promise<void> {
     this.storage.removeItem(STORAGE_KEYS.transactions);
     this.storage.removeItem(STORAGE_KEYS.goals);
-    this.storage.removeItem(STORAGE_KEYS.mode);
     this.storage.removeItem(STORAGE_KEYS.savings_balance);
     this.storage.removeItem(STORAGE_KEYS.total_deducted);
+    this.storage.removeItem(STORAGE_KEYS.auto_invest_percent);
+    this.storage.removeItem(STORAGE_KEYS.auto_save_percent);
   }
 }

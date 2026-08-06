@@ -4,9 +4,10 @@ import type { DataStore } from "../src/lib/storage/datastore";
 import type { Goal, Settings, Tx } from "../src/lib/types";
 
 const DEFAULT_SETTINGS: Settings = {
-  mode: "daily",
   savingsBalance: 0,
   totalDeducted: 0,
+  autoInvestPercent: 0,
+  autoSavePercent: 0,
 };
 
 const txInput = {
@@ -118,7 +119,7 @@ describe("AppStore init", () => {
     const backend = new FakeStore();
     await backend.addTransaction(txInput);
     await backend.addGoal(goalInput);
-    await backend.saveSettings({ mode: "weekly", savingsBalance: 500, totalDeducted: 10 });
+    await backend.saveSettings({ savingsBalance: 500, totalDeducted: 10, autoInvestPercent: 0, autoSavePercent: 0 });
     const { store } = makeStore(backend);
 
     await store.init();
@@ -127,7 +128,7 @@ describe("AppStore init", () => {
     expect(store.transactions[0]?.note).toBe("lunch");
     expect(store.goals).toHaveLength(1);
     expect(store.goals[0]?.name).toBe("vacation");
-    expect(store.settings).toEqual({ mode: "weekly", savingsBalance: 500, totalDeducted: 10 });
+    expect(store.settings).toEqual({ savingsBalance: 500, totalDeducted: 10, autoInvestPercent: 0, autoSavePercent: 0 });
   });
 
   test("init does not notify", async () => {
@@ -246,49 +247,123 @@ describe("AppStore goals", () => {
   });
 });
 
-describe("AppStore promoteGoal", () => {
-  test("moves goal at position to front and persists reordered positions", async () => {
+describe("AppStore investGoal", () => {
+  test("adds money to the goal and persists, capped at target", async () => {
     const { store, backend } = makeStore();
-    const first = await store.addGoal(goalInput);
-    const second = await store.addGoal({ ...goalInput, name: "second", position: 1 });
-    const third = await store.addGoal({ ...goalInput, name: "third", position: 2 });
+    const goal = await store.addGoal(goalInput);
     const { count } = countNotifications(store);
 
-    await store.promoteGoal(2);
+    await store.investGoal(goal.id, 400);
 
-    expect(store.goals.map((g) => g.name)).toEqual(["third", "vacation", "second"]);
-    expect(store.goals.map((g) => g.id)).toEqual([third.id, first.id, second.id]);
-    expect(store.goals.map((g) => g.position)).toEqual([0, 1, 2]);
-    const persisted = backend.goals.map((g) => ({ name: g.name, position: g.position }));
-    expect(persisted).toEqual([
-      { name: "vacation", position: 1 },
-      { name: "second", position: 2 },
-      { name: "third", position: 0 },
-    ]);
+    expect(store.goals[0]?.current).toBe(500);
+    expect(backend.goals[0]?.current).toBe(500);
     expect(count()).toBe(1);
   });
 
-  test("promoting front goal is a no-op without notify", async () => {
-    const { store } = makeStore();
-    await store.addGoal(goalInput);
-    const { count } = countNotifications(store);
+  test("caps current at target", async () => {
+    const { store, backend } = makeStore();
+    const goal = await store.addGoal(goalInput);
 
-    await store.promoteGoal(0);
+    await store.investGoal(goal.id, 20000);
 
-    expect(store.goals.map((g) => g.position)).toEqual([0]);
-    expect(count()).toBe(0);
+    expect(store.goals[0]?.current).toBe(goalInput.target);
+    expect(backend.goals[0]?.current).toBe(goalInput.target);
   });
 
-  test("out-of-range position is a no-op without notify", async () => {
-    const { store, backend } = makeStore();
-    await store.addGoal(goalInput);
+  test("missing id and non-positive amounts are no-ops without notify", async () => {
+    const { store } = makeStore();
+    const goal = await store.addGoal(goalInput);
     const { count } = countNotifications(store);
 
-    await store.promoteGoal(5);
+    await store.investGoal("missing", 100);
+    await store.investGoal(goal.id, 0);
 
-    expect(store.goals).toHaveLength(1);
-    expect(backend.goals[0]?.position).toBe(0);
+    expect(store.goals[0]?.current).toBe(goalInput.current);
     expect(count()).toBe(0);
+  });
+});
+
+describe("AppStore saveMoney", () => {
+  test("adds to savingsBalance and persists", async () => {
+    const { store, backend } = makeStore();
+    await store.init();
+    const { count } = countNotifications(store);
+
+    await store.saveMoney(250);
+
+    expect(store.settings.savingsBalance).toBe(250);
+    expect(backend.settings.savingsBalance).toBe(250);
+    expect(count()).toBe(1);
+  });
+
+  test("non-positive amounts are a no-op without notify", async () => {
+    const { store } = makeStore();
+    await store.init();
+    const { count } = countNotifications(store);
+
+    await store.saveMoney(0);
+
+    expect(store.settings.savingsBalance).toBe(0);
+    expect(count()).toBe(0);
+  });
+});
+
+describe("AppStore auto-split on income", () => {
+  test("invests into the top goal first, then rolls over to the next", async () => {
+    const { store, backend } = makeStore();
+    await store.init();
+    const first = await store.addGoal({ ...goalInput, name: "first", current: 0 });
+    await store.addGoal({ ...goalInput, name: "second", current: 0, position: 1 });
+    await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 10 });
+
+    const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };
+    await store.addTx(income);
+
+    expect(store.goals[0]?.current).toBe(500);
+    expect(store.goals[1]?.current).toBe(0);
+    expect(store.settings.savingsBalance).toBe(100);
+    expect(store.transactions).toHaveLength(1);
+    expect(backend.goals[0]?.current).toBe(500);
+    expect(backend.settings.savingsBalance).toBe(100);
+  });
+
+  test("rolls leftover into the next goal when the first is capped", async () => {
+    const { store } = makeStore();
+    await store.init();
+    const first = await store.addGoal({ ...goalInput, name: "first", target: 100, current: 0 });
+    await store.addGoal({ ...goalInput, name: "second", target: 1000, current: 0, position: 1 });
+    await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 0 });
+
+    const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };
+    await store.addTx(income);
+
+    expect(store.goals[0]?.current).toBe(100);
+    expect(store.goals[1]?.current).toBe(400);
+  });
+
+  test("no split when percents are zero", async () => {
+    const { store } = makeStore();
+    await store.init();
+    const goal = await store.addGoal({ ...goalInput, current: 0 });
+    await store.updateSettings({ autoInvestPercent: 0, autoSavePercent: 0 });
+
+    const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };
+    await store.addTx(income);
+
+    expect(store.goals[0]?.current).toBe(0);
+    expect(store.settings.savingsBalance).toBe(0);
+  });
+
+  test("expense transactions never trigger a split", async () => {
+    const { store } = makeStore();
+    await store.init();
+    const goal = await store.addGoal({ ...goalInput, current: 0 });
+    await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 10 });
+
+    await store.addTx(txInput);
+
+    expect(store.goals[0]?.current).toBe(0);
+    expect(store.settings.savingsBalance).toBe(0);
   });
 });
 
@@ -300,8 +375,8 @@ describe("AppStore settings", () => {
 
     await store.updateSettings({ savingsBalance: 900 });
 
-    expect(store.settings).toEqual({ mode: "daily", savingsBalance: 900, totalDeducted: 0 });
-    expect(backend.settings).toEqual({ mode: "daily", savingsBalance: 900, totalDeducted: 0 });
+    expect(store.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
+    expect(backend.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
     expect(count()).toBe(1);
   });
 });
