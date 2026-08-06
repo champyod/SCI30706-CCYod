@@ -28,16 +28,16 @@ export function parseHue(input: string | null): number {
 
 // Pure field -> token mapping keeps the document-touching apply step unit
 // testable: renderToString and bun:test never construct a real document.
+// Var names must match the semantic vars consumed by @theme in styles.css.
 export function paletteToCssVarMap(palette: Palette): Record<string, string> {
   return {
     "--s-primary": palette.primary,
-    "--c-btn-primary-bg": palette.primary,
     "--s-surface": palette.surface,
-    "--c-card-bg": palette.surface,
     "--s-text": palette.onSurface,
     "--s-income": palette.income,
     "--s-expense": palette.expense,
-    "--c-btn-primary-text": palette.onPrimary,
+    "--s-on-primary": palette.onPrimary,
+    "--s-on-surface": palette.onSurface,
   };
 }
 
@@ -82,4 +82,14 @@ export function loadHue(): number {
 export function applyTheme(hue: number): void {
   applyPaletteToCssVars(generatePalette(hue));
   saveHue(hue);
+}
+
+// CSS custom property -> computed color string. document may be absent in
+// test runners, so every access is guarded.
+export function resolveToken(name: string): string | null {
+  if (typeof document === "undefined" || typeof getComputedStyle === "undefined") {
+    return null;
+  }
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value.length > 0 ? value : null;
 }

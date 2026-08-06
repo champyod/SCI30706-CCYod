@@ -5,31 +5,31 @@ import { BarChart } from "../src/components/BarChart";
 import { LineChart } from "../src/components/LineChart";
 import { PieChart, sliceColors } from "../src/components/PieChart";
 
-// Charts are React components now: renderToString asserts the static markup
-// (wrapper class, canvas, legend). The actual canvas pixels are drawn by the
-// effect in a browser and are WYSIWYG — not unit-tested post-pivot.
+// Charts are recharts-backed now: recharts defers SVG construction to a
+// client-side effect, so renderToString only sees the sizing wrapper. The
+// actual SVG (svg.recharts-surface) is asserted by the browser E2E script;
+// here we only pin the static wrapper and the pure sliceColors logic.
 
 describe("BarChart", () => {
-  test("renders a chart-wrap container holding a canvas", () => {
+  test("renders a sized wrapper without crashing", () => {
     const html = renderToString(
       createElement(BarChart, {
         data: [100, 250, 75],
         labels: ["ม.ค.", "ก.พ.", "มี.ค."],
       }),
     );
-    expect(html).toContain('class="chart-wrap chart-bar"');
-    expect(html).toContain("<canvas");
+    expect(html).toContain('class="h-44 w-full"');
+    expect(html).toContain("recharts-wrapper");
   });
 
   test("renders empty data and labels without crashing", () => {
     const html = renderToString(createElement(BarChart, { data: [], labels: [] }));
-    expect(html).toContain('class="chart-wrap chart-bar"');
-    expect(html).toContain("<canvas");
+    expect(html).toContain("recharts-wrapper");
   });
 });
 
 describe("LineChart", () => {
-  test("renders a legend with the income and expense labels", () => {
+  test("renders a sized wrapper without crashing", () => {
     const html = renderToString(
       createElement(LineChart, {
         data: {
@@ -39,24 +39,20 @@ describe("LineChart", () => {
         },
       }),
     );
-    expect(html).toContain('class="chart-wrap chart-line"');
-    expect(html).toContain("<canvas");
-    expect(html).toContain("chart-legend-dot");
-    expect(html).toContain("รายรับ");
-    expect(html).toContain("รายจ่าย");
+    expect(html).toContain('class="h-44 w-full"');
+    expect(html).toContain("recharts-wrapper");
   });
 
   test("renders empty series without crashing", () => {
     const html = renderToString(
       createElement(LineChart, { data: { labels: [], income: [], expense: [] } }),
     );
-    expect(html).toContain('class="chart-wrap chart-line"');
-    expect(html).toContain("<canvas");
+    expect(html).toContain("recharts-wrapper");
   });
 });
 
 describe("PieChart", () => {
-  test("renders one legend item per slice with formatted amounts", () => {
+  test("renders a sized wrapper without crashing", () => {
     const html = renderToString(
       createElement(PieChart, {
         data: [
@@ -65,16 +61,13 @@ describe("PieChart", () => {
         ],
       }),
     );
-    expect(html).toContain('class="chart-wrap chart-pie"');
-    expect(html).toContain("<canvas");
-    expect(html).toContain("อาหาร 1,200.00");
-    expect(html).toContain("เดินทาง 300.00");
+    expect(html).toContain('class="h-44 w-full"');
+    expect(html).toContain("recharts-wrapper");
   });
 
   test("renders empty data without crashing", () => {
     const html = renderToString(createElement(PieChart, { data: [] }));
-    expect(html).toContain('class="chart-wrap chart-pie"');
-    expect(html).toContain("<canvas");
+    expect(html).toContain("recharts-wrapper");
   });
 });
 

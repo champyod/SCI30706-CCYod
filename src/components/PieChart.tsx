@@ -1,27 +1,18 @@
-// Category donut chart. Slice colors are derived at render time from the
-// --s-primary hue (rotated per slice) via generatePalette — never literals.
-// The canvas is owned by React: the effect draws after mount and re-draws on
-// wrapper resize.
+// Category donut chart backed by recharts. Slice colors are derived at render
+// time from the --s-primary hue (rotated per slice) via generatePalette —
+// never literals.
 
 import { parse } from "culori";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import type { ReactElement } from "react";
+import { Cell, Pie, PieChart as RechartsPieChart, Tooltip } from "recharts";
 import { generatePalette } from "../lib/color";
 import { formatBaht } from "../lib/money";
-import {
-  clearCanvas,
-  measureSize,
-  resolveToken,
-  setupCanvas,
-} from "./canvas-utils";
+import { resolveToken } from "./theme-logic";
 
-const CHART_CLASS = "chart-pie";
-const PADDING = 24;
 const INNER_RATIO = 0.6;
+const OUTER_RATIO = 0.9;
 const HUE_STEP = 30;
-const TWO_PI = Math.PI * 2;
-const START_ANGLE = -Math.PI / 2;
-const CENTER_FONT = "14px system-ui";
 const PRIMARY_HUE_FALLBACK = 262; // mirrors --p-primary
 
 export interface PieSlice {
@@ -34,66 +25,31 @@ export interface PieChartProps {
 }
 
 export function PieChart({ data }: PieChartProps): ReactElement {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  // Memoized on the count so a data identity change with the same length does
-  // not rebuild draw (colors depend only on how many slices there are).
   const colors = useMemo(() => sliceColors(data.length), [data.length]);
-  const textColor =
-    resolveToken("--s-text") ?? generatePalette(PRIMARY_HUE_FALLBACK).onSurface;
-
-  // Keyed on data + the resolved colors so a props or theme change rebuilds
-  // draw and the effect re-paints; the two refs are stable and safe to omit.
-  const draw = useCallback((): void => {
-    const canvas = canvasRef.current;
-    const wrap = wrapRef.current;
-    if (canvas === null || wrap === null) {
-      return;
-    }
-    const size = measureSize(wrap);
-    if (size === null) {
-      return;
-    }
-    const ctx = setupCanvas(canvas, size.width, size.height);
-    if (ctx === null) {
-      return;
-    }
-    clearCanvas(canvas, ctx, size.width, size.height);
-    drawDonut(ctx, size.width, size.height, data, colors, textColor);
-  }, [data, colors, textColor]);
-
-  useEffect(() => {
-    draw();
-    const wrap = wrapRef.current;
-    if (wrap === null || typeof ResizeObserver === "undefined") {
-      return;
-    }
-    const observer = new ResizeObserver(draw);
-    observer.observe(wrap);
-    return () => {
-      observer.disconnect();
-    };
-  }, [draw]);
 
   return (
-    <div ref={wrapRef} className={`chart-wrap ${CHART_CLASS}`}>
-      <canvas ref={canvasRef} />
-      <div className="chart-legend">
-        {data.map((slice, index) => (
-          <span key={index} className="chart-legend-item">
-            <span
-              className="chart-legend-dot"
-              style={{
-                backgroundColor:
-                  colors[index] ??
-                  generatePalette(PRIMARY_HUE_FALLBACK).primary,
-              }}
+    <div className="h-44 w-full">
+      <RechartsPieChart width="100%" height={176}>
+        <Pie
+          data={data}
+          dataKey="total"
+          nameKey="category"
+          cx="50%"
+          cy="50%"
+          innerRadius={`${INNER_RATIO * 100}%`}
+          outerRadius={`${OUTER_RATIO * 100}%`}
+          paddingAngle={2}
+          strokeWidth={0}
+        >
+          {data.map((slice, index) => (
+            <Cell
+              key={slice.category}
+              fill={colors[index] ?? generatePalette(PRIMARY_HUE_FALLBACK).primary}
             />
-            {`${slice.category} ${formatBaht(slice.total)}`}
-          </span>
-        ))}
-      </div>
+          ))}
+        </Pie>
+        <Tooltip formatter={(value) => formatBaht(Number(value))} />
+      </RechartsPieChart>
     </div>
   );
 }
@@ -117,44 +73,4 @@ function resolveTokenHue(name: string): number | null {
     return null;
   }
   return color.h;
-}
-
-function drawDonut(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  data: PieSlice[],
-  colors: string[],
-  textColor: string,
-): void {
-  const total = data.reduce((sum, slice) => sum + slice.total, 0);
-  const radius = Math.min(width, height) / 2 - PADDING;
-  if (radius <= 0 || total <= 0) {
-    return;
-  }
-
-  ctx.save();
-  ctx.translate(width / 2, height / 2);
-  let startAngle = START_ANGLE;
-  for (let index = 0; index < data.length; index += 1) {
-    const slice = data[index];
-    if (slice === undefined) {
-      continue;
-    }
-    const sweep = (slice.total / total) * TWO_PI;
-    ctx.fillStyle = colors[index] ?? generatePalette(PRIMARY_HUE_FALLBACK).primary;
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, startAngle, startAngle + sweep);
-    ctx.arc(0, 0, radius * INNER_RATIO, startAngle + sweep, startAngle, true);
-    ctx.closePath();
-    ctx.fill();
-    startAngle += sweep;
-  }
-
-  ctx.font = CENTER_FONT;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = textColor;
-  ctx.fillText(formatBaht(total), 0, 0);
-  ctx.restore();
 }
