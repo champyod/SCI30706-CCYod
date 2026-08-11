@@ -294,12 +294,6 @@ export class AppStore {
     }
   }
 
-  async setBackend(store: DataStore): Promise<void> {
-    this.backend = store;
-    await this.init();
-    this.notify();
-  }
-
   async clearAll(): Promise<void> {
     const previousTransactions = this.transactions;
     const previousGoals = this.goals;

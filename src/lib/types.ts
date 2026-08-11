@@ -29,11 +29,3 @@ export interface Settings {
   autoInvestPercent: number;
   autoSavePercent: number;
 }
-
-export type StorageKey =
-  | "transactions"
-  | "goals"
-  | "savings_balance"
-  | "total_deducted"
-  | "auto_invest_percent"
-  | "auto_save_percent";

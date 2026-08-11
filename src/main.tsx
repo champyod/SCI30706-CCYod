@@ -1,19 +1,24 @@
 import { createClient } from "@supabase/supabase-js";
+import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
+import { toast } from "sonner";
 import { mountApp } from "./components/App";
+import { ConnectionError } from "./components/ConnectionError";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./config";
 import { AppStore } from "./lib/store";
-import { LocalStore } from "./lib/storage/local";
 import { SupabaseStore } from "./lib/storage/supabase";
 import type { SupabaseClientLike } from "./lib/storage/supabase";
 
-// Why a timeout instead of just try/catch: SupabaseStore has no reachability
-// probe, so a stalled network leaves init() pending forever and the page blank.
-// Racing init against a short timeout lets a healthy cloud respond quickly
-// while a hung or unreachable instance falls back to LocalStore so the page
-// still renders.
+// Supabase is the only backend; there is deliberately no local fallback. A
+// stalled or unreachable cloud surfaces a connection error with a retry action
+// instead of silently degrading to localStorage, so the timeout below bounds
+// the wait before the error screen appears.
 const CLOUD_INIT_TIMEOUT_MS = 2500;
 
-async function chooseBackend(): Promise<AppStore> {
+const LOADING_LABEL = "กำลังเชื่อมต่อฐานข้อมูล…";
+const CONNECT_ERROR = "ไม่สามารถเชื่อมต่อฐานข้อมูลได้";
+
+function createBackendStore(): AppStore {
   // The real SupabaseClient's generated generics are too deep for TS to check
   // structurally against SupabaseClientLike, so widen only at this boundary
   // (same rationale as the defaultClient() cast inside supabase.ts).
@@ -21,15 +26,7 @@ async function chooseBackend(): Promise<AppStore> {
     SUPABASE_URL,
     SUPABASE_PUBLISHABLE_KEY,
   ) as unknown as SupabaseClientLike;
-  const store = new AppStore(new SupabaseStore(client));
-  try {
-    await withTimeout(store.init(), CLOUD_INIT_TIMEOUT_MS);
-    return store;
-  } catch (error) {
-    console.error("Supabase unavailable; falling back to local storage", error);
-    await store.setBackend(new LocalStore());
-    return store;
-  }
+  return new AppStore(new SupabaseStore(client));
 }
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
@@ -50,11 +47,25 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
   });
 }
 
-const root = document.getElementById("root");
-if (!root) throw new Error("missing #root element");
+async function boot(root: Root): Promise<void> {
+  const store = createBackendStore();
+  try {
+    await withTimeout(store.init(), CLOUD_INIT_TIMEOUT_MS);
+    mountApp(root, store);
+  } catch (error) {
+    console.error("Supabase unavailable; not falling back to local storage", error);
+    toast.error(CONNECT_ERROR);
+    root.render(<ConnectionError onRetry={() => void boot(root)} />);
+  }
+}
 
-// mountApp re-runs store.init() before first render by contract; that second
-// read is idempotent and cheap, and guards against backend swap mid-flight.
-void chooseBackend().then((store) => {
-  mountApp(root, store);
-});
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("missing #root element");
+
+const root = createRoot(rootElement);
+root.render(
+  <div className="flex min-h-screen items-center justify-center bg-surface text-ink-dim">
+    {LOADING_LABEL}
+  </div>,
+);
+void boot(root);

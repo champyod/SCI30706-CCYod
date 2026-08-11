@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
-import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
 import { Toaster } from "sonner";
 import { categoryBreakdown, incomeVsExpense, monthlySeries } from "../lib/chart-data";
 import { AppStore } from "../lib/store";
@@ -127,21 +127,8 @@ function logBackendError(action: string, error: unknown): void {
   console.error(`Failed to ${action}`, error);
 }
 
-export function mountApp(root: HTMLElement, store: AppStore): void {
-  // Render only after init resolves so the first paint already has data; if
-  // init rejects, still render with whatever cache exists rather than a blank
-  // page (main.tsx already chose a working backend before calling mountApp).
-  void store.init().then(
-    () => {
-      renderApp(root, store);
-    },
-    (error: unknown) => {
-      console.error("mountApp: store init failed, rendering with current state", error);
-      renderApp(root, store);
-    },
-  );
-}
-
-function renderApp(root: HTMLElement, store: AppStore): void {
-  createRoot(root).render(<App store={store} />);
+export function mountApp(root: Root, store: AppStore): void {
+  // main.tsx gates boot: it awaits store.init() (with a timeout) before calling
+  // this, so by the time we render the backend has already loaded its data.
+  root.render(<App store={store} />);
 }

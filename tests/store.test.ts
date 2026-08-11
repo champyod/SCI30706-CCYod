@@ -381,25 +381,6 @@ describe("AppStore settings", () => {
   });
 });
 
-describe("AppStore setBackend", () => {
-  test("swaps backend, reloads cache from it, and notifies once", async () => {
-    const firstBackend = new FakeStore();
-    const first = new AppStore(firstBackend);
-    await firstBackend.addGoal({ ...goalInput, name: "old-backend-goal" });
-    await first.init();
-
-    const secondBackend = new FakeStore();
-    await secondBackend.addGoal({ ...goalInput, name: "new-backend-goal" });
-    const { count } = countNotifications(first);
-
-    await first.setBackend(secondBackend);
-
-    expect(first.backend).toBe(secondBackend);
-    expect(first.goals.map((g) => g.name)).toEqual(["new-backend-goal"]);
-    expect(count()).toBe(1);
-  });
-});
-
 describe("AppStore clearAll", () => {
   test("empties cache and backend, resets settings, and notifies", async () => {
     const { store, backend } = makeStore();
