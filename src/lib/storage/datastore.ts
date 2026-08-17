@@ -11,5 +11,4 @@ export interface DataStore {
   deleteGoal(id: string): Promise<void>;
   getSettings(): Promise<Settings>;
   saveSettings(s: Settings): Promise<void>;
-  clearAll(): Promise<void>;
 }

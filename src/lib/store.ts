@@ -66,14 +66,6 @@ export class AppStore {
     });
   }
 
-  isTxPending(id: string): boolean {
-    return this.pendingTxIds.has(id);
-  }
-
-  isGoalPending(id: string): boolean {
-    return this.pendingGoalIds.has(id);
-  }
-
   // Optimistic add: the row appears immediately as pending, then the backend
   // write resolves and replaces it with the persisted record. On failure the
   // row is rolled back and a toast explains what happened.
@@ -126,27 +118,6 @@ export class AppStore {
       throw error;
     }
   }
-
-  async updateTx(id: string, patch: Partial<Tx>): Promise<void> {
-    const previous = this.transactions;
-    const previousIndex = this.transactions.findIndex((t) => t.id === id);
-    if (previousIndex === -1) return;
-    const existing = previous[previousIndex];
-    if (existing === undefined) return;
-    this.transactions = this.transactions.map((t, index) =>
-      index === previousIndex ? { ...existing, ...patch } : t,
-    );
-    this.notify();
-    try {
-      await this.backend.updateTransaction(id, patch);
-    } catch (error) {
-      this.transactions = previous;
-      this.notify();
-      toast.error(UPDATE_ERROR);
-      throw error;
-    }
-  }
-
   // Optimistic delete: the row disappears immediately; on failure it is
   // restored and a toast explains the rollback.
   async deleteTx(id: string): Promise<void> {
@@ -288,26 +259,6 @@ export class AppStore {
       await this.backend.saveSettings(merged);
     } catch (error) {
       this.settings = previous;
-      this.notify();
-      toast.error(UPDATE_ERROR);
-      throw error;
-    }
-  }
-
-  async clearAll(): Promise<void> {
-    const previousTransactions = this.transactions;
-    const previousGoals = this.goals;
-    const previousSettings = this.settings;
-    this.transactions = [];
-    this.goals = [];
-    this.settings = { ...DEFAULT_SETTINGS };
-    this.notify();
-    try {
-      await this.backend.clearAll();
-    } catch (error) {
-      this.transactions = previousTransactions;
-      this.goals = previousGoals;
-      this.settings = previousSettings;
       this.notify();
       toast.error(UPDATE_ERROR);
       throw error;

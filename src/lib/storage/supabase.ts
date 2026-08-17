@@ -235,10 +235,4 @@ export class SupabaseStore implements DataStore {
       this.client.from("settings").upsert(rows, { onConflict: "key" }),
     );
   }
-
-  async clearAll(): Promise<void> {
-    await this.run("ล้างข้อมูล", () => this.client.from("transactions").delete());
-    await this.run("ล้างข้อมูล", () => this.client.from("goals").delete());
-    await this.run("ล้างข้อมูล", () => this.client.from("settings").delete());
-  }
 }

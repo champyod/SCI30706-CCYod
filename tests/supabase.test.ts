@@ -255,21 +255,3 @@ describe("SupabaseStore error wrapping", () => {
     await expect(store.saveSettings(settingsInput)).rejects.toThrow("ไม่สามารถบันทึกการตั้งค่าได้");
   });
 });
-
-describe("SupabaseStore clearAll", () => {
-  test("clearAll deletes every row from all three tables", async () => {
-    const { store, client } = makeFakeStore();
-    client.transactions.rows = [txRow("t1", "2026-08-01T00:00:00.000Z")];
-    client.goals.rows = [goalRow("g1", 0, "a")];
-    client.settings.rows = [{ id: 2, key: "savings_balance", value: 300 }];
-
-    await store.clearAll();
-
-    expect(client.transactions.rows).toEqual([]);
-    expect(client.goals.rows).toEqual([]);
-    expect(client.settings.rows).toEqual([]);
-    expect(client.transactions.deleteCalls).toBe(1);
-    expect(client.goals.deleteCalls).toBe(1);
-    expect(client.settings.deleteCalls).toBe(1);
-  });
-});

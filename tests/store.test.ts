@@ -95,12 +95,6 @@ class FakeStore implements DataStore {
   async saveSettings(s: Settings): Promise<void> {
     this.settings = { ...s };
   }
-
-  async clearAll(): Promise<void> {
-    this.transactions = [];
-    this.goals = [];
-    this.settings = { ...DEFAULT_SETTINGS };
-  }
 }
 
 function makeStore(backend = new FakeStore()) {
@@ -171,29 +165,6 @@ describe("AppStore transactions", () => {
     expect(store.transactions[0]).toEqual(added);
     expect(backend.transactions).toHaveLength(1);
     expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
-  });
-
-  test("updateTx patches backend and cache, and notifies", async () => {
-    const { store, backend } = makeStore();
-    const added = await store.addTx(txInput);
-    const { count } = countNotifications(store);
-
-    await store.updateTx(added.id, { note: "dinner", amount: 99 });
-
-    expect(store.transactions[0]?.note).toBe("dinner");
-    expect(store.transactions[0]?.amount).toBe(99);
-    expect(backend.transactions[0]?.note).toBe("dinner");
-    expect(count()).toBe(1);
-  });
-
-  test("updateTx with missing id does not notify", async () => {
-    const { store } = makeStore();
-    await store.addTx(txInput);
-    const { count } = countNotifications(store);
-
-    await store.updateTx("missing", { note: "nope" });
-
-    expect(count()).toBe(0);
   });
 
   test("deleteTx removes from backend and cache, and notifies", async () => {
@@ -379,25 +350,6 @@ describe("AppStore settings", () => {
 
     expect(store.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
     expect(backend.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
-    expect(count()).toBe(1);
-  });
-});
-
-describe("AppStore clearAll", () => {
-  test("empties cache and backend, resets settings, and notifies", async () => {
-    const { store, backend } = makeStore();
-    await store.addTx(txInput);
-    await store.addGoal(goalInput);
-    await store.updateSettings({ savingsBalance: 500 });
-    const { count } = countNotifications(store);
-
-    await store.clearAll();
-
-    expect(store.transactions).toHaveLength(0);
-    expect(store.goals).toHaveLength(0);
-    expect(store.settings).toEqual(DEFAULT_SETTINGS);
-    expect(backend.transactions).toHaveLength(0);
-    expect(backend.goals).toHaveLength(0);
     expect(count()).toBe(1);
   });
 });
