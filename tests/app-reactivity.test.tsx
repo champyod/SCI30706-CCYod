@@ -12,6 +12,8 @@ const DEFAULT_SETTINGS: Settings = {
   autoSavePercent: 0,
 };
 
+const OPTIMISTIC_MUTATION_VERSION_STEP = 2;
+
 const txInput = {
   type: "expense" as const,
   category: "อาหาร",
@@ -187,7 +189,7 @@ describe("App store reactivity", () => {
     await store.deleteTx(store.transactions[0]?.id ?? "missing");
     const afterDelete = store.version;
 
-    expect(afterAdd).toBe(before + 1);
-    expect(afterDelete).toBe(afterAdd + 1);
+    expect(afterAdd).toBe(before + OPTIMISTIC_MUTATION_VERSION_STEP);
+    expect(afterDelete).toBe(afterAdd + OPTIMISTIC_MUTATION_VERSION_STEP);
   });
 });

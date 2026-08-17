@@ -10,6 +10,8 @@ const DEFAULT_SETTINGS: Settings = {
   autoSavePercent: 0,
 };
 
+const OPTIMISTIC_MUTATION_NOTIFIES = 2;
+
 const txInput = {
   type: "expense" as const,
   category: "food",
@@ -153,7 +155,7 @@ describe("AppStore subscribe", () => {
     unsubscribe();
     await store.addTx(txInput);
 
-    expect(notified).toBe(1);
+    expect(notified).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 });
 
@@ -168,7 +170,7 @@ describe("AppStore transactions", () => {
     expect(store.transactions).toHaveLength(1);
     expect(store.transactions[0]).toEqual(added);
     expect(backend.transactions).toHaveLength(1);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 
   test("updateTx patches backend and cache, and notifies", async () => {
@@ -203,7 +205,7 @@ describe("AppStore transactions", () => {
 
     expect(store.transactions).toHaveLength(0);
     expect(backend.transactions).toHaveLength(0);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 });
 
@@ -218,7 +220,7 @@ describe("AppStore goals", () => {
     expect(store.goals).toHaveLength(1);
     expect(store.goals[0]).toEqual(added);
     expect(backend.goals).toHaveLength(1);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 
   test("updateGoal patches backend and cache, and notifies", async () => {
@@ -243,7 +245,7 @@ describe("AppStore goals", () => {
 
     expect(store.goals).toHaveLength(0);
     expect(backend.goals).toHaveLength(0);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 });
 
