@@ -19,9 +19,8 @@ export function goalsInvested(goals: Goal[]): number {
 }
 
 /**
- * Money left after expenses and money committed to savings + goals.
- * income − expense − Σgoal.current − savingsBalance. totalDeducted is a legacy
- * field and is intentionally not deducted.
+ * Money left after expenses and money committed to savings + goals:
+ * income − expense − Σgoal.current − savingsBalance.
  */
 export function freeBalance(txs: Tx[], goals: Goal[], settings: Settings): number {
   const balance = sumByType(txs, "income") - sumByType(txs, "expense") - goalsInvested(goals) - settings.savingsBalance;

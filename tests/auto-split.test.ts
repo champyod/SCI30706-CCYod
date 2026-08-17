@@ -23,7 +23,6 @@ function makeGoal(partial: Partial<Goal> = {}): Goal {
 function makeSettings(partial: Partial<Settings> = {}): Settings {
   return {
     savingsBalance: 0,
-    totalDeducted: 0,
     autoInvestPercent: 0,
     autoSavePercent: 0,
     ...partial,

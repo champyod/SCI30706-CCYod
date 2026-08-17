@@ -5,7 +5,6 @@ import type { Goal, Settings, Tx } from "../src/lib/types";
 
 const DEFAULT_SETTINGS: Settings = {
   savingsBalance: 0,
-  totalDeducted: 0,
   autoInvestPercent: 0,
   autoSavePercent: 0,
 };
@@ -115,7 +114,7 @@ describe("AppStore init", () => {
     const backend = new FakeStore();
     await backend.addTransaction(txInput);
     await backend.addGoal(goalInput);
-    await backend.saveSettings({ savingsBalance: 500, totalDeducted: 10, autoInvestPercent: 0, autoSavePercent: 0 });
+    await backend.saveSettings({ savingsBalance: 500, autoInvestPercent: 0, autoSavePercent: 0 });
     const { store } = makeStore(backend);
 
     await store.init();
@@ -124,7 +123,7 @@ describe("AppStore init", () => {
     expect(store.transactions[0]?.note).toBe("lunch");
     expect(store.goals).toHaveLength(1);
     expect(store.goals[0]?.name).toBe("vacation");
-    expect(store.settings).toEqual({ savingsBalance: 500, totalDeducted: 10, autoInvestPercent: 0, autoSavePercent: 0 });
+    expect(store.settings).toEqual({ savingsBalance: 500, autoInvestPercent: 0, autoSavePercent: 0 });
   });
 
   test("init does not notify", async () => {

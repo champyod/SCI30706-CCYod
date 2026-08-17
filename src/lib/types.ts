@@ -25,7 +25,6 @@ export interface Goal {
 
 export interface Settings {
   savingsBalance: number;
-  totalDeducted: number;
   autoInvestPercent: number;
   autoSavePercent: number;
 }

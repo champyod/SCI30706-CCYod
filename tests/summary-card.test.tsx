@@ -14,7 +14,6 @@ const SAMPLE_GOALS: Goal[] = [
 
 const SAMPLE_SETTINGS: Settings = {
   savingsBalance: 300,
-  totalDeducted: 0,
   autoInvestPercent: 0,
   autoSavePercent: 0,
 };

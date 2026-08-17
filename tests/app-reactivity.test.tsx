@@ -7,7 +7,6 @@ import { Window } from "happy-dom";
 
 const DEFAULT_SETTINGS: Settings = {
   savingsBalance: 0,
-  totalDeducted: 0,
   autoInvestPercent: 0,
   autoSavePercent: 0,
 };

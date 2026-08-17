@@ -37,7 +37,6 @@ function makeGoal(partial: Partial<Goal> = {}): Goal {
 function makeSettings(partial: Partial<Settings> = {}): Settings {
   return {
     savingsBalance: 0,
-    totalDeducted: 0,
     autoInvestPercent: 0,
     autoSavePercent: 0,
     ...partial,
@@ -88,12 +87,6 @@ describe("freeBalance", () => {
     const goals = [makeGoal({ id: "a", current: 1500 })];
     const settings = makeSettings({ savingsBalance: 400 });
     expect(freeBalance(txs, goals, settings)).toBe(1899.5);
-  });
-
-  test("ignores legacy totalDeducted", () => {
-    const txs: Tx[] = [makeTx({ id: "a", type: "income", amount: 1000 })];
-    const settings = makeSettings({ savingsBalance: 100, totalDeducted: 300 });
-    expect(freeBalance(txs, [], settings)).toBe(900);
   });
 
   test("returns 0 for empty txs, goals, and default settings", () => {

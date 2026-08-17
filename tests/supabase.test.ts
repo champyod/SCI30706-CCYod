@@ -23,7 +23,6 @@ const goalInput = {
 
 const settingsInput: Settings = {
   savingsBalance: 500,
-  totalDeducted: 123,
   autoInvestPercent: 20,
   autoSavePercent: 10,
 };
@@ -152,7 +151,6 @@ describe("SupabaseStore settings", () => {
     const { store } = makeFakeStore();
     expect(await store.getSettings()).toEqual({
       savingsBalance: 0,
-      totalDeducted: 0,
       autoInvestPercent: 0,
       autoSavePercent: 0,
     });
@@ -168,7 +166,6 @@ describe("SupabaseStore settings", () => {
 
     expect(settings).toEqual({
       savingsBalance: 0,
-      totalDeducted: 0,
       autoInvestPercent: 30,
       autoSavePercent: 0,
     });
@@ -178,7 +175,6 @@ describe("SupabaseStore settings", () => {
     const { store, client } = makeFakeStore();
     client.settings.rows = [
       { id: 2, key: "savings_balance", value: "abc" },
-      { id: 3, key: "total_deducted", value: 42 },
       { id: 4, key: "auto_invest_percent", value: "nope" },
       { id: 5, key: "auto_save_percent", value: 5 },
     ];
@@ -187,25 +183,21 @@ describe("SupabaseStore settings", () => {
 
     expect(settings).toEqual({
       savingsBalance: 0,
-      totalDeducted: 42,
       autoInvestPercent: 0,
       autoSavePercent: 5,
     });
   });
 
-  test("saveSettings upserts the four keys with deterministic ids on key conflict", async () => {
+  test("saveSettings upserts the three keys with deterministic ids on key conflict", async () => {
     const { store, client } = makeFakeStore();
 
     await store.saveSettings(settingsInput);
 
     expect(client.settings.lastUpsertConflict).toBe("key");
-    expect(client.settings.rows).toHaveLength(4);
+    expect(client.settings.rows).toHaveLength(3);
     const balance = client.settings.rows.find((row) => row.key === "savings_balance");
     expect(balance?.id).toBe(2);
     expect(balance?.value).toBe(500);
-    const deducted = client.settings.rows.find((row) => row.key === "total_deducted");
-    expect(deducted?.id).toBe(3);
-    expect(deducted?.value).toBe(123);
     const invest = client.settings.rows.find((row) => row.key === "auto_invest_percent");
     expect(invest?.id).toBe(4);
     expect(invest?.value).toBe(20);
@@ -219,9 +211,9 @@ describe("SupabaseStore settings", () => {
     const { store, client } = makeFakeStore();
     client.settings.rows = [{ id: 2, key: "savings_balance", value: 1 }];
 
-    await store.saveSettings({ savingsBalance: 10, totalDeducted: 5, autoInvestPercent: 0, autoSavePercent: 0 });
+    await store.saveSettings({ savingsBalance: 10, autoInvestPercent: 0, autoSavePercent: 0 });
 
-    expect(client.settings.rows).toHaveLength(4);
+    expect(client.settings.rows).toHaveLength(3);
   });
 });
 

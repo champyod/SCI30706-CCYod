@@ -5,22 +5,19 @@ import type { DataStore } from "./datastore";
 
 const DEFAULT_SETTINGS: Settings = {
   savingsBalance: 0,
-  totalDeducted: 0,
   autoInvestPercent: 0,
   autoSavePercent: 0,
 };
 
 const SETTING_KEYS = {
   savingsBalance: "savings_balance",
-  totalDeducted: "total_deducted",
   autoInvestPercent: "auto_invest_percent",
   autoSavePercent: "auto_save_percent",
 } as const;
 
-// settings.id integer primary key has no default, so the four keyed rows use fixed ids
+// settings.id integer primary key has no default, so the three keyed rows use fixed ids
 const SETTING_IDS = {
   savingsBalance: 2,
-  totalDeducted: 3,
   autoInvestPercent: 4,
   autoSavePercent: 5,
 } as const;
@@ -218,7 +215,6 @@ export class SupabaseStore implements DataStore {
     const byKey = new Map(((result.data ?? []) as SettingsRow[]).map((row) => [row.key, row.value]));
     return {
       savingsBalance: parseNumber(byKey.get(SETTING_KEYS.savingsBalance)),
-      totalDeducted: parseNumber(byKey.get(SETTING_KEYS.totalDeducted)),
       autoInvestPercent: parseNumber(byKey.get(SETTING_KEYS.autoInvestPercent)),
       autoSavePercent: parseNumber(byKey.get(SETTING_KEYS.autoSavePercent)),
     };
@@ -227,7 +223,6 @@ export class SupabaseStore implements DataStore {
   async saveSettings(settings: Settings): Promise<void> {
     const rows = [
       { id: SETTING_IDS.savingsBalance, key: SETTING_KEYS.savingsBalance, value: settings.savingsBalance },
-      { id: SETTING_IDS.totalDeducted, key: SETTING_KEYS.totalDeducted, value: settings.totalDeducted },
       { id: SETTING_IDS.autoInvestPercent, key: SETTING_KEYS.autoInvestPercent, value: settings.autoInvestPercent },
       { id: SETTING_IDS.autoSavePercent, key: SETTING_KEYS.autoSavePercent, value: settings.autoSavePercent },
     ];
