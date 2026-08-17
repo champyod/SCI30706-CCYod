@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ChangeEvent, ReactElement } from "react";
+import type { ChangeEvent, KeyboardEvent, ReactElement } from "react";
 import { MAX_AUTO_PERCENT, validateAutoSplitPercents } from "../lib/auto-split";
 import type { Settings } from "../lib/types";
 
@@ -22,6 +22,10 @@ export function AutoInvestRow({ settings, onUpdate }: AutoInvestRowProps): React
   }, [settings.autoInvestPercent, settings.autoSavePercent]);
 
   function commit(investInput: string, saveInput: string): void {
+    if (investInput.trim() === "" || saveInput.trim() === "") {
+      setError(null);
+      return;
+    }
     const investPercent = Number(investInput);
     const savePercent = Number(saveInput);
     const result = validateAutoSplitPercents(investPercent, savePercent);
@@ -34,15 +38,25 @@ export function AutoInvestRow({ settings, onUpdate }: AutoInvestRowProps): React
   }
 
   function handleInvestChange(event: ChangeEvent<HTMLInputElement>): void {
-    const value = event.target.value;
-    setInvest(value);
-    commit(value, save);
+    setInvest(event.target.value);
   }
 
   function handleSaveChange(event: ChangeEvent<HTMLInputElement>): void {
-    const value = event.target.value;
-    setSave(value);
-    commit(invest, value);
+    setSave(event.target.value);
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>): void {
+    if (event.key === "Enter") {
+      commit(invest, save);
+    }
+  }
+
+  function handleInvestBlur(): void {
+    commit(invest, save);
+  }
+
+  function handleSaveBlur(): void {
+    commit(invest, save);
   }
 
   return (
@@ -56,6 +70,8 @@ export function AutoInvestRow({ settings, onUpdate }: AutoInvestRowProps): React
           className={INPUT_CLASS}
           value={invest}
           onChange={handleInvestChange}
+          onBlur={handleInvestBlur}
+          onKeyDown={handleKeyDown}
           aria-label="Auto-invest percent"
         />
         %
@@ -69,6 +85,8 @@ export function AutoInvestRow({ settings, onUpdate }: AutoInvestRowProps): React
           className={INPUT_CLASS}
           value={save}
           onChange={handleSaveChange}
+          onBlur={handleSaveBlur}
+          onKeyDown={handleKeyDown}
           aria-label="Auto-save percent"
         />
         %
