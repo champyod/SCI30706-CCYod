@@ -10,8 +10,6 @@ export const EXPENSE_CATEGORIES = [
   "อื่นๆ",
 ];
 
-export const INTEREST_RATE = 0.015;
-
 export const SAVINGS_QUOTES = [
   "ออมวันละนิด พอเพียงทุกวัน",
   "เงินออมคือรากฐานของอนาคต",

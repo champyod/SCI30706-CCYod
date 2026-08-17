@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import {
   EXPENSE_CATEGORIES,
   INCOME_CATEGORIES,
-  INTEREST_RATE,
   SAVINGS_QUOTES,
 } from "../src/lib/constants";
 
@@ -15,12 +14,6 @@ describe("INCOME_CATEGORIES", () => {
 describe("EXPENSE_CATEGORIES", () => {
   test("has no duplicate entries", () => {
     expect(new Set(EXPENSE_CATEGORIES).size).toBe(EXPENSE_CATEGORIES.length);
-  });
-});
-
-describe("INTEREST_RATE", () => {
-  test("equals 0.015", () => {
-    expect(INTEREST_RATE).toBe(0.015);
   });
 });
 

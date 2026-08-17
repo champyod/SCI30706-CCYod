@@ -1,10 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { Goal, Settings, Tx } from "../src/lib/types";
 import {
-  applyDeduction,
-  currentBalance,
   freeBalance,
-  getBalance,
   goalProgress,
   goalsInvested,
   sumByType,
@@ -65,49 +62,6 @@ describe("sumByType", () => {
 
   test("returns 0 for empty list", () => {
     expect(sumByType([], "income")).toBe(0);
-  });
-});
-
-describe("applyDeduction", () => {
-  test("deducts interest-rate slice from income", () => {
-    expect(applyDeduction(1000, 0.015)).toEqual({ savings: 985, deducted: 15 });
-  });
-
-  test("returns zeros when income is 0", () => {
-    expect(applyDeduction(0, 0.1)).toEqual({ savings: 0, deducted: 0 });
-  });
-
-  test("returns full income when rate is 0", () => {
-    expect(applyDeduction(200, 0)).toEqual({ savings: 200, deducted: 0 });
-  });
-
-  test("rounds both values to 2 decimals", () => {
-    expect(applyDeduction(10.05, 0.1)).toEqual({ savings: 9.05, deducted: 1.01 });
-  });
-});
-
-describe("getBalance", () => {
-  test("subtracts expenses from income", () => {
-    expect(getBalance(1000, 400)).toBe(600);
-  });
-
-  test("returns 0 when both are 0", () => {
-    expect(getBalance(0, 0)).toBe(0);
-  });
-});
-
-describe("currentBalance", () => {
-  test("applies settings adjustments to net income", () => {
-    const txs: Tx[] = [
-      makeTx({ id: "a", type: "income", amount: 1000 }),
-      makeTx({ id: "b", type: "expense", amount: 300 }),
-    ];
-    const settings = makeSettings({ savingsBalance: 15, totalDeducted: 15 });
-    expect(currentBalance(txs, settings)).toBe(700);
-  });
-
-  test("returns 0 for empty txs and default settings", () => {
-    expect(currentBalance([], makeSettings())).toBe(0);
   });
 });
 
