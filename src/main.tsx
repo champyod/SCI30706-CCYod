@@ -8,6 +8,7 @@ import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./config";
 import { AppStore } from "./lib/store";
 import { SupabaseStore } from "./lib/storage/supabase";
 import type { SupabaseClientLike } from "./lib/storage/supabase";
+import { withTimeout } from "./lib/with-timeout";
 
 // Supabase is the only backend; there is deliberately no local fallback. A
 // stalled or unreachable cloud surfaces a connection error with a retry action
@@ -27,24 +28,6 @@ function createBackendStore(): AppStore {
     SUPABASE_PUBLISHABLE_KEY,
   ) as unknown as SupabaseClientLike;
   return new AppStore(new SupabaseStore(client));
-}
-
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error(`backend init timed out after ${timeoutMs}ms`));
-    }, timeoutMs);
-    promise.then(
-      (value) => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      (reason) => {
-        clearTimeout(timer);
-        reject(reason);
-      },
-    );
-  });
 }
 
 async function boot(root: Root): Promise<void> {

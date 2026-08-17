@@ -79,14 +79,3 @@ export function computeAutoSplit(
   const leftover = round2(income - committedToGoals - saveAmount);
   return { goalDeltas, saveAmount, leftover };
 }
-
-export function applyGoalDeltas(goals: Goal[], deltas: GoalDelta[]): Goal[] {
-  if (deltas.length === 0) {
-    return goals;
-  }
-  const byId = new Map(deltas.map((delta) => [delta.goalId, delta.amount]));
-  return goals.map((goal) => {
-    const add = byId.get(goal.id);
-    return add === undefined ? goal : { ...goal, current: round2(goal.current + add) };
-  });
-}

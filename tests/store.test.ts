@@ -1,7 +1,24 @@
-import { describe, expect, test } from "bun:test";
-import { AppStore } from "../src/lib/store";
+import { beforeEach, describe, expect, mock, test } from "bun:test";
+import {
+  ADD_TX_ERROR,
+  AppStore,
+  PARTIAL_TX_WARNING,
+  TIMEOUT_ERROR,
+} from "../src/lib/store";
 import type { DataStore } from "../src/lib/storage/datastore";
 import type { Goal, Settings, Tx } from "../src/lib/types";
+import { TimeoutError } from "../src/lib/with-timeout";
+
+const toastError = mock(() => {});
+const toastWarning = mock(() => {});
+mock.module("sonner", () => ({
+  toast: { error: toastError, warning: toastWarning },
+}));
+
+beforeEach(() => {
+  toastError.mockClear();
+  toastWarning.mockClear();
+});
 
 const DEFAULT_SETTINGS: Settings = {
   savingsBalance: 0,
@@ -96,8 +113,53 @@ class FakeStore implements DataStore {
   }
 }
 
-function makeStore(backend = new FakeStore()) {
-  const store = new AppStore(backend);
+/** Writes never settle; reads resolve so refetchAll can reconcile state. */
+class HangingStore extends FakeStore {
+  override addTransaction(): Promise<Tx> {
+    return new Promise<Tx>(() => {});
+  }
+
+  override updateTransaction(): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+
+  override deleteTransaction(): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+
+  override addGoal(): Promise<Goal> {
+    return new Promise<Goal>(() => {});
+  }
+
+  override updateGoal(): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+
+  override deleteGoal(): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+
+  override saveSettings(): Promise<void> {
+    return new Promise<void>(() => {});
+  }
+}
+
+/** Transaction insert fails immediately. */
+class FailInsertStore extends FakeStore {
+  override addTransaction(): Promise<Tx> {
+    return Promise.reject(new Error("insert failed"));
+  }
+}
+
+/** Transaction insert succeeds but the goal split write fails. */
+class SplitFailsStore extends FakeStore {
+  override updateGoal(): Promise<void> {
+    return Promise.reject(new Error("split write failed"));
+  }
+}
+
+function makeStore(backend = new FakeStore(), options?: { mutationTimeoutMs?: number }) {
+  const store = new AppStore(backend, options);
   return { store, backend };
 }
 
@@ -203,7 +265,7 @@ describe("AppStore goals", () => {
     expect(store.goals[0]?.name).toBe("new-car");
     expect(store.goals[0]?.target).toBe(20000);
     expect(backend.goals[0]?.name).toBe("new-car");
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 
   test("deleteGoal removes from backend and cache, and notifies", async () => {
@@ -229,7 +291,7 @@ describe("AppStore investGoal", () => {
 
     expect(store.goals[0]?.current).toBe(500);
     expect(backend.goals[0]?.current).toBe(500);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 
   test("caps current at target", async () => {
@@ -265,7 +327,7 @@ describe("AppStore saveMoney", () => {
 
     expect(store.settings.savingsBalance).toBe(250);
     expect(backend.settings.savingsBalance).toBe(250);
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 
   test("non-positive amounts are a no-op without notify", async () => {
@@ -349,6 +411,53 @@ describe("AppStore settings", () => {
 
     expect(store.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
     expect(backend.settings).toEqual({ ...DEFAULT_SETTINGS, savingsBalance: 900 });
-    expect(count()).toBe(1);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
+  });
+});
+
+describe("AppStore mutation failure", () => {
+  test("addTx failure removes the skeleton and shows an error toast", async () => {
+    const { store } = makeStore(new FailInsertStore());
+    const { count } = countNotifications(store);
+
+    await expect(store.addTx(txInput)).rejects.toThrow("insert failed");
+
+    expect(store.transactions).toHaveLength(0);
+    expect(store.pendingTxIds.size).toBe(0);
+    expect(toastError).toHaveBeenCalledWith(ADD_TX_ERROR);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
+  });
+});
+
+describe("AppStore mutation timeout", () => {
+  test("addTx timeout removes the skeleton and shows a timeout toast", async () => {
+    const { store } = makeStore(new HangingStore(), { mutationTimeoutMs: 5 });
+    const { count } = countNotifications(store);
+
+    await expect(store.addTx(txInput)).rejects.toBeInstanceOf(TimeoutError);
+
+    expect(store.transactions).toHaveLength(0);
+    expect(store.pendingTxIds.size).toBe(0);
+    expect(toastError).toHaveBeenCalledWith(TIMEOUT_ERROR);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
+  });
+});
+
+describe("AppStore partial split failure", () => {
+  test("keeps the persisted transaction and warns when the split write fails", async () => {
+    const { store, backend } = makeStore(new SplitFailsStore());
+    await store.init();
+    await store.addGoal({ ...goalInput, current: 0 });
+    await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 0 });
+    const { count } = countNotifications(store);
+
+    const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };
+    const saved = await store.addTx(income);
+
+    expect(saved.id).toBeTruthy();
+    expect(backend.transactions).toHaveLength(1);
+    expect(store.transactions).toHaveLength(1);
+    expect(toastWarning).toHaveBeenCalledWith(PARTIAL_TX_WARNING);
+    expect(count()).toBe(OPTIMISTIC_MUTATION_NOTIFIES);
   });
 });

@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
 import {
-  applyGoalDeltas,
   computeAutoSplit,
   validateAutoSplitPercents,
 } from "../src/lib/auto-split";
@@ -100,25 +99,5 @@ describe("computeAutoSplit", () => {
     expect(result.goalDeltas).toEqual([]);
     expect(result.saveAmount).toBe(150);
     expect(result.leftover).toBe(350);
-  });
-});
-
-describe("applyGoalDeltas", () => {
-  test("adds the delta to the matching goal and leaves others untouched", () => {
-    const goals = [makeGoal({ id: "a", current: 10 }), makeGoal({ id: "b", current: 20 })];
-    const next = applyGoalDeltas(goals, [{ goalId: "a", amount: 100 }]);
-    expect(next[0]?.current).toBe(110);
-    expect(next[1]?.current).toBe(20);
-  });
-
-  test("returns the same array when there are no deltas", () => {
-    const goals = [makeGoal()];
-    expect(applyGoalDeltas(goals, [])).toBe(goals);
-  });
-
-  test("ignores deltas whose goal id is missing", () => {
-    const goals = [makeGoal({ id: "a", current: 10 })];
-    const next = applyGoalDeltas(goals, [{ goalId: "ghost", amount: 100 }]);
-    expect(next[0]?.current).toBe(10);
   });
 });
