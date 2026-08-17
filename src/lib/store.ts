@@ -121,19 +121,13 @@ export class AppStore {
   // restored and a toast explains the rollback.
   async deleteTx(id: string): Promise<void> {
     const previous = this.transactions;
-    const removed = this.transactions.find((t) => t.id === id);
     this.transactions = this.transactions.filter((t) => t.id !== id);
-    if (removed !== undefined) {
-      this.pendingTxIds.add(id);
-    }
     this.notify();
     try {
       await this.backend.deleteTransaction(id);
-      this.pendingTxIds.delete(id);
       this.notify();
     } catch (error) {
       this.transactions = previous;
-      this.pendingTxIds.delete(id);
       this.notify();
       toast.error(DELETE_ERROR);
       throw error;
@@ -182,19 +176,13 @@ export class AppStore {
 
   async deleteGoal(id: string): Promise<void> {
     const previous = this.goals;
-    const removed = this.goals.find((g) => g.id === id);
     this.goals = this.goals.filter((g) => g.id !== id);
-    if (removed !== undefined) {
-      this.pendingGoalIds.add(id);
-    }
     this.notify();
     try {
       await this.backend.deleteGoal(id);
-      this.pendingGoalIds.delete(id);
       this.notify();
     } catch (error) {
       this.goals = previous;
-      this.pendingGoalIds.delete(id);
       this.notify();
       toast.error(DELETE_ERROR);
       throw error;
