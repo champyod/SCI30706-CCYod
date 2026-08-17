@@ -10,14 +10,14 @@ const SAMPLE_TXS: Tx[] = [
 ];
 
 function renderTable(transactions: Tx[]): string {
-  return renderToString(<TxTable transactions={transactions} onDelete={() => {}} />);
+  return renderToString(<TxTable transactions={transactions} pendingIds={new Set()} onDelete={() => {}} />);
 }
 
 describe("TxTable", () => {
   test("renders a header row plus one row per transaction", () => {
     const markup = renderTable(SAMPLE_TXS);
-    expect(markup).toContain('<table class="table">');
-    expect(markup.split("<tr>").length - 1).toBe(4);
+    expect(markup).toContain('<table class="w-full border-collapse text-sm">');
+    expect(markup.split("<tr").length - 1).toBe(4);
   });
 
   test("default sort is date descending", () => {
@@ -32,15 +32,15 @@ describe("TxTable", () => {
 
   test("type badges carry the correct tone classes", () => {
     const markup = renderTable(SAMPLE_TXS);
-    expect(markup).toContain('<span class="badge badge-income">รายรับ</span>');
-    expect(markup.match(/class="badge badge-expense">รายจ่าย<\/span>/g)?.length).toBe(2);
+    expect(markup).toContain("bg-income-light");
+    expect(markup.match(/bg-expense-light px-2/g)?.length).toBe(2);
   });
 
   test("amounts are prefixed with + for income and − for expense", () => {
     const markup = renderTable(SAMPLE_TXS);
-    expect(markup).toContain('<span class="tx-amount tx-amount-income">+10,000.00</span>');
-    expect(markup).toContain('<span class="tx-amount tx-amount-expense">−250.50</span>');
-    expect(markup).toContain('<span class="tx-amount tx-amount-expense">−40.00</span>');
+    expect(markup).toContain('<span class="font-semibold text-income-dark">+10,000.00</span>');
+    expect(markup).toContain('<span class="font-semibold text-expense">−250.50</span>');
+    expect(markup).toContain('<span class="font-semibold text-expense">−40.00</span>');
   });
 
   test("renders one delete button per row with the Trash2 icon", () => {
