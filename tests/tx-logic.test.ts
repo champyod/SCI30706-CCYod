@@ -111,14 +111,18 @@ describe("display helpers", () => {
     expect(TX_TYPE_LABELS.expense).toBe("รายจ่าย");
   });
 
-  test("txBadgeClass pairs the badge base with the tone class", () => {
-    expect(txBadgeClass("income")).toBe("badge badge-income");
-    expect(txBadgeClass("expense")).toBe("badge badge-expense");
+  test("txBadgeClass returns the income and expense tone classes", () => {
+    expect(txBadgeClass("income")).toBe(
+      "inline-block rounded-full bg-income-light px-2 py-0.5 text-xs font-semibold text-income-dark",
+    );
+    expect(txBadgeClass("expense")).toBe(
+      "inline-block rounded-full bg-expense-light px-2 py-0.5 text-xs font-semibold text-expense",
+    );
   });
 
-  test("txAmountClass pairs the tx-amount base with the tone class", () => {
-    expect(txAmountClass("income")).toBe("tx-amount tx-amount-income");
-    expect(txAmountClass("expense")).toBe("tx-amount tx-amount-expense");
+  test("txAmountClass returns the income and expense tone classes", () => {
+    expect(txAmountClass("income")).toBe("font-semibold text-income-dark");
+    expect(txAmountClass("expense")).toBe("font-semibold text-expense");
   });
 
   test("txAmountParts prefixes income with + and expense with −", () => {
