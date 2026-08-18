@@ -1,7 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
-import { toast } from "sonner";
 import { mountApp } from "./components/App";
 import { ConnectionError } from "./components/ConnectionError";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./config";
@@ -17,7 +16,6 @@ import { withTimeout } from "./lib/with-timeout";
 const CLOUD_INIT_TIMEOUT_MS = 2500;
 
 const LOADING_LABEL = "กำลังเชื่อมต่อฐานข้อมูล…";
-const CONNECT_ERROR = "ไม่สามารถเชื่อมต่อฐานข้อมูลได้";
 
 function createBackendStore(): AppStore {
   // The real SupabaseClient's generated generics are too deep for TS to check
@@ -37,7 +35,6 @@ async function boot(root: Root): Promise<void> {
     mountApp(root, store);
   } catch (error) {
     console.error("Supabase unavailable; not falling back to local storage", error);
-    toast.error(CONNECT_ERROR);
     root.render(<ConnectionError onRetry={() => void boot(root)} />);
   }
 }
