@@ -66,7 +66,6 @@ interface GoalRow {
   name: string;
   target: number;
   current: number;
-  mode: string;
   duration: number;
   position: number;
   created_at: string;
@@ -95,7 +94,6 @@ function rowToGoal(row: GoalRow): Goal {
     name: row.name,
     target: Number(row.target),
     current: Number(row.current),
-    mode: row.mode === "weekly" ? "weekly" : "daily",
     duration: row.duration,
     position: row.position,
     createdAt: row.created_at,

@@ -40,7 +40,6 @@ const goalInput = {
   name: "vacation",
   target: 10000,
   current: 100,
-  mode: "weekly" as const,
   duration: 90,
   position: 0,
 };

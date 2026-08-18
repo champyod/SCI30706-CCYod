@@ -10,14 +10,11 @@ export interface Tx {
   createdAt: string;
 }
 
-export type GoalMode = "daily" | "weekly";
-
 export interface Goal {
   id: string;
   name: string;
   target: number;
   current: number;
-  mode: GoalMode;
   duration: number;
   position: number;
   createdAt: string;

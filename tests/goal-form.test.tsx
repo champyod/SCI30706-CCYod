@@ -4,7 +4,6 @@ import { GoalForm } from "../src/components/GoalForm";
 import {
   EMPTY_FORM_VALUES,
   parseDuration,
-  parseMode,
   parseName,
   submitGoal,
   validateGoal,
@@ -14,7 +13,6 @@ import type { GoalFormValues, GoalInput } from "../src/components/goal-form-logi
 const VALID_VALUES: GoalFormValues = {
   name: "Emergency Fund",
   target: "5000",
-  mode: "daily",
   duration: "30",
 };
 
@@ -22,7 +20,6 @@ const EXPECTED_INPUT: GoalInput = {
   name: "Emergency Fund",
   target: 5000,
   current: 0,
-  mode: "daily",
   duration: 30,
   position: 0,
 };
@@ -41,12 +38,6 @@ describe("parse helpers", () => {
     expect(parseDuration("3.5")).toBeNull();
     expect(parseDuration("abc")).toBeNull();
     expect(parseDuration("")).toBeNull();
-  });
-
-  test("parseMode accepts only daily and weekly", () => {
-    expect(parseMode("daily")).toBe("daily");
-    expect(parseMode("weekly")).toBe("weekly");
-    expect(parseMode("monthly")).toBeNull();
   });
 });
 
@@ -89,20 +80,13 @@ describe("submitGoal", () => {
 });
 
 describe("GoalForm", () => {
-  test("renders all four controlled inputs", () => {
+  test("renders all three controlled inputs", () => {
     const markup = renderToString(<GoalForm onSubmit={mock((_i: GoalInput): void => {})} />);
     expect(markup).toContain("<form");
     expect(markup).toContain('name="name"');
     expect(markup).toContain('name="target"');
-    expect(markup).toContain('name="mode"');
     expect(markup).toContain('name="duration"');
     expect(markup).not.toContain('name="current"');
-  });
-
-  test("renders daily and weekly mode options", () => {
-    const markup = renderToString(<GoalForm onSubmit={mock((_i: GoalInput): void => {})} />);
-    expect(markup).toContain('value="daily"');
-    expect(markup).toContain('value="weekly"');
   });
 
   test("renders the submit button", () => {
@@ -113,6 +97,6 @@ describe("GoalForm", () => {
   test("renders no error on first paint", () => {
     const markup = renderToString(<GoalForm onSubmit={mock((_i: GoalInput): void => {})} />);
     expect(markup).not.toContain('class="goal-form-error"');
-    expect(EMPTY_FORM_VALUES.mode).toBe("daily");
+    expect(EMPTY_FORM_VALUES).toEqual({ name: "", target: "", duration: "" });
   });
 });

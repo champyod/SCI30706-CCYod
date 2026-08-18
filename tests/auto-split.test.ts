@@ -11,7 +11,6 @@ function makeGoal(partial: Partial<Goal> = {}): Goal {
     name: "savings",
     target: 1000,
     current: 0,
-    mode: "daily",
     duration: 30,
     position: 0,
     createdAt: "2026-08-05T00:00:00Z",

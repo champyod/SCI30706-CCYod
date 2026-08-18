@@ -1,21 +1,17 @@
 import { parseAmount } from "../lib/money";
-import type { Goal, GoalMode } from "../lib/types";
+import type { Goal } from "../lib/types";
 
 export type GoalInput = Omit<Goal, "id" | "createdAt">;
 
 export interface GoalFormValues {
   name: string;
   target: string;
-  mode: GoalMode;
   duration: string;
 }
-
-export const DEFAULT_MODE: GoalMode = "daily";
 
 export const EMPTY_FORM_VALUES: GoalFormValues = {
   name: "",
   target: "",
-  mode: DEFAULT_MODE,
   duration: "",
 };
 
@@ -42,10 +38,6 @@ export function parseDuration(input: string): number | null {
   return value;
 }
 
-export function parseMode(input: string): GoalMode | null {
-  return input === "daily" || input === "weekly" ? input : null;
-}
-
 export function validateGoal(
   values: GoalFormValues,
 ): GoalInput | { error: string } {
@@ -61,7 +53,7 @@ export function validateGoal(
   if (duration === null) {
     return { error: ERRORS.durationInvalid };
   }
-  return { name, target, current: 0, mode: values.mode, duration, position: 0 };
+  return { name, target, current: 0, duration, position: 0 };
 }
 
 export function submitGoal(

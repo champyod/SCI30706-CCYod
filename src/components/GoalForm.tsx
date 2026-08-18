@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent, ReactElement } from "react";
 import type { GoalFormValues, GoalInput } from "./goal-form-logic";
-import { EMPTY_FORM_VALUES, parseMode, submitGoal } from "./goal-form-logic";
+import { EMPTY_FORM_VALUES, submitGoal } from "./goal-form-logic";
 
 const TEXT_FIELDS = ["name", "target", "duration"] as const;
 type TextField = (typeof TEXT_FIELDS)[number];
@@ -31,13 +31,6 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
 
   function handleDurationChange(event: ChangeEvent<HTMLInputElement>): void {
     updateTextField("duration", event.target.value);
-  }
-
-  function handleModeChange(event: ChangeEvent<HTMLSelectElement>): void {
-    const mode = parseMode(event.target.value);
-    if (mode !== null) {
-      setValues((current) => ({ ...current, mode }));
-    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
@@ -75,13 +68,6 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
           value={values.target}
           onChange={handleTargetChange}
         />
-      </label>
-      <label className="text-sm font-medium text-ink">
-        Mode
-        <select name="mode" className={`${INPUT_CLASS} mt-1`} value={values.mode} onChange={handleModeChange}>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-        </select>
       </label>
       <label className="text-sm font-medium text-ink">
         Duration (days)

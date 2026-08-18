@@ -16,7 +16,6 @@ const goalInput = {
   name: "vacation",
   target: 10000,
   current: 100,
-  mode: "weekly" as const,
   duration: 90,
   position: 0,
 };
@@ -32,7 +31,7 @@ function txRow(id: string, createdAt: string): Row {
 }
 
 function goalRow(id: string, position: number, name: string): Row {
-  return { id, name, target: 10, current: 0, mode: "daily", duration: 30, position, created_at: "2026-08-01T00:00:00.000Z" };
+  return { id, name, target: 10, current: 0, duration: 30, position, created_at: "2026-08-01T00:00:00.000Z" };
 }
 
 describe("SupabaseStore transactions", () => {

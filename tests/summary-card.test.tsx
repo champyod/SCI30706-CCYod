@@ -9,7 +9,7 @@ const SAMPLE_TXS: Tx[] = [
 ];
 
 const SAMPLE_GOALS: Goal[] = [
-  { id: "g1", name: "vacation", target: 10000, current: 500, mode: "daily", duration: 30, position: 0, createdAt: "g1" },
+  { id: "g1", name: "vacation", target: 10000, current: 500, duration: 30, position: 0, createdAt: "g1" },
 ];
 
 const SAMPLE_SETTINGS: Settings = {
