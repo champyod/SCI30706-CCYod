@@ -103,6 +103,24 @@ describe("parseTxForm", () => {
     expect("error" in parseTxForm({ ...form, amount: "0" })).toBe(true);
     expect("error" in parseTxForm({ ...form, amount: "-50" })).toBe(true);
   });
+
+  test("blank date returns an error, never a draft", () => {
+    const result = parseTxForm({ ...form, date: "" });
+    expect("error" in result).toBe(true);
+    expect("input" in result).toBe(false);
+  });
+
+  test("whitespace-only date returns an error", () => {
+    expect("error" in parseTxForm({ ...form, date: "   " })).toBe(true);
+  });
+
+  test("valid date returns the draft as before", () => {
+    const result = parseTxForm({ ...form, date: "2026-08-05" });
+    expect("input" in result).toBe(true);
+    if ("input" in result) {
+      expect(result.input.date).toBe("2026-08-05");
+    }
+  });
 });
 
 describe("display helpers", () => {

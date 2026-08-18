@@ -27,12 +27,12 @@ export function SavingsCard({ balance, onSave }: SavingsCardProps): ReactElement
   return (
     <article className="w-full rounded-xl border border-edge bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="m-0 text-base font-bold text-ink">Savings</h3>
+        <h3 className="m-0 text-base font-bold text-ink">เงินออม</h3>
         <span className="rounded-full bg-edge px-2 py-0.5 text-xs font-semibold text-ink-dim">
-          Unlimited
+          ไม่จำกัด
         </span>
       </div>
-      <p className="m-0 mt-2 text-sm text-ink-dim">Saved so far</p>
+      <p className="m-0 mt-2 text-sm text-ink-dim">ออมไปแล้ว</p>
       <p className="m-0 mt-1 text-3xl font-bold text-income-dark">
         {formatBaht(balance)}
       </p>
@@ -42,12 +42,12 @@ export function SavingsCard({ balance, onSave }: SavingsCardProps): ReactElement
         noValidate
       >
         <label className="min-w-0 flex-1">
-          <span className="sr-only">Save amount</span>
+          <span className="sr-only">จำนวนเงินที่ออม</span>
           <input
             type="text"
             name="save-amount"
             inputMode="decimal"
-            placeholder="Amount to save"
+            placeholder="จำนวนเงินที่ต้องการออม"
             className="w-full rounded-lg border border-edge bg-surface px-3 py-1.5 text-ink outline-none transition-colors focus:border-primary"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
@@ -57,7 +57,7 @@ export function SavingsCard({ balance, onSave }: SavingsCardProps): ReactElement
           type="submit"
           className="cursor-pointer rounded-lg bg-primary px-3 py-1.5 font-semibold text-on-primary transition-opacity hover:opacity-90"
         >
-          Save
+          ออม
         </button>
       </form>
     </article>

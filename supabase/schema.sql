@@ -16,7 +16,6 @@ create table goals (
   target numeric(12,2) not null check (target > 0),
   current numeric(12,2) not null default 0,
   duration integer not null default 30,
-  position integer not null default 0,  -- for promoteGoal ordering
   created_at timestamptz not null default now()
 );
 

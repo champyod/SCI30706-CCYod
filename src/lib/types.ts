@@ -16,7 +16,6 @@ export interface Goal {
   target: number;
   current: number;
   duration: number;
-  position: number;
   createdAt: string;
 }
 

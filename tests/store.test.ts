@@ -41,7 +41,6 @@ const goalInput = {
   target: 10000,
   current: 100,
   duration: 90,
-  position: 0,
 };
 
 /** In-memory DataStore mirroring the backend contract (MemoryStorage-style). */
@@ -346,7 +345,7 @@ describe("AppStore auto-split on income", () => {
     const { store, backend } = makeStore();
     await store.init();
     const first = await store.addGoal({ ...goalInput, name: "first", current: 0 });
-    await store.addGoal({ ...goalInput, name: "second", current: 0, position: 1 });
+    await store.addGoal({ ...goalInput, name: "second", current: 0 });
     await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 10 });
 
     const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };
@@ -364,7 +363,7 @@ describe("AppStore auto-split on income", () => {
     const { store } = makeStore();
     await store.init();
     const first = await store.addGoal({ ...goalInput, name: "first", target: 100, current: 0 });
-    await store.addGoal({ ...goalInput, name: "second", target: 1000, current: 0, position: 1 });
+    await store.addGoal({ ...goalInput, name: "second", target: 1000, current: 0 });
     await store.updateSettings({ autoInvestPercent: 50, autoSavePercent: 0 });
 
     const income = { ...txInput, type: "income" as const, category: "salary", amount: 1000 };

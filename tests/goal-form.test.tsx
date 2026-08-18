@@ -21,7 +21,6 @@ const EXPECTED_INPUT: GoalInput = {
   target: 5000,
   current: 0,
   duration: 30,
-  position: 0,
 };
 
 describe("parse helpers", () => {
@@ -44,20 +43,20 @@ describe("parse helpers", () => {
 describe("validateGoal", () => {
   test("rejects empty name", () => {
     const result = validateGoal({ ...VALID_VALUES, name: " " });
-    expect(result).toEqual({ error: "Name is required." });
+    expect(result).toEqual({ error: "กรุณากรอกชื่อ" });
   });
 
   test("rejects non-numeric target", () => {
     const result = validateGoal({ ...VALID_VALUES, target: "abc" });
-    expect(result).toEqual({ error: "Target must be a positive number." });
+    expect(result).toEqual({ error: "กรุณากรอกเป้าหมายให้ถูกต้อง (มากกว่า 0)" });
   });
 
   test("rejects non-positive duration", () => {
     const result = validateGoal({ ...VALID_VALUES, duration: "0" });
-    expect(result).toEqual({ error: "Duration must be a positive whole number of days." });
+    expect(result).toEqual({ error: "กรุณากรอกระยะเวลาเป็นจำนวนเต็มบวก (วัน)" });
   });
 
-  test("returns the goal input with position 0 on valid values", () => {
+  test("returns the goal input on valid values", () => {
     expect(validateGoal(VALID_VALUES)).toEqual(EXPECTED_INPUT);
   });
 });
@@ -74,7 +73,7 @@ describe("submitGoal", () => {
   test("returns the error and does not call onSubmit on invalid values", () => {
     const onSubmit = mock((_input: GoalInput): void => {});
     const result = submitGoal({ ...VALID_VALUES, name: "" }, onSubmit);
-    expect(result).toBe("Name is required.");
+    expect(result).toBe("กรุณากรอกชื่อ");
     expect(onSubmit).toHaveBeenCalledTimes(0);
   });
 });

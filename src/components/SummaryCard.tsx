@@ -3,9 +3,9 @@ import { freeBalance, goalsInvested } from "../lib/finance";
 import { formatBaht } from "../lib/money";
 import type { Goal, Settings, Tx } from "../lib/types";
 
-const SAVED_LABEL = "Saved";
-const IN_GOALS_LABEL = "In Goals";
-const FREE_LABEL = "Free Balance";
+const SAVED_LABEL = "เงินออม";
+const IN_GOALS_LABEL = "ในเป้าหมาย";
+const FREE_LABEL = "เงินคงเหลือ";
 
 const TONE_CLASSES = {
   saved: "text-income-dark",

@@ -9,7 +9,7 @@ const SAMPLE_TXS: Tx[] = [
 ];
 
 const SAMPLE_GOALS: Goal[] = [
-  { id: "g1", name: "vacation", target: 10000, current: 500, duration: 30, position: 0, createdAt: "g1" },
+  { id: "g1", name: "vacation", target: 10000, current: 500, duration: 30, createdAt: "g1" },
 ];
 
 const SAMPLE_SETTINGS: Settings = {
@@ -31,7 +31,7 @@ describe("SummaryCard", () => {
     const markup = renderToString(
       <SummaryCard transactions={SAMPLE_TXS} goals={SAMPLE_GOALS} settings={SAMPLE_SETTINGS} />,
     );
-    expect(markup).toContain('>Saved</span>');
+    expect(markup).toContain('>เงินออม</span>');
     expect(markup).toContain('class="mt-1 block text-4xl font-bold text-income-dark">300.00</strong>');
   });
 
@@ -39,7 +39,7 @@ describe("SummaryCard", () => {
     const markup = renderToString(
       <SummaryCard transactions={SAMPLE_TXS} goals={SAMPLE_GOALS} settings={SAMPLE_SETTINGS} />,
     );
-    expect(markup).toContain('>In Goals</span>');
+    expect(markup).toContain('>ในเป้าหมาย</span>');
     expect(markup).toContain('class="mt-1 block text-4xl font-bold text-primary-dark">500.00</strong>');
   });
 
@@ -47,7 +47,7 @@ describe("SummaryCard", () => {
     const markup = renderToString(
       <SummaryCard transactions={SAMPLE_TXS} goals={SAMPLE_GOALS} settings={SAMPLE_SETTINGS} />,
     );
-    expect(markup).toContain('>Free Balance</span>');
+    expect(markup).toContain('>เงินคงเหลือ</span>');
     expect(markup).toContain('class="mt-1 block text-4xl font-bold text-ink">2,999.50</strong>');
   });
 

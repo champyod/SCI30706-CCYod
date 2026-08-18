@@ -1,5 +1,7 @@
 import type { Tx } from "./types";
 
+const CHART_MONTHS = 6;
+
 type CategoryTotal = { category: string; total: number };
 
 interface IncomeVsExpense {
@@ -39,7 +41,19 @@ export function categoryBreakdown(txs: Tx[]): CategoryTotal[] {
     .sort((a, b) => b.total - a.total);
 }
 
-export function incomeVsExpense(txs: Tx[]): IncomeVsExpense {
+function monthWindowLabels(now: Date): string[] {
+  const currentMonth = now.getFullYear() * 12 + now.getMonth();
+  const labels: string[] = [];
+  for (let offset = CHART_MONTHS - 1; offset >= 0; offset--) {
+    const total = currentMonth - offset;
+    labels.push(
+      `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, "0")}`,
+    );
+  }
+  return labels;
+}
+
+export function incomeVsExpense(txs: Tx[], now: Date = new Date()): IncomeVsExpense {
   const incomeByMonth: Record<string, number> = {};
   const expenseByMonth: Record<string, number> = {};
   for (const tx of txs) {
@@ -50,10 +64,7 @@ export function incomeVsExpense(txs: Tx[]): IncomeVsExpense {
       expenseByMonth[month] = (expenseByMonth[month] ?? 0) + tx.amount;
     }
   }
-  const labels = Object.keys(incomeByMonth)
-    .concat(Object.keys(expenseByMonth))
-    .filter((month, index, all) => all.indexOf(month) === index)
-    .sort();
+  const labels = monthWindowLabels(now);
   const income = labels.map((month) => round(incomeByMonth[month] ?? 0, 2));
   const expense = labels.map((month) => round(expenseByMonth[month] ?? 0, 2));
   return { labels, income, expense };

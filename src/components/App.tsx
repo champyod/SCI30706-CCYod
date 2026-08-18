@@ -1,7 +1,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 import type { ReactElement } from "react";
 import type { Root } from "react-dom/client";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import { categoryBreakdown, incomeVsExpense, monthlySeries } from "../lib/chart-data";
 import { AppStore } from "../lib/store";
 import type { Settings, Tx } from "../lib/types";
@@ -22,6 +22,9 @@ import { TxTable } from "./TxTable";
 interface AppProps {
   store: AppStore;
 }
+
+const INVEST_SUCCESS = "ลงทุนสำเร็จ";
+const SAVE_MONEY_SUCCESS = "บันทึกเงินออมแล้ว";
 
 export function App({ store }: AppProps): ReactElement {
   // Re-render on every store mutation: the snapshot must be a value that
@@ -112,11 +115,17 @@ function handleDeleteGoal(store: AppStore, id: string): void {
 }
 
 function handleInvestGoal(store: AppStore, id: string, amount: number): void {
-  store.investGoal(id, amount).catch((error: unknown) => logBackendError("invest in goal", error));
+  store
+    .investGoal(id, amount)
+    .then(() => toast.success(INVEST_SUCCESS))
+    .catch((error: unknown) => logBackendError("invest in goal", error));
 }
 
 function handleSaveMoney(store: AppStore, amount: number): void {
-  store.saveMoney(amount).catch((error: unknown) => logBackendError("save money", error));
+  store
+    .saveMoney(amount)
+    .then(() => toast.success(SAVE_MONEY_SUCCESS))
+    .catch((error: unknown) => logBackendError("save money", error));
 }
 
 function handleUpdateSettings(store: AppStore, patch: Partial<Settings>): void {

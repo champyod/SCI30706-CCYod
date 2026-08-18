@@ -67,7 +67,6 @@ interface GoalRow {
   target: number;
   current: number;
   duration: number;
-  position: number;
   created_at: string;
 }
 
@@ -95,7 +94,6 @@ function rowToGoal(row: GoalRow): Goal {
     target: Number(row.target),
     current: Number(row.current),
     duration: row.duration,
-    position: row.position,
     createdAt: row.created_at,
   };
 }
@@ -182,7 +180,7 @@ export class SupabaseStore implements DataStore {
 
   async listGoals(): Promise<Goal[]> {
     const result = await this.run("โหลดเป้าหมาย", () =>
-      this.client.from("goals").select("*").order("position", { ascending: true }),
+      this.client.from("goals").select("*").order("created_at", { ascending: true }),
     );
     return ((result.data ?? []) as GoalRow[]).map(rowToGoal);
   }

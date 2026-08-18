@@ -12,7 +12,6 @@ function makeGoal(partial: Partial<Goal> = {}): Goal {
     target: 1000,
     current: 0,
     duration: 30,
-    position: 0,
     createdAt: "2026-08-05T00:00:00Z",
     ...partial,
   };

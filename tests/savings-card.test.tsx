@@ -10,7 +10,7 @@ describe("SavingsCard", () => {
 
   test("renders the unlimited badge", () => {
     const markup = renderToString(<SavingsCard balance={0} onSave={mock(() => {})} />);
-    expect(markup).toContain(">Unlimited</span>");
+    expect(markup).toContain(">ไม่จำกัด</span>");
   });
 
   test("renders the save form with an amount input", () => {
@@ -18,7 +18,7 @@ describe("SavingsCard", () => {
     expect(markup).toContain("<form");
     expect(markup).toContain('name="save-amount"');
     expect(markup).toContain('type="submit"');
-    expect(markup).toContain(">Save</button>");
+    expect(markup).toContain(">ออม</button>");
   });
 
   test("renders no delete action", () => {

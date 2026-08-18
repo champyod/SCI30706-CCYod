@@ -1,9 +1,15 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, mock, test } from "bun:test";
 import { App } from "../src/components/App";
 import { AppStore } from "../src/lib/store";
 import type { DataStore } from "../src/lib/storage/datastore";
 import type { Goal, Settings, Tx } from "../src/lib/types";
 import { Window } from "happy-dom";
+
+const toastSuccess = mock(() => {});
+mock.module("sonner", () => ({
+  toast: { success: toastSuccess, error: mock(() => {}), warning: mock(() => {}) },
+  Toaster: () => null,
+}));
 
 const DEFAULT_SETTINGS: Settings = {
   savingsBalance: 0,
@@ -170,9 +176,9 @@ describe("App store reactivity", () => {
     });
 
     const text = window.document.body.textContent ?? "";
-    expect(text).toContain("Saved");
-    expect(text).toContain("In Goals");
-    expect(text).toContain("Free Balance");
+    expect(text).toContain("เงินออม");
+    expect(text).toContain("ในเป้าหมาย");
+    expect(text).toContain("เงินคงเหลือ");
     expect(text).toContain("500.00");
 
     window.close();
@@ -190,5 +196,40 @@ describe("App store reactivity", () => {
 
     expect(afterAdd).toBe(before + OPTIMISTIC_MUTATION_VERSION_STEP);
     expect(afterDelete).toBe(afterAdd + OPTIMISTIC_MUTATION_VERSION_STEP);
+  });
+
+  test("investing in a goal shows a success toast", async () => {
+    const store = new AppStore(new FakeStore());
+    await store.init();
+    await store.addGoal({ name: "vacation", target: 10000, current: 0, duration: 90 });
+    const window = mountApp(store);
+    const { act } = require("react");
+
+    const investForm = [...window.document.querySelectorAll("form")].find(
+      (form) => form.querySelector('input[name="invest-amount"]') !== null,
+    );
+    const input = investForm?.querySelector('input[name="invest-amount"]') as HTMLInputElement | null;
+    const button = investForm?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    if (!input || !button) {
+      throw new Error("invest form not found");
+    }
+
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+    if (!setter) {
+      throw new Error("HTMLInputElement value setter unavailable");
+    }
+    act(() => {
+      setter.call(input, "500");
+      input.dispatchEvent(new window.Event("input", { bubbles: true }) as unknown as Event);
+    });
+    act(() => {
+      button.click();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(toastSuccess).toHaveBeenCalledWith("ลงทุนสำเร็จ");
+    window.close();
   });
 });

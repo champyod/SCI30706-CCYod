@@ -24,6 +24,7 @@ export type TxFormResult = { input: TxFormDraft } | { error: string };
 const DEFAULT_TYPE: TxType = "expense";
 const FALLBACK_CATEGORY = "อื่นๆ";
 const AMOUNT_ERROR = "กรุณากรอกจำนวนเงินที่ถูกต้อง (มากกว่า 0)";
+const DATE_ERROR = "กรุณากรอกวันที่";
 
 export function categoryOptions(type: TxType): readonly string[] {
   return type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
@@ -58,6 +59,9 @@ export function parseTxForm(form: TxFormState): TxFormResult {
   const amount = parseAmount(form.amount);
   if (amount === null) {
     return { error: AMOUNT_ERROR };
+  }
+  if (form.date.trim() === "") {
+    return { error: DATE_ERROR };
   }
   return {
     input: {

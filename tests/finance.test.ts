@@ -27,7 +27,6 @@ function makeGoal(partial: Partial<Goal> = {}): Goal {
     target: 100,
     current: 0,
     duration: 30,
-    position: 0,
     createdAt: "2026-08-05T00:00:00Z",
     ...partial,
   };
@@ -101,7 +100,6 @@ describe("goalProgress", () => {
       target: 100,
       current: 50,
       duration: 30,
-      position: 0,
       createdAt: "2026-08-05T00:00:00Z",
     };
     expect(goalProgress(goal)).toBe(0.5);
@@ -114,7 +112,6 @@ describe("goalProgress", () => {
       target: 100,
       current: 200,
       duration: 30,
-      position: 0,
       createdAt: "2026-08-05T00:00:00Z",
     };
     expect(goalProgress(goal)).toBe(1);
@@ -127,7 +124,6 @@ describe("goalProgress", () => {
       target: 100,
       current: 0,
       duration: 30,
-      position: 0,
       createdAt: "2026-08-05T00:00:00Z",
     };
     expect(goalProgress(goal)).toBe(0);
@@ -140,7 +136,6 @@ describe("goalProgress", () => {
       target: 0,
       current: 50,
       duration: 30,
-      position: 0,
       createdAt: "2026-08-05T00:00:00Z",
     };
     expect(goalProgress(goal)).toBe(0);

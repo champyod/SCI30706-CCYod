@@ -17,7 +17,6 @@ const goalInput = {
   target: 10000,
   current: 100,
   duration: 90,
-  position: 0,
 };
 
 const settingsInput: Settings = {
@@ -30,8 +29,8 @@ function txRow(id: string, createdAt: string): Row {
   return { id, type: "expense", category: "food", amount: 10, note: "a", date: "2026-08-01", created_at: createdAt };
 }
 
-function goalRow(id: string, position: number, name: string): Row {
-  return { id, name, target: 10, current: 0, duration: 30, position, created_at: "2026-08-01T00:00:00.000Z" };
+function goalRow(id: string, createdAt: string, name: string): Row {
+  return { id, name, target: 10, current: 0, duration: 30, created_at: createdAt };
 }
 
 describe("SupabaseStore transactions", () => {
@@ -103,14 +102,18 @@ describe("SupabaseStore transactions", () => {
 });
 
 describe("SupabaseStore goals", () => {
-  test("listGoals orders by position ascending", async () => {
+  test("listGoals orders by created_at ascending", async () => {
     const { store, client } = makeFakeStore();
-    client.goals.rows = [goalRow("g1", 2, "b"), goalRow("g2", 0, "a"), goalRow("g3", 1, "c")];
+    client.goals.rows = [
+      goalRow("g1", "2026-08-03T00:00:00.000Z", "c"),
+      goalRow("g2", "2026-08-01T00:00:00.000Z", "a"),
+      goalRow("g3", "2026-08-02T00:00:00.000Z", "b"),
+    ];
 
     const list = await store.listGoals();
 
-    expect(list.map((goal) => goal.position)).toEqual([0, 1, 2]);
-    expect(client.goals.lastOrder).toEqual({ column: "position", ascending: true });
+    expect(list.map((goal) => goal.id)).toEqual(["g2", "g3", "g1"]);
+    expect(client.goals.lastOrder).toEqual({ column: "created_at", ascending: true });
   });
 
   test("addGoal inserts a snake_case row with generated id and createdAt", async () => {
@@ -126,7 +129,7 @@ describe("SupabaseStore goals", () => {
 
   test("updateGoal maps createdAt to created_at in the patch", async () => {
     const { store, client } = makeFakeStore();
-    client.goals.rows = [goalRow("g1", 0, "a")];
+    client.goals.rows = [goalRow("g1", "2026-08-01T00:00:00.000Z", "a")];
 
     await store.updateGoal("g1", { name: "new-car", createdAt: "2026-09-01T00:00:00.000Z" });
 
@@ -136,7 +139,10 @@ describe("SupabaseStore goals", () => {
 
   test("deleteGoal removes only the matching goal", async () => {
     const { store, client } = makeFakeStore();
-    client.goals.rows = [goalRow("g1", 0, "a"), goalRow("g2", 1, "b")];
+    client.goals.rows = [
+      goalRow("g1", "2026-08-01T00:00:00.000Z", "a"),
+      goalRow("g2", "2026-08-02T00:00:00.000Z", "b"),
+    ];
 
     await store.deleteGoal("g1");
 

@@ -40,11 +40,11 @@ export function GoalCard({ goal, pending, onInvest, onDelete }: GoalCardProps): 
         <h3 className="m-0 text-base font-bold text-ink">{goal.name}</h3>
         {pending ? (
           <span className="rounded-full bg-edge px-2 py-0.5 text-xs font-semibold text-ink-dim">
-            Saving…
+            กำลังบันทึก…
           </span>
         ) : achieved ? (
           <span className="rounded-full bg-income-light px-2 py-0.5 text-xs font-semibold text-income-dark">
-            Achieved
+            สำเร็จแล้ว
           </span>
         ) : null}
       </div>
@@ -61,9 +61,9 @@ export function GoalCard({ goal, pending, onInvest, onDelete }: GoalCardProps): 
           style={{ width: `${progress}%` }}
         />
       </div>
-      <p className="m-0 mt-1 font-medium text-ink">{`${progress}% filled (${formatBaht(goal.current)} / ${formatBaht(goal.target)})`}</p>
+      <p className="m-0 mt-1 font-medium text-ink">{`${progress}% ครบแล้ว (${formatBaht(goal.current)} / ${formatBaht(goal.target)})`}</p>
       {!achieved && (
-        <p className="m-0 text-sm text-ink-dim">{`Est. ${formatBaht(required)} THB/day to reach your goal`}</p>
+        <p className="m-0 text-sm text-ink-dim">{`ประมาณ ${formatBaht(required)} บาท/วัน ต่อเป้าหมายนี้`}</p>
       )}
       <form
         className="mt-3 flex items-center gap-2"
@@ -71,12 +71,12 @@ export function GoalCard({ goal, pending, onInvest, onDelete }: GoalCardProps): 
         noValidate
       >
         <label className="min-w-0 flex-1">
-          <span className="sr-only">Invest amount for {goal.name}</span>
+          <span className="sr-only">จำนวนเงินที่ลงทุนสำหรับ {goal.name}</span>
           <input
             type="text"
             name="invest-amount"
             inputMode="decimal"
-            placeholder="Invest amount"
+            placeholder="จำนวนเงินที่ลงทุน"
             className="w-full rounded-lg border border-edge bg-surface px-3 py-1.5 text-ink outline-none transition-colors focus:border-primary"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
@@ -87,12 +87,12 @@ export function GoalCard({ goal, pending, onInvest, onDelete }: GoalCardProps): 
           disabled={achieved}
           className="cursor-pointer rounded-lg bg-primary px-3 py-1.5 font-semibold text-on-primary transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Invest
+          ลงทุน
         </button>
         <button
           type="button"
           className="cursor-pointer rounded-lg border border-edge bg-surface px-2 py-1.5 text-ink-dim transition-colors hover:border-expense hover:text-expense"
-          aria-label={`Delete ${goal.name}`}
+          aria-label={`ลบ ${goal.name}`}
           onClick={() => onDelete(goal.id)}
         >
           <Icon name="Trash2" />

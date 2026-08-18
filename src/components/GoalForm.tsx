@@ -49,7 +49,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
       noValidate
     >
       <label className="text-sm font-medium text-ink">
-        Name
+        ชื่อ
         <input
           type="text"
           name="name"
@@ -59,7 +59,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
         />
       </label>
       <label className="text-sm font-medium text-ink">
-        Target (Baht)
+        เป้าหมาย (บาท)
         <input
           type="text"
           name="target"
@@ -70,7 +70,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
         />
       </label>
       <label className="text-sm font-medium text-ink">
-        Duration (days)
+        ระยะเวลา (วัน)
         <input
           type="text"
           name="duration"
@@ -89,7 +89,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): ReactElement {
         type="submit"
         className="cursor-pointer rounded-lg bg-primary px-4 py-2 font-semibold text-on-primary transition-opacity hover:opacity-90 sm:col-span-2"
       >
-        Add Goal
+        เพิ่มเป้าหมาย
       </button>
     </form>
   );

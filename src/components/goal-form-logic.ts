@@ -16,9 +16,9 @@ export const EMPTY_FORM_VALUES: GoalFormValues = {
 };
 
 const ERRORS = {
-  nameRequired: "Name is required.",
-  targetInvalid: "Target must be a positive number.",
-  durationInvalid: "Duration must be a positive whole number of days.",
+  nameRequired: "กรุณากรอกชื่อ",
+  targetInvalid: "กรุณากรอกเป้าหมายให้ถูกต้อง (มากกว่า 0)",
+  durationInvalid: "กรุณากรอกระยะเวลาเป็นจำนวนเต็มบวก (วัน)",
 } as const;
 
 export function parseName(input: string): string | null {
@@ -53,7 +53,7 @@ export function validateGoal(
   if (duration === null) {
     return { error: ERRORS.durationInvalid };
   }
-  return { name, target, current: 0, duration, position: 0 };
+  return { name, target, current: 0, duration };
 }
 
 export function submitGoal(

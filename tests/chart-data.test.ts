@@ -87,22 +87,104 @@ describe("categoryBreakdown", () => {
 });
 
 describe("incomeVsExpense", () => {
-  test("returns ascending labels with aligned income and expense", () => {
+  test("returns a fixed 6-month window ending at the current month", () => {
+    const now = new Date(2026, 7, 15); // 2026-08-15
+    expect(incomeVsExpense([], now)).toEqual({
+      labels: [
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+      ],
+      income: [0, 0, 0, 0, 0, 0],
+      expense: [0, 0, 0, 0, 0, 0],
+    });
+  });
+
+  test("zero-fills months without transactions", () => {
+    const txs: Tx[] = [
+      makeTx({ id: "a", type: "income", amount: 1000, date: "2026-06-10" }),
+      makeTx({ id: "b", type: "expense", amount: 200, date: "2026-08-05" }),
+    ];
+    const now = new Date(2026, 7, 15);
+    expect(incomeVsExpense(txs, now)).toEqual({
+      labels: [
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+      ],
+      income: [0, 0, 0, 1000, 0, 0],
+      expense: [0, 0, 0, 0, 0, 200],
+    });
+  });
+
+  test("aggregates all txs per month per type", () => {
+    const txs: Tx[] = [
+      makeTx({ id: "a", type: "income", amount: 1000, date: "2026-08-02" }),
+      makeTx({ id: "b", type: "income", amount: 500, date: "2026-08-10" }),
+      makeTx({ id: "c", type: "expense", amount: 300, date: "2026-08-05" }),
+      makeTx({ id: "d", type: "expense", amount: 50, date: "2026-08-15" }),
+      makeTx({ id: "e", type: "expense", amount: 120, date: "2026-07-01" }),
+    ];
+    const now = new Date(2026, 7, 20);
+    expect(incomeVsExpense(txs, now)).toEqual({
+      labels: [
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+      ],
+      income: [0, 0, 0, 0, 0, 1500],
+      expense: [0, 0, 0, 0, 120, 350],
+    });
+  });
+
+  test("rolls the window across a year boundary when now is in January", () => {
+    const txs: Tx[] = [
+      makeTx({ id: "a", type: "expense", amount: 100, date: "2025-08-05" }),
+    ];
+    const now = new Date(2026, 0, 15);
+    expect(incomeVsExpense(txs, now)).toEqual({
+      labels: [
+        "2025-08",
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+      ],
+      income: [0, 0, 0, 0, 0, 0],
+      expense: [100, 0, 0, 0, 0, 0],
+    });
+  });
+
+  test("returns aligned income and expense within the window", () => {
     const txs: Tx[] = [
       makeTx({ id: "a", type: "income", amount: 1000, date: "2026-02-10" }),
       makeTx({ id: "b", type: "expense", amount: 200, date: "2026-02-15" }),
       makeTx({ id: "c", type: "income", amount: 800, date: "2026-01-05" }),
       makeTx({ id: "d", type: "expense", amount: 100, date: "2026-01-20" }),
     ];
-    expect(incomeVsExpense(txs)).toEqual({
-      labels: ["2026-01", "2026-02"],
-      income: [800, 1000],
-      expense: [100, 200],
+    const now = new Date(2026, 1, 15);
+    expect(incomeVsExpense(txs, now)).toEqual({
+      labels: [
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+        "2026-02",
+      ],
+      income: [0, 0, 0, 0, 800, 1000],
+      expense: [0, 0, 0, 0, 100, 200],
     });
-  });
-
-  test("returns empty arrays for empty txs", () => {
-    expect(incomeVsExpense([])).toEqual({ labels: [], income: [], expense: [] });
   });
 
   test("rounds values to 2 decimals", () => {
@@ -110,10 +192,18 @@ describe("incomeVsExpense", () => {
       makeTx({ id: "a", type: "income", amount: 10.005, date: "2026-01-10" }),
       makeTx({ id: "b", type: "expense", amount: 5.005, date: "2026-01-10" }),
     ];
-    expect(incomeVsExpense(txs)).toEqual({
-      labels: ["2026-01"],
-      income: [10.01],
-      expense: [5.01],
+    const now = new Date(2026, 0, 10);
+    expect(incomeVsExpense(txs, now)).toEqual({
+      labels: [
+        "2025-08",
+        "2025-09",
+        "2025-10",
+        "2025-11",
+        "2025-12",
+        "2026-01",
+      ],
+      income: [0, 0, 0, 0, 0, 10.01],
+      expense: [0, 0, 0, 0, 0, 5.01],
     });
   });
 });
